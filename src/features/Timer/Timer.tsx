@@ -1,4 +1,5 @@
-import React, { MouseEvent, useCallback, useState } from "react";
+import React, { MouseEvent, useCallback, useRef, useState } from "react";
+import { Temporal } from "@js-temporal/polyfill";
 import { Circle } from "@/features/Timer/Circle";
 
 interface ITimerProps extends React.ComponentProps<"div"> {}
@@ -6,28 +7,67 @@ interface ITimerProps extends React.ComponentProps<"div"> {}
 export function Timer(props: ITimerProps) {
   const [isStarted, setIsStarted] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [startDate, setStartDate] = useState<Temporal.PlainTime>();
+  const [endDate, setEndDate] = useState<Temporal.PlainTime>();
+  const intervalRef = useRef<number>();
 
-  const onStartClick = useCallback((event: MouseEvent<HTMLButtonElement>) => {
-    setIsStarted(true);
-  }, []);
+  function advanceTimer() {
+    console.log(Temporal.Now.plainTimeISO().toString());
+  }
 
-  const onSkipClick = useCallback((event: MouseEvent<HTMLButtonElement>) => {
-    setIsStarted(false);
-    setIsPaused(false);
-  }, []);
+  //#region EventHandlers
+  const onStartClick = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      setIsStarted(true);
 
-  const onStopClick = useCallback((event: MouseEvent<HTMLButtonElement>) => {
-    setIsStarted(false);
-    setIsPaused(false);
-  }, []);
+      const timeNow = Temporal.Now.plainTimeISO();
+      const sessionDuration = Temporal.Duration.from({ minutes: 25 });
+      setStartDate(timeNow);
+      setEndDate(timeNow.add(sessionDuration));
 
-  const onPauseClick = useCallback((event: MouseEvent<HTMLButtonElement>) => {
-    setIsPaused(true);
-  }, []);
+      intervalRef.current = setInterval(advanceTimer, 1000);
+    },
+    [intervalRef.current]
+  );
 
-  const onResumeClick = useCallback((event: MouseEvent<HTMLButtonElement>) => {
-    setIsPaused(false);
-  }, []);
+  const onSkipClick = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      setIsStarted(false);
+      setIsPaused(false);
+
+      clearInterval(intervalRef.current);
+    },
+    [intervalRef.current]
+  );
+
+  const onStopClick = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      setIsStarted(false);
+      setIsPaused(false);
+
+      clearInterval(intervalRef.current);
+    },
+    [intervalRef.current]
+  );
+
+  const onPauseClick = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      setIsPaused(true);
+
+      clearInterval(intervalRef.current);
+    },
+    [intervalRef.current]
+  );
+
+  const onResumeClick = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      setIsPaused(false);
+
+      intervalRef.current = setInterval(advanceTimer, 1000);
+    },
+    [intervalRef.current]
+  );
+  //#endregion
 
   return (
     <div {...props}>
