@@ -4,7 +4,7 @@ import { Circle } from "@/features/Timer/Circle";
 
 interface ITimerProps extends React.ComponentProps<"div"> {}
 
-const seconds = 60;
+const seconds = 10;
 
 export function Timer(props: ITimerProps) {
   const [isStarted, setIsStarted] = useState(false);
@@ -25,10 +25,22 @@ export function Timer(props: ITimerProps) {
     );
   };
 
-  useEffect(() => {
-    if (secondsLeft() > 0) return;
-
+  function cleanupTimer() {
     clearInterval(intervalRef.current);
+    setTimeLeft(Temporal.Duration.from({ seconds: 0 }));
+    setTimeout(() => {
+      console.log("Siema");
+      setIsStarted(false);
+      setIsPaused(false);
+    }, 1100);
+  }
+
+  useEffect(() => {
+    console.log(secondsLeft());
+
+    if (secondsLeft() >= 0) return;
+
+    cleanupTimer();
   }, [timeLeft]);
 
   //#region EventHandlers
@@ -49,7 +61,7 @@ export function Timer(props: ITimerProps) {
       setIsStarted(false);
       setIsPaused(false);
 
-      clearInterval(intervalRef.current);
+      cleanupTimer();
     },
     [intervalRef.current]
   );
@@ -59,7 +71,7 @@ export function Timer(props: ITimerProps) {
       setIsStarted(false);
       setIsPaused(false);
 
-      clearInterval(intervalRef.current);
+      cleanupTimer();
     },
     [intervalRef.current]
   );
