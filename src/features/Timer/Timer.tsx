@@ -89,23 +89,26 @@ export function Timer(props: ITimerProps) {
     [intervalRef.current]
   );
 
-  const onPauseClick = useCallback(
-    (event: MouseEvent<HTMLButtonElement>) => {
-      setIsPaused(true);
+  const onPauseClick = (event: MouseEvent<HTMLButtonElement>) => {
+    setIsPaused(true);
 
-      clearInterval(intervalRef.current);
-    },
-    [intervalRef.current]
-  );
+    clearInterval(intervalRef.current);
+  };
 
-  const onResumeClick = useCallback(
-    (event: MouseEvent<HTMLButtonElement>) => {
-      setIsPaused(false);
+  const onResumeClick = (event: MouseEvent<HTMLButtonElement>) => {
+    if (!timeLeft) return;
 
-      intervalRef.current = setInterval(advanceTimer, 1000);
-    },
-    [intervalRef.current]
-  );
+    setIsPaused(false);
+
+    endDate.current = Temporal.Now.plainTimeISO()
+      .round({
+        smallestUnit: "seconds",
+        roundingMode: "floor",
+      })
+      .add(timeLeft);
+
+    intervalRef.current = setInterval(advanceTimer, 1000);
+  };
   //#endregion
 
   return (
