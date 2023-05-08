@@ -18,6 +18,20 @@ export function Timer(props: ITimerProps) {
 
   const secondsLeft = () => timeLeft?.total("seconds") ?? seconds;
 
+  /**
+   * Return MM:SS formatted string from duration.
+   * @param duration A Temporal.Duration instance.
+   */
+  function readableTime(duration: Temporal.Duration): string {
+    let seconds = duration.round("seconds").total("seconds");
+    let minutes = Math.floor(duration.total("minutes"));
+
+    if (minutes < 0) minutes = 0;
+    if (seconds < 0) seconds = 0;
+
+    return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  }
+
   // Beware - it's a closure
   const advanceTimer = () => {
     if (!endDate.current) return;
@@ -101,7 +115,11 @@ export function Timer(props: ITimerProps) {
 
   return (
     <div {...props}>
-      <Circle showProgress={isStarted} progress={progress} timeRemaining={`${secondsLeft()}`} />
+      <Circle
+        showProgress={isStarted}
+        progress={progress}
+        timeRemaining={timeLeft ? readableTime(timeLeft) : `00:00`}
+      />
       <div className="flex justify-evenly">
         {!isStarted && <button onClick={onStartClick}>start</button>}
         {(isStarted || isPaused) && <button onClick={onSkipClick}>skip</button>}
