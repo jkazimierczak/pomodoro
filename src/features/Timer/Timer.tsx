@@ -52,7 +52,7 @@ export function Timer(props: ITimerProps) {
     startDate.current = timeNow;
     endDate.current = timeNow.add(sessionDuration);
 
-    // TODO: Investigate 1-sec delay on start
+    advanceTimer();
     intervalRef.current = setInterval(() => advanceTimer(), 1000);
   };
 
