@@ -5,6 +5,7 @@ import { Circle } from "@/features/Timer/Circle";
 interface ITimerProps extends React.ComponentProps<"div"> {}
 
 const seconds = 10;
+const initialDuration = Temporal.Duration.from({ seconds: seconds });
 
 export function Timer(props: ITimerProps) {
   const [isStarted, setIsStarted] = useState(false);
@@ -13,7 +14,7 @@ export function Timer(props: ITimerProps) {
   const [progress, setProgress] = useState<number>(0);
   const startDate = useRef<Temporal.PlainTime>();
   const endDate = useRef<Temporal.PlainTime>();
-  const [timeLeft, setTimeLeft] = useState<Temporal.Duration>();
+  const [timeLeft, setTimeLeft] = useState<Temporal.Duration>(initialDuration);
   const intervalRef = useRef<number>();
 
   const secondsLeft = () => timeLeft?.total("seconds") ?? seconds;
@@ -50,8 +51,8 @@ export function Timer(props: ITimerProps) {
     clearInterval(intervalRef.current);
     setProgress(0);
 
+    setTimeLeft(initialDuration);
     setTimeout(() => {
-      setTimeLeft(Temporal.Duration.from({ seconds: 0 }));
       setIsStarted(false);
       setIsPaused(false);
     }, 1100);
