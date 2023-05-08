@@ -15,13 +15,18 @@ export function Timer(props: ITimerProps) {
   const [timeLeft, setTimeLeft] = useState<Temporal.Duration>();
   const intervalRef = useRef<number>();
 
-  const secondsLeft = () => Math.floor(timeLeft?.total("seconds") ?? seconds);
+  const secondsLeft = () => timeLeft?.total("seconds") ?? seconds;
 
   const advanceTimer = () => {
     if (!endDate.current) return;
 
     setTimeLeft(
-      (timeElapsed) => (timeElapsed = Temporal.Now.plainTimeISO().until(endDate.current))
+      Temporal.Now.plainTimeISO()
+        .round({
+          smallestUnit: "seconds",
+          roundingMode: "floor",
+        })
+        .until(endDate.current)
     );
   };
 
@@ -47,7 +52,10 @@ export function Timer(props: ITimerProps) {
   const onStartClick = (event: MouseEvent<HTMLButtonElement>) => {
     setIsStarted(true);
 
-    const timeNow = Temporal.Now.plainTimeISO();
+    const timeNow = Temporal.Now.plainTimeISO().round({
+      smallestUnit: "seconds",
+      roundingMode: "floor",
+    });
     const sessionDuration = Temporal.Duration.from({ seconds: seconds });
     startDate.current = timeNow;
     endDate.current = timeNow.add(sessionDuration);
