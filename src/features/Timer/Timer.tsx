@@ -69,25 +69,13 @@ export function Timer(props: ITimerProps) {
     intervalRef.current = setInterval(() => advanceTimer(), 1000);
   };
 
-  const onSkipClick = useCallback(
-    (event: MouseEvent<HTMLButtonElement>) => {
-      setIsStarted(false);
-      setIsPaused(false);
+  const onSkipClick = (event: MouseEvent<HTMLButtonElement>) => {
+    cleanupTimer();
+  };
 
-      cleanupTimer();
-    },
-    [intervalRef.current]
-  );
-
-  const onStopClick = useCallback(
-    (event: MouseEvent<HTMLButtonElement>) => {
-      setIsStarted(false);
-      setIsPaused(false);
-
-      cleanupTimer();
-    },
-    [intervalRef.current]
-  );
+  const onStopClick = (event: MouseEvent<HTMLButtonElement>) => {
+    cleanupTimer();
+  };
 
   const onPauseClick = (event: MouseEvent<HTMLButtonElement>) => {
     setIsPaused(true);
