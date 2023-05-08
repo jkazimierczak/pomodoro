@@ -39,7 +39,7 @@ export function Circle({ showProgress, progress, timeRemaining }: ICircle) {
               transformOrigin: "50% 50%",
               display: "initial",
               transition: "stroke-dashoffset 1s linear 0s",
-              strokeDashoffset: 770.771 * progress,
+              strokeDashoffset: 770.771 * (1 - progress),
             }}
           ></circle>
         )}
