@@ -118,21 +118,24 @@ export function Timer(props: ITimerProps) {
 
   return (
     <div {...props}>
+      <p className="relative bottom-10 text-center text-4xl">
+        {!isStarted
+          ? "Start session?"
+          : isStarted && isPaused
+          ? "Session paused"
+          : "Session ongoing"}
+      </p>
+
       <Circle
         showProgress={isStarted}
         progress={progress}
         timeRemaining={timeLeft ? readableTime(timeLeft) : `00:00`}
       />
-      <div className="flex justify-evenly">
-        <IconContext.Provider value={{ size: "2.5rem" }}>
+      <div className="relative top-10 flex justify-center gap-6">
+        <IconContext.Provider value={{ size: "2.25em" }}>
           {!isStarted && (
             <button onClick={onStartClick}>
               <FiPlay />
-            </button>
-          )}
-          {(isStarted || isPaused) && (
-            <button onClick={onSkipClick}>
-              <FiSkipForward />
             </button>
           )}
           {(isStarted || isPaused) && (
@@ -148,6 +151,11 @@ export function Timer(props: ITimerProps) {
           {isPaused && (
             <button onClick={onResumeClick}>
               <FiPlay />
+            </button>
+          )}
+          {(isStarted || isPaused) && (
+            <button onClick={onSkipClick}>
+              <FiSkipForward />
             </button>
           )}
         </IconContext.Provider>

@@ -1,3 +1,5 @@
+import React from "react";
+
 interface ICircle {
   showProgress: boolean;
   progress: number;
@@ -6,7 +8,7 @@ interface ICircle {
 
 export function Circle({ showProgress, progress, timeRemaining }: ICircle) {
   return (
-    <div className="grid grid max-w-fit" style={{ gridTemplateAreas: "clock" }}>
+    <div className="mx-auto grid grid max-w-fit" style={{ gridTemplateAreas: "clock" }}>
       <svg
         viewBox="0 0 260 260"
         width="260"
@@ -44,7 +46,7 @@ export function Circle({ showProgress, progress, timeRemaining }: ICircle) {
           ></circle>
         )}
       </svg>
-      <p className="self-center justify-self-center text-3xl" style={{ gridArea: "clock" }}>
+      <p className="self-center justify-self-center text-4xl" style={{ gridArea: "clock" }}>
         {timeRemaining}
       </p>
     </div>
