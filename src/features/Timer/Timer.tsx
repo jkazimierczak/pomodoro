@@ -1,6 +1,8 @@
-import React, { MouseEvent, useCallback, useEffect, useRef, useState } from "react";
+import React, { MouseEvent, useEffect, useRef, useState } from "react";
 import { Temporal } from "@js-temporal/polyfill";
 import { Circle } from "@/features/Timer/Circle";
+import { FiPause, FiPlay, FiSkipForward, FiX } from "react-icons/fi";
+import { IconContext } from "react-icons";
 
 interface ITimerProps extends React.ComponentProps<"div"> {}
 
@@ -122,11 +124,33 @@ export function Timer(props: ITimerProps) {
         timeRemaining={timeLeft ? readableTime(timeLeft) : `00:00`}
       />
       <div className="flex justify-evenly">
-        {!isStarted && <button onClick={onStartClick}>start</button>}
-        {(isStarted || isPaused) && <button onClick={onSkipClick}>skip</button>}
-        {(isStarted || isPaused) && <button onClick={onStopClick}>stop</button>}
-        {isStarted && !isPaused && <button onClick={onPauseClick}>pause</button>}
-        {isPaused && <button onClick={onResumeClick}>resume</button>}
+        <IconContext.Provider value={{ size: "2.5rem" }}>
+          {!isStarted && (
+            <button onClick={onStartClick}>
+              <FiPlay />
+            </button>
+          )}
+          {(isStarted || isPaused) && (
+            <button onClick={onSkipClick}>
+              <FiSkipForward />
+            </button>
+          )}
+          {(isStarted || isPaused) && (
+            <button onClick={onStopClick}>
+              <FiX />
+            </button>
+          )}
+          {isStarted && !isPaused && (
+            <button onClick={onPauseClick}>
+              <FiPause />
+            </button>
+          )}
+          {isPaused && (
+            <button onClick={onResumeClick}>
+              <FiPlay />
+            </button>
+          )}
+        </IconContext.Provider>
       </div>
     </div>
   );
