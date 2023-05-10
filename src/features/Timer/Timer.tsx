@@ -26,7 +26,7 @@ export function Timer(props: ITimerProps) {
    * @param duration A Temporal.Duration instance.
    */
   function readableTime(duration: Temporal.Duration): string {
-    let seconds = duration.round("seconds").total("seconds");
+    let seconds = duration.round("seconds").total("seconds") % 60;
     let minutes = Math.floor(duration.total("minutes"));
 
     if (minutes < 0) minutes = 0;
