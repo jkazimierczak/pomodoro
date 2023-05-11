@@ -92,7 +92,7 @@ export function Timer({ initialDurations, ...props }: ITimerProps) {
   }, [timeLeft?.total("seconds")]);
 
   //#region EventHandlers
-  const onStartClick = (event: MouseEvent<HTMLButtonElement>) => {
+  const onStartClick = () => {
     dispatch(start());
 
     const timeNow = Temporal.Now.plainTimeISO().round({
@@ -107,23 +107,23 @@ export function Timer({ initialDurations, ...props }: ITimerProps) {
     intervalRef.current = setInterval(() => advanceTimer(), 1000);
   };
 
-  const onSkipClick = (event: MouseEvent<HTMLButtonElement>) => {
+  const onSkipClick = () => {
     setTimeout(() => dispatch(skip()), 1100);
     cleanupTimer();
   };
 
-  const onStopClick = (event: MouseEvent<HTMLButtonElement>) => {
+  const onStopClick = () => {
     setTimeout(() => dispatch(stop()), 1100);
     cleanupTimer();
   };
 
-  const onPauseClick = (event: MouseEvent<HTMLButtonElement>) => {
+  const onPauseClick = () => {
     dispatch(pause());
 
     clearInterval(intervalRef.current);
   };
 
-  const onResumeClick = (event: MouseEvent<HTMLButtonElement>) => {
+  const onResumeClick = () => {
     if (!timeLeft) return;
 
     dispatch(resume());
