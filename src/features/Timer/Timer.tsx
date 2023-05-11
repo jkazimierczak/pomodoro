@@ -1,4 +1,4 @@
-import React, { MouseEvent, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Temporal } from "@js-temporal/polyfill";
 import { Circle } from "@/features/Timer/Circle";
 import {
@@ -22,6 +22,7 @@ import {
   stop,
   pause,
   resume,
+  finished,
 } from "@/features/Timer/timerSlice";
 
 interface ITimerProps extends React.ComponentProps<"div"> {
@@ -88,6 +89,7 @@ export function Timer({ initialDurations, ...props }: ITimerProps) {
 
     if (secondsLeft() >= 0) return;
 
+    setTimeout(() => dispatch(finished()), 1100);
     cleanupTimer();
   }, [timeLeft?.total("seconds")]);
 
@@ -142,11 +144,9 @@ export function Timer({ initialDurations, ...props }: ITimerProps) {
   return (
     <div {...props}>
       <p className="relative bottom-10 text-center text-4xl">
-        {timer.status === SessionStatus.UNSTARTED
-          ? "Start session?"
-          : timer.status === SessionStatus.PAUSED
-          ? "Session paused"
-          : "Session ongoing"}
+        {timer.status === SessionStatus.UNSTARTED && "Start session?"}
+        {timer.status === SessionStatus.RUNNING && "Start ongoing"}
+        {timer.status === SessionStatus.PAUSED && "Session paused"}
       </p>
 
       {timer.status !== SessionStatus.UNINITIALIZED && (
@@ -154,15 +154,22 @@ export function Timer({ initialDurations, ...props }: ITimerProps) {
           className="absolute left-1/2 top-2.5 flex justify-center"
           style={{ transform: "translateX(-50%)" }}
         >
-          <IconContext.Provider value={{ size: "1.25em", color: "#bcbcbcc9" }}>
-            {timer.history.map((item, idx) => (
-              <li key={`TimerState${idx}`}>
+          {timer.history.map((item, idx) => (
+            <IconContext.Provider
+              key={`TimerState${idx}`}
+              value={
+                idx === timer.currentSessionIdx && timer.status !== SessionStatus.UNSTARTED
+                  ? { size: "1.25em" }
+                  : { size: "1.25em", color: "#bcbcbcc9" }
+              }
+            >
+              <li>
                 {item.result === SessionResult.COMPLETED && <FiCheckCircle />}
                 {item.result === SessionResult.SKIPPED && <FiArrowRightCircle />}
                 {item.result === SessionResult.UNKNOWN && <FiCircle />}
               </li>
-            ))}
-          </IconContext.Provider>
+            </IconContext.Provider>
+          ))}
         </ul>
       )}
 

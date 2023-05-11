@@ -52,6 +52,7 @@ export interface SessionDurations {
 
 export interface TimerState {
   history: SessionHistoryItem[];
+  currentSessionIdx: number;
   status: SessionStatus;
   duration: {
     session: number;
@@ -67,6 +68,7 @@ export interface TimerState {
 
 const initialState: TimerState = {
   history: [],
+  currentSessionIdx: -1,
   status: SessionStatus.UNINITIALIZED,
   duration: {
     session: 0,
@@ -96,12 +98,19 @@ export const timerSlice = createSlice({
     },
     start: (state) => {
       state.status = SessionStatus.RUNNING;
+      state.currentSessionIdx++;
     },
     skip: (state) => {
       state.status = SessionStatus.UNSTARTED;
+      state.history[state.currentSessionIdx].result = SessionResult.SKIPPED;
+    },
+    finished: (state) => {
+      state.status = SessionStatus.UNSTARTED;
+      state.history[state.currentSessionIdx].result = SessionResult.COMPLETED;
     },
     stop: (state) => {
       state.status = SessionStatus.UNINITIALIZED;
+      state.currentSessionIdx = -1;
     },
     pause: (state) => {
       state.status = SessionStatus.PAUSED;
@@ -112,5 +121,5 @@ export const timerSlice = createSlice({
   },
 });
 
-export const { initialize, start, skip, stop, pause, resume } = timerSlice.actions;
+export const { initialize, start, skip, stop, pause, resume, finished } = timerSlice.actions;
 export default timerSlice.reducer;
