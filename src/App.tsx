@@ -1,4 +1,5 @@
 import { Timer } from "@/features/Timer";
+import { Settings } from "@/features/Settings/Settings";
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
           transform: "translate(-50%, -50%)",
         }}
       />
+      <Settings className="absolute right-0 top-0 h-full w-[440px] bg-white p-5 shadow-lg" />
     </div>
   );
 }
