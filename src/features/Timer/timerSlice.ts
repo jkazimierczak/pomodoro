@@ -101,5 +101,5 @@ export const timerSlice = createSlice({
   },
 });
 
-export const { initialize, start,, stop, pause, resume, finished } = timerSlice.actions;
+export const { initialize, start, stop, pause, resume, finished } = timerSlice.actions;
 export default timerSlice.reducer;
