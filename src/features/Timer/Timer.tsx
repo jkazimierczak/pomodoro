@@ -173,7 +173,9 @@ export function Timer({ ...props }: ITimerProps) {
       )}
 
       <Circle
-        showProgress={timerState.status === SessionStatus.RUNNING}
+        showProgress={
+          timerState.status === SessionStatus.RUNNING || timerState.status === SessionStatus.PAUSED
+        }
         progress={progress}
         timeRemaining={timeLeft ? readableTime(timeLeft) : `${settings.sessionDuration}:00`}
       />
