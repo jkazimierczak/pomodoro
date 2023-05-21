@@ -1,33 +1,80 @@
 import { ComponentProps } from "react";
 import { IconContext } from "react-icons";
-import { FiX } from "react-icons/fi";
+import { FiRotateCcw, FiSave, FiX } from "react-icons/fi";
 import { FormSection } from "@/features/Settings/FormSection";
 import { RangeInput } from "@/features/Settings/RangeInput";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { DevTool } from "@hookform/devtools";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { defaultSettings, SettingsFormData, settingsSchema } from "@/features/Settings/schema";
 
 interface Settings extends ComponentProps<"form"> {}
 
 export function Settings({ ...params }: Settings) {
-  return (
-    <form {...params}>
-      <header className="between mb-4 flex justify-between">
-        <p className="text-4xl">Settings</p>
-        <button>
-          <IconContext.Provider value={{ size: "2.25em" }}>
-            <FiX />
-          </IconContext.Provider>
-        </button>
-      </header>
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { isDirty },
+  } = useForm<SettingsFormData>({
+    resolver: zodResolver(settingsSchema),
+    defaultValues: defaultSettings,
+  });
+  const onSubmit: SubmitHandler<SettingsFormData> = (data) => console.log(data);
 
-      <FormSection title="General">
-        <p>Session duration</p>
-        <RangeInput min={1} max={120} />
-        <p>Break duration</p>
-        <RangeInput min={1} max={60} />
-        <p>Long break duration</p>
-        <RangeInput min={1} max={60} />
-        <p>Sessions before long break</p>
-        <RangeInput min={1} max={10} />
-      </FormSection>
-    </form>
+  return (
+    <>
+      <DevTool control={control} placement="top-left" />
+
+      <form {...params} onSubmit={handleSubmit(onSubmit)}>
+        <header className="between mb-4 flex justify-between">
+          <p className="text-4xl">Settings</p>
+          <IconContext.Provider value={{ size: "2.25em" }}>
+            <div className="flex gap-5">
+              {isDirty && (
+                <button onClick={() => reset({ ...defaultSettings })}>
+                  <FiRotateCcw />
+                </button>
+              )}
+              {isDirty && (
+                <button type="submit">
+                  <FiSave />
+                </button>
+              )}
+              <button>
+                <FiX />
+              </button>
+            </div>
+          </IconContext.Provider>
+        </header>
+
+        <FormSection title="General">
+          <p>Session duration</p>
+          <Controller
+            control={control}
+            name="sessionDuration"
+            render={({ field }) => <RangeInput min={1} max={120} {...field} />}
+          />
+          <p>Break duration</p>
+          <Controller
+            control={control}
+            name="breakDuration"
+            render={({ field }) => <RangeInput min={1} max={60} {...field} />}
+          />
+          <p>Long break duration</p>
+          <Controller
+            control={control}
+            name="longBreakDuration"
+            render={({ field }) => <RangeInput min={1} max={60} {...field} />}
+          />
+          <p>Sessions before long break</p>
+          <Controller
+            control={control}
+            name="sessionsBeforeLongBreak"
+            render={({ field }) => <RangeInput min={1} max={10} {...field} />}
+          />
+        </FormSection>
+      </form>
+    </>
   );
 }
