@@ -83,11 +83,19 @@ export function Settings({ onClose, ...params }: Settings) {
             name="longBreakDuration"
             render={({ field }) => <RangeInput min={1} max={60} {...field} />}
           />
+        </FormSection>
+        <FormSection title="Other">
           <p>Sessions before long break</p>
           <Controller
             control={control}
             name="sessionsBeforeLongBreak"
             render={({ field }) => <RangeInput min={1} max={10} {...field} />}
+          />
+          <p>Daily goal</p>
+          <Controller
+            control={control}
+            name="dailyGoal"
+            render={({ field }) => <RangeInput min={1} max={16} {...field} />}
           />
         </FormSection>
       </form>
