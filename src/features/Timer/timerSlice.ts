@@ -8,10 +8,6 @@ export enum SessionStatus {
   /**
    * Initial session state - defines a new, non-started session.
    */
-  UNINITIALIZED = "UNINITIALIZED",
-  /**
-   * Initial session state - defines a new, non-started session.
-   */
   UNSTARTED = "UNSTARTED",
   /**
    * Running - as in started - session state.
@@ -59,7 +55,7 @@ export interface TimerState {
 const initialState: TimerState = {
   history: [],
   currentSessionIdx: -1,
-  status: SessionStatus.UNINITIALIZED,
+  status: SessionStatus.UNSTARTED,
 };
 
 export const timerSlice = createSlice({
@@ -93,8 +89,8 @@ export const timerSlice = createSlice({
       state.history[state.currentSessionIdx].result = SessionResult.COMPLETED;
     },
     stop: (state) => {
-      state.status = SessionStatus.UNINITIALIZED;
-      state.currentSessionIdx = -1;
+      state.status = SessionStatus.UNSTARTED;
+      state.currentSessionIdx--;
     },
     pause: (state) => {
       state.status = SessionStatus.PAUSED;
