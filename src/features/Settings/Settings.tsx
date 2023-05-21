@@ -1,4 +1,4 @@
-import { ComponentProps } from "react";
+import { ComponentProps, useEffect } from "react";
 import { IconContext } from "react-icons";
 import { FiRotateCcw, FiSave, FiX } from "react-icons/fi";
 import { FormSection } from "@/features/Settings/FormSection";
@@ -7,20 +7,32 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { defaultSettings, SettingsFormData, settingsSchema } from "@/features/Settings/schema";
+import { useAppDispatch, useAppSelector } from "@/store";
+import { updateSettings } from "@/features/Settings/settingsSlice";
 
 interface Settings extends ComponentProps<"form"> {}
 
 export function Settings({ ...params }: Settings) {
+  const dispatch = useAppDispatch();
+  const settingsState = useAppSelector((state) => state.settings);
+
   const {
     control,
     handleSubmit,
     reset,
-    formState: { isDirty },
+    formState: { isDirty, isSubmitSuccessful },
   } = useForm<SettingsFormData>({
     resolver: zodResolver(settingsSchema),
     defaultValues: defaultSettings,
   });
-  const onSubmit: SubmitHandler<SettingsFormData> = (data) => console.log(data);
+
+  const onSubmit: SubmitHandler<SettingsFormData> = (data) => {
+    dispatch(updateSettings(data));
+  };
+
+  useEffect(() => {
+    reset(settingsState);
+  }, [isSubmitSuccessful]);
 
   return (
     <>
@@ -32,7 +44,7 @@ export function Settings({ ...params }: Settings) {
           <IconContext.Provider value={{ size: "2.25em" }}>
             <div className="flex gap-5">
               {isDirty && (
-                <button onClick={() => reset({ ...defaultSettings })}>
+                <button onClick={() => reset({ ...settingsState })}>
                   <FiRotateCcw />
                 </button>
               )}
