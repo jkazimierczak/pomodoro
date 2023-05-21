@@ -36,7 +36,6 @@ export enum SessionType {
 }
 
 export enum SessionResult {
-  SKIPPED = "SKIPPED",
   COMPLETED = "COMPLETED",
   UNKNOWN = "UNKNOWN",
 }
@@ -89,10 +88,6 @@ export const timerSlice = createSlice({
       state.status = SessionStatus.RUNNING;
       state.currentSessionIdx++;
     },
-    skip: (state) => {
-      state.status = SessionStatus.UNSTARTED;
-      state.history[state.currentSessionIdx].result = SessionResult.SKIPPED;
-    },
     finished: (state) => {
       state.status = SessionStatus.UNSTARTED;
       state.history[state.currentSessionIdx].result = SessionResult.COMPLETED;
@@ -110,5 +105,5 @@ export const timerSlice = createSlice({
   },
 });
 
-export const { initialize, start, skip, stop, pause, resume, finished } = timerSlice.actions;
+export const { initialize, start,, stop, pause, resume, finished } = timerSlice.actions;
 export default timerSlice.reducer;

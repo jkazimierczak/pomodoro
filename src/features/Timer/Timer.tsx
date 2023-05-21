@@ -1,27 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Temporal } from "@js-temporal/polyfill";
 import { Circle } from "@/features/Timer/Circle";
-import {
-  FiArrowRightCircle,
-  FiCheckCircle,
-  FiCircle,
-  FiPause,
-  FiPlay,
-  FiSkipForward,
-  FiX,
-} from "react-icons/fi";
+import { FiCheckCircle, FiCircle, FiPause, FiPlay, FiX } from "react-icons/fi";
 import { IconContext } from "react-icons";
 import { useAppDispatch, useAppSelector } from "@/store";
 import {
+  finished,
   initialize,
+  pause,
+  resume,
   SessionResult,
   SessionStatus,
   start,
-  skip,
   stop,
-  pause,
-  resume,
-  finished,
 } from "@/features/Timer/timerSlice";
 
 interface ITimerProps extends React.ComponentProps<"div"> {}
@@ -107,11 +98,6 @@ export function Timer({ ...props }: ITimerProps) {
     intervalRef.current = setInterval(() => advanceTimer(), 1000);
   };
 
-  const onSkipClick = () => {
-    setTimeout(() => dispatch(skip()), 1100);
-    cleanupTimer();
-  };
-
   const onStopClick = () => {
     setTimeout(() => dispatch(stop()), 1100);
     cleanupTimer();
@@ -147,30 +133,26 @@ export function Timer({ ...props }: ITimerProps) {
         {timerState.status === SessionStatus.PAUSED && "Session paused"}
       </p>
 
-      {timerState.status !== SessionStatus.UNINITIALIZED && (
-        <ul
-          className="absolute left-1/2 top-2.5 flex justify-center"
-          style={{ transform: "translateX(-50%)" }}
-        >
-          {timerState.history.map((item, idx) => (
-            <IconContext.Provider
-              key={`TimerState${idx}`}
-              value={
-                idx === timerState.currentSessionIdx &&
-                timerState.status !== SessionStatus.UNSTARTED
-                  ? { size: "1.25em" }
-                  : { size: "1.25em", color: "#bcbcbcc9" }
-              }
-            >
-              <li>
-                {item.result === SessionResult.COMPLETED && <FiCheckCircle />}
-                {item.result === SessionResult.SKIPPED && <FiArrowRightCircle />}
-                {item.result === SessionResult.UNKNOWN && <FiCircle />}
-              </li>
-            </IconContext.Provider>
-          ))}
-        </ul>
-      )}
+      <ul
+        className="absolute left-1/2 top-2.5 flex justify-center"
+        style={{ transform: "translateX(-50%)" }}
+      >
+        {timerState.history.map((item, idx) => (
+          <IconContext.Provider
+            key={`TimerState${idx}`}
+            value={
+              idx === timerState.currentSessionIdx && timerState.status !== SessionStatus.UNSTARTED
+                ? { size: "1.25em" }
+                : { size: "1.25em", color: "#bcbcbcc9" }
+            }
+          >
+            <li>
+              {item.result === SessionResult.COMPLETED && <FiCheckCircle />}
+              {item.result === SessionResult.UNKNOWN && <FiCircle />}
+            </li>
+          </IconContext.Provider>
+        ))}
+      </ul>
 
       <Circle
         showProgress={
@@ -199,11 +181,6 @@ export function Timer({ ...props }: ITimerProps) {
           {timerState.status === SessionStatus.PAUSED && (
             <button onClick={onResumeClick}>
               <FiPlay />
-            </button>
-          )}
-          {[SessionStatus.RUNNING, SessionStatus.PAUSED].includes(timerState.status) && (
-            <button onClick={onSkipClick}>
-              <FiSkipForward />
             </button>
           )}
         </IconContext.Provider>
