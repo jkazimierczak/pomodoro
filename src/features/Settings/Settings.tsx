@@ -10,9 +10,11 @@ import { defaultSettings, SettingsFormData, settingsSchema } from "@/features/Se
 import { useAppDispatch, useAppSelector } from "@/store";
 import { updateSettings } from "@/features/Settings/settingsSlice";
 
-interface Settings extends ComponentProps<"form"> {}
+interface Settings extends ComponentProps<"form"> {
+  onClose: () => void;
+}
 
-export function Settings({ ...params }: Settings) {
+export function Settings({ onClose, ...params }: Settings) {
   const dispatch = useAppDispatch();
   const settingsState = useAppSelector((state) => state.settings);
 
@@ -53,9 +55,11 @@ export function Settings({ ...params }: Settings) {
                   <FiSave />
                 </button>
               )}
-              <button>
-                <FiX />
-              </button>
+              {!isDirty && (
+                <button onClick={onClose}>
+                  <FiX />
+                </button>
+              )}
             </div>
           </IconContext.Provider>
         </header>
