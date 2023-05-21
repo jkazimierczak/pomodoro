@@ -14,7 +14,6 @@ import { IconContext } from "react-icons";
 import { useAppDispatch, useAppSelector } from "@/store";
 import {
   initialize,
-  SessionDurations,
   SessionResult,
   SessionStatus,
   start,
@@ -25,28 +24,27 @@ import {
   finished,
 } from "@/features/Timer/timerSlice";
 
-interface ITimerProps extends React.ComponentProps<"div"> {
-  initialDurations: SessionDurations;
-}
+interface ITimerProps extends React.ComponentProps<"div"> {}
 
-export function Timer({ initialDurations, ...props }: ITimerProps) {
+export function Timer({ ...props }: ITimerProps) {
   const dispatch = useAppDispatch();
-  const timer = useAppSelector((state) => state.timer);
+  const timerState = useAppSelector((state) => state.timer);
+  const settings = useAppSelector((state) => state.settings);
 
   // Using refs to mitigate stale state within a closure
   const [progress, setProgress] = useState<number>(0);
   const startDate = useRef<Temporal.PlainTime>();
   const endDate = useRef<Temporal.PlainTime>();
   const [timeLeft, setTimeLeft] = useState<Temporal.Duration>(
-    Temporal.Duration.from({ minutes: initialDurations.session })
+    Temporal.Duration.from({ minutes: settings.sessionDuration })
   );
   const intervalRef = useRef<number>();
 
   useEffect(() => {
-    dispatch(initialize(initialDurations));
-  }, [initialDurations.session, initialDurations.break]);
+    dispatch(initialize(settings.dailyGoal));
+  }, [settings.dailyGoal]);
 
-  const secondsLeft = () => timeLeft?.total("seconds") ?? timer.duration.session * 60;
+  const secondsLeft = () => timeLeft?.total("seconds") ?? settings.sessionDuration * 60;
 
   /**
    * Return MM:SS formatted string from duration.
@@ -79,12 +77,12 @@ export function Timer({ initialDurations, ...props }: ITimerProps) {
   function cleanupTimer() {
     clearInterval(intervalRef.current);
     setProgress(0);
-    setTimeLeft(Temporal.Duration.from({ minutes: timer.duration.session }));
+    setTimeLeft(Temporal.Duration.from({ minutes: settings.sessionDuration }));
   }
 
   useEffect(() => {
-    if (timer.status === SessionStatus.RUNNING) {
-      setProgress(1 - secondsLeft() / (timer.duration.session * 60));
+    if (timerState.status === SessionStatus.RUNNING) {
+      setProgress(1 - secondsLeft() / (settings.sessionDuration * 60));
     }
 
     if (secondsLeft() >= 0) return;
@@ -101,7 +99,7 @@ export function Timer({ initialDurations, ...props }: ITimerProps) {
       smallestUnit: "seconds",
       roundingMode: "floor",
     });
-    const sessionDuration = Temporal.Duration.from({ minutes: timer.duration.session });
+    const sessionDuration = Temporal.Duration.from({ minutes: settings.sessionDuration });
     startDate.current = timeNow;
     endDate.current = timeNow.add(sessionDuration);
 
@@ -144,21 +142,22 @@ export function Timer({ initialDurations, ...props }: ITimerProps) {
   return (
     <div {...props}>
       <p className="relative bottom-10 text-center text-4xl">
-        {timer.status === SessionStatus.UNSTARTED && "Start session?"}
-        {timer.status === SessionStatus.RUNNING && "Start ongoing"}
-        {timer.status === SessionStatus.PAUSED && "Session paused"}
+        {timerState.status === SessionStatus.UNSTARTED && "Start session?"}
+        {timerState.status === SessionStatus.RUNNING && "Session ongoing"}
+        {timerState.status === SessionStatus.PAUSED && "Session paused"}
       </p>
 
-      {timer.status !== SessionStatus.UNINITIALIZED && (
+      {timerState.status !== SessionStatus.UNINITIALIZED && (
         <ul
           className="absolute left-1/2 top-2.5 flex justify-center"
           style={{ transform: "translateX(-50%)" }}
         >
-          {timer.history.map((item, idx) => (
+          {timerState.history.map((item, idx) => (
             <IconContext.Provider
               key={`TimerState${idx}`}
               value={
-                idx === timer.currentSessionIdx && timer.status !== SessionStatus.UNSTARTED
+                idx === timerState.currentSessionIdx &&
+                timerState.status !== SessionStatus.UNSTARTED
                   ? { size: "1.25em" }
                   : { size: "1.25em", color: "#bcbcbcc9" }
               }
@@ -174,33 +173,33 @@ export function Timer({ initialDurations, ...props }: ITimerProps) {
       )}
 
       <Circle
-        showProgress={timer.status === SessionStatus.RUNNING}
+        showProgress={timerState.status === SessionStatus.RUNNING}
         progress={progress}
-        timeRemaining={timeLeft ? readableTime(timeLeft) : `${timer.duration.session}:00`}
+        timeRemaining={timeLeft ? readableTime(timeLeft) : `${settings.sessionDuration}:00`}
       />
       <div className="relative top-10 flex justify-center gap-6">
         <IconContext.Provider value={{ size: "2.25em" }}>
-          {timer.status === SessionStatus.UNSTARTED && (
+          {timerState.status === SessionStatus.UNSTARTED && (
             <button onClick={onStartClick}>
               <FiPlay />
             </button>
           )}
-          {[SessionStatus.RUNNING, SessionStatus.PAUSED].includes(timer.status) && (
+          {[SessionStatus.RUNNING, SessionStatus.PAUSED].includes(timerState.status) && (
             <button onClick={onStopClick}>
               <FiX />
             </button>
           )}
-          {timer.status === SessionStatus.RUNNING && (
+          {timerState.status === SessionStatus.RUNNING && (
             <button onClick={onPauseClick}>
               <FiPause />
             </button>
           )}
-          {timer.status === SessionStatus.PAUSED && (
+          {timerState.status === SessionStatus.PAUSED && (
             <button onClick={onResumeClick}>
               <FiPlay />
             </button>
           )}
-          {[SessionStatus.RUNNING, SessionStatus.PAUSED].includes(timer.status) && (
+          {[SessionStatus.RUNNING, SessionStatus.PAUSED].includes(timerState.status) && (
             <button onClick={onSkipClick}>
               <FiSkipForward />
             </button>

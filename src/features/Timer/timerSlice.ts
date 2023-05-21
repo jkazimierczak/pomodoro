@@ -45,19 +45,10 @@ export interface SessionHistoryItem {
   result: SessionResult;
 }
 
-export interface SessionDurations {
-  session: number;
-  break: number;
-}
-
 export interface TimerState {
   history: SessionHistoryItem[];
   currentSessionIdx: number;
   status: SessionStatus;
-  duration: {
-    session: number;
-    break: number;
-  };
   // temporal: {
   //   duration: Temporal.Duration;
   //   start: Temporal.PlainTime;
@@ -70,31 +61,29 @@ const initialState: TimerState = {
   history: [],
   currentSessionIdx: -1,
   status: SessionStatus.UNINITIALIZED,
-  duration: {
-    session: 0,
-    break: 0,
-  },
 };
 
 export const timerSlice = createSlice({
   name: "timer",
   initialState,
   reducers: {
-    initialize: (state, action: PayloadAction<SessionDurations>) => {
-      state.history = [
-        {
-          result: SessionResult.UNKNOWN,
-        },
-        {
-          result: SessionResult.UNKNOWN,
-        },
-        {
-          result: SessionResult.UNKNOWN,
-        },
-      ];
+    initialize: (state, action: PayloadAction<number>) => {
+      const { payload } = action;
+
+      const historyLenDiff = payload - state.history.length;
+      console.log("diff", historyLenDiff);
+      if (historyLenDiff > 0) {
+        for (let i = state.history.length; i < payload; i++) {
+          state.history.push({
+            result: SessionResult.UNKNOWN,
+          });
+        }
+      } else if (historyLenDiff < 0) {
+        for (let i = 0; i < -historyLenDiff; i++) {
+          state.history.pop();
+        }
+      }
       state.status = SessionStatus.UNSTARTED;
-      state.duration.session = action.payload.session;
-      state.duration.break = action.payload.break;
     },
     start: (state) => {
       state.status = SessionStatus.RUNNING;
