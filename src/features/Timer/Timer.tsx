@@ -17,6 +17,20 @@ import {
 
 interface ITimerProps extends React.ComponentProps<"div"> {}
 
+/**
+ * Return MM:SS formatted string from duration.
+ * @param duration A Temporal.Duration instance.
+ */
+function readableTime(duration: Temporal.Duration): string {
+  let seconds = duration.round("seconds").total("seconds") % 60;
+  let minutes = Math.floor(duration.total("minutes"));
+
+  if (minutes < 0) minutes = 0;
+  if (seconds < 0) seconds = 0;
+
+  return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+}
+
 export function Timer({ ...props }: ITimerProps) {
   const dispatch = useAppDispatch();
   const timerState = useAppSelector((state) => state.timer);
@@ -36,20 +50,6 @@ export function Timer({ ...props }: ITimerProps) {
   }, [settings.dailyGoal]);
 
   const secondsLeft = () => timeLeft?.total("seconds") ?? settings.sessionDuration * 60;
-
-  /**
-   * Return MM:SS formatted string from duration.
-   * @param duration A Temporal.Duration instance.
-   */
-  function readableTime(duration: Temporal.Duration): string {
-    let seconds = duration.round("seconds").total("seconds") % 60;
-    let minutes = Math.floor(duration.total("minutes"));
-
-    if (minutes < 0) minutes = 0;
-    if (seconds < 0) seconds = 0;
-
-    return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-  }
 
   // Beware - it's a closure
   const advanceTimer = () => {
