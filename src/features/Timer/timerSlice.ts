@@ -26,9 +26,10 @@ export enum SessionStatus {
 /**
  * Represents session type.
  */
-export enum SessionType {
+export enum HistoryItemType {
   BREAK = "BREAK",
-  FOCUS = "FOCUS",
+  SESSION = "SESSION",
+  LONG_BREAK = "LONG_BREAK",
 }
 
 export enum SessionResult {
@@ -37,7 +38,9 @@ export enum SessionResult {
 }
 
 export interface SessionHistoryItem {
+  type: HistoryItemType;
   result: SessionResult;
+  duration?: number;
 }
 
 export interface TimerState {
@@ -58,27 +61,65 @@ const initialState: TimerState = {
   status: SessionStatus.UNSTARTED,
 };
 
+interface InitializeActionPayload {
+  sessionCount: number;
+  sessionDuration: number;
+  breakDuration: number;
+  longBreakDuration: number;
+}
+
 export const timerSlice = createSlice({
   name: "timer",
   initialState,
   reducers: {
-    initialize: (state, action: PayloadAction<number>) => {
+    initialize: (state, action: PayloadAction<InitializeActionPayload>) => {
       const { payload } = action;
 
-      const historyLenDiff = payload - state.history.length;
-      console.log("diff", historyLenDiff);
+      const historyLenDiff = payload.sessionCount - state.history.length;
+
+      if (historyLenDiff == 0) {
+        state.history.forEach((item) => {
+          if (item.type === HistoryItemType.SESSION) {
+            item.duration = payload.sessionDuration;
+          } else if (item.type === HistoryItemType.BREAK) {
+            item.duration = payload.breakDuration;
+          } else {
+            item.duration = payload.longBreakDuration;
+          }
+        });
+      }
+
       if (historyLenDiff > 0) {
-        for (let i = state.history.length; i < payload; i++) {
-          state.history.push({
-            result: SessionResult.UNKNOWN,
-          });
+        const desiredLength = payload.sessionCount + payload.sessionCount;
+
+        for (let i = state.history.length; i < desiredLength; i++) {
+          if (i % 2 == 0) {
+            // Session item
+            state.history.push({
+              type: HistoryItemType.SESSION,
+              result: SessionResult.UNKNOWN,
+              duration: payload.sessionDuration,
+            });
+          } else {
+            // Break item
+            state.history.push({
+              type: HistoryItemType.BREAK,
+              result: SessionResult.UNKNOWN,
+              duration: payload.breakDuration,
+            });
+          }
         }
       } else if (historyLenDiff < 0) {
         for (let i = 0; i < -historyLenDiff; i++) {
           state.history.pop();
         }
       }
+
       state.status = SessionStatus.UNSTARTED;
+    },
+    setLongBreakAfter: (state, action: PayloadAction<number>) => {
+      const item = state.history[action.payload + 1];
+      item.type = HistoryItemType.LONG_BREAK;
     },
     start: (state) => {
       state.status = SessionStatus.RUNNING;

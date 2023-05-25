@@ -6,6 +6,7 @@ import { IconContext } from "react-icons";
 import { useAppDispatch, useAppSelector } from "@/store";
 import {
   finished,
+  HistoryItemType,
   initialize,
   pause,
   resume,
@@ -35,6 +36,12 @@ export function Timer({ ...props }: ITimerProps) {
   const dispatch = useAppDispatch();
   const timerState = useAppSelector((state) => state.timer);
   const settings = useAppSelector((state) => state.settings);
+  const currentSession = useAppSelector(
+    (state) => state.timer.history[state.timer.currentSessionIdx]
+  );
+  const nextSession = useAppSelector(
+    (state) => state.timer.history[state.timer.currentSessionIdx + 1]
+  );
 
   // Using refs to mitigate stale state within a closure
   const [progress, setProgress] = useState<number>(0);
@@ -45,9 +52,23 @@ export function Timer({ ...props }: ITimerProps) {
   );
   const intervalRef = useRef<number>();
 
-  useEffect(() => {
-    dispatch(initialize(settings.dailyGoal));
-  }, [settings.dailyGoal]);
+  function updateTimerSettings() {
+    dispatch(
+      initialize({
+        sessionCount: settings.dailyGoal,
+        sessionDuration: settings.sessionDuration,
+        breakDuration: settings.breakDuration,
+        longBreakDuration: settings.longBreakDuration,
+      })
+    );
+  }
+
+  useEffect(updateTimerSettings, [
+    settings.dailyGoal,
+    settings.sessionDuration,
+    settings.breakDuration,
+    settings.longBreakDuration,
+  ]);
 
   const secondsLeft = () => timeLeft?.total("seconds") ?? settings.sessionDuration * 60;
 
@@ -86,11 +107,19 @@ export function Timer({ ...props }: ITimerProps) {
   const onStartClick = () => {
     dispatch(start());
 
+    let sessionDuration;
+    if (nextSession.type === HistoryItemType.SESSION) {
+      sessionDuration = Temporal.Duration.from({ minutes: settings.sessionDuration });
+    } else if (nextSession.type === HistoryItemType.BREAK) {
+      sessionDuration = Temporal.Duration.from({ minutes: settings.breakDuration });
+    } else {
+      sessionDuration = Temporal.Duration.from({ minutes: settings.longBreakDuration });
+    }
+
     const timeNow = Temporal.Now.plainTimeISO().round({
       smallestUnit: "seconds",
       roundingMode: "floor",
     });
-    const sessionDuration = Temporal.Duration.from({ minutes: settings.sessionDuration });
     startDate.current = timeNow;
     endDate.current = timeNow.add(sessionDuration);
 
@@ -128,39 +157,74 @@ export function Timer({ ...props }: ITimerProps) {
   return (
     <div {...props}>
       <p className="relative bottom-10 text-center text-4xl">
-        {timerState.status === SessionStatus.UNSTARTED && "Start session?"}
-        {timerState.status === SessionStatus.RUNNING && "Session ongoing"}
-        {timerState.status === SessionStatus.PAUSED && "Session paused"}
+        {timerState.history.length && (
+          <>
+            {timerState.status === SessionStatus.UNSTARTED &&
+              nextSession.type === HistoryItemType.SESSION &&
+              "Start session?"}
+            {timerState.status === SessionStatus.UNSTARTED &&
+              nextSession.type === HistoryItemType.BREAK &&
+              "Start break?"}
+            {timerState.status === SessionStatus.RUNNING &&
+              currentSession.type === HistoryItemType.SESSION &&
+              "Session ongoing"}
+            {timerState.status === SessionStatus.RUNNING &&
+              currentSession.type === HistoryItemType.BREAK &&
+              "Break ongoing"}
+            {timerState.status === SessionStatus.PAUSED &&
+              currentSession.type === HistoryItemType.SESSION &&
+              "Session paused"}
+            {timerState.status === SessionStatus.PAUSED &&
+              currentSession.type === HistoryItemType.BREAK &&
+              "Break paused"}
+          </>
+        )}
       </p>
 
       <ul
         className="absolute left-1/2 top-2.5 flex justify-center"
         style={{ transform: "translateX(-50%)" }}
       >
-        {timerState.history.map((item, idx) => (
-          <IconContext.Provider
-            key={`TimerState${idx}`}
-            value={
-              idx === timerState.currentSessionIdx && timerState.status !== SessionStatus.UNSTARTED
-                ? { size: "1.25em" }
-                : { size: "1.25em", color: "#bcbcbcc9" }
-            }
-          >
-            <li>
-              {item.result === SessionResult.COMPLETED && <FiCheckCircle />}
-              {item.result === SessionResult.UNKNOWN && <FiCircle />}
-            </li>
-          </IconContext.Provider>
-        ))}
+        {/* Create the number of progress circles corresponding to the daily goal. */}
+        {timerState.history.length &&
+          Array(settings.dailyGoal)
+            .fill(0)
+            .map((_, idx) => idx + idx)
+            .map((idx) => (
+              <IconContext.Provider
+                key={`TimerState${idx}`}
+                value={
+                  idx === timerState.currentSessionIdx &&
+                  timerState.status !== SessionStatus.UNSTARTED
+                    ? { size: "1.25em" }
+                    : { size: "1.25em", color: "#bcbcbcc9" }
+                }
+              >
+                <li>
+                  {timerState.history[idx]?.result === SessionResult.COMPLETED ? (
+                    <FiCheckCircle />
+                  ) : (
+                    <FiCircle />
+                  )}
+                </li>
+              </IconContext.Provider>
+            ))}
       </ul>
 
-      <Circle
-        showProgress={
-          timerState.status === SessionStatus.RUNNING || timerState.status === SessionStatus.PAUSED
-        }
-        progress={progress}
-        timeRemaining={timeLeft ? readableTime(timeLeft) : `${settings.sessionDuration}:00`}
-      />
+      {timerState.history.length && (
+        <Circle
+          showProgress={
+            timerState.status === SessionStatus.RUNNING ||
+            timerState.status === SessionStatus.PAUSED
+          }
+          progress={progress}
+          timeRemaining={
+            timeLeft
+              ? readableTime(timeLeft)
+              : `${timerState.history[timerState.currentSessionIdx].duration}:00`
+          }
+        />
+      )}
       <div className="relative top-10 flex justify-center gap-6">
         <IconContext.Provider value={{ size: "2.25em" }}>
           {timerState.status === SessionStatus.UNSTARTED && (
