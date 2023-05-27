@@ -50,6 +50,7 @@ export function Timer({ ...props }: ITimerProps) {
   const [timeLeft, setTimeLeft] = useState<Temporal.Duration>(
     Temporal.Duration.from({ minutes: settings.sessionDuration })
   );
+  const [readableTimeLeft, setReadableTimeLeft] = useState(readableTime(timeLeft));
   const intervalRef = useRef<number>();
 
   function updateTimerSettings() {
@@ -70,6 +71,12 @@ export function Timer({ ...props }: ITimerProps) {
     settings.longBreakDuration,
   ]);
 
+  useEffect(() => {
+    if (timerState.status === SessionStatus.UNSTARTED) {
+      setTimeLeft(Temporal.Duration.from({ minutes: nextSession.duration }));
+    }
+  }, [nextSession.duration]);
+
   const secondsLeft = () => timeLeft?.total("seconds") ?? settings.sessionDuration * 60;
 
   // Beware - it's a closure
@@ -86,10 +93,14 @@ export function Timer({ ...props }: ITimerProps) {
     );
   };
 
+  useEffect(() => {
+    setReadableTimeLeft(readableTime(timeLeft));
+  }, [timeLeft.total("seconds")]);
+
   function cleanupTimer() {
     clearInterval(intervalRef.current);
     setProgress(0);
-    setTimeLeft(Temporal.Duration.from({ minutes: settings.sessionDuration }));
+    setTimeout(() => setTimeLeft(Temporal.Duration.from({ minutes: nextSession.duration })), 1100);
   }
 
   useEffect(() => {
@@ -206,7 +217,7 @@ export function Timer({ ...props }: ITimerProps) {
             timerState.status === SessionStatus.PAUSED
           }
           progress={progress}
-          timeRemaining={timeLeft ? readableTime(timeLeft) : `${currentSession.duration}:00`}
+          timeRemaining={readableTimeLeft}
         />
       )}
       <div className="relative top-10 flex justify-center gap-6">
