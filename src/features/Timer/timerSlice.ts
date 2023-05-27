@@ -1,5 +1,6 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
+import { defaultSettings } from "@/features/Settings/schema";
 
 /**
  * Represents current focus session state.
@@ -56,7 +57,13 @@ export interface TimerState {
 }
 
 const initialState: TimerState = {
-  history: [],
+  history: [
+    {
+      type: HistoryItemType.SESSION,
+      duration: defaultSettings.sessionDuration,
+      result: SessionResult.UNKNOWN,
+    },
+  ],
   currentSessionIdx: -1,
   status: SessionStatus.UNSTARTED,
 };
