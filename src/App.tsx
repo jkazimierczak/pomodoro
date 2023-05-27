@@ -27,7 +27,7 @@ function App() {
           </div>
           <Portal isOpen={isOpen}>
             <Settings
-              className="absolute right-0 top-0 h-full w-[440px] bg-white p-5 shadow shadow-gray-700"
+              className="absolute right-0 top-0 h-full w-screen bg-white p-5 shadow shadow-gray-700 sm:w-[440px]"
               onClose={closePortal}
             />
           </Portal>
