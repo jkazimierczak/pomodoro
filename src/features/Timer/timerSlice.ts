@@ -75,7 +75,8 @@ export const timerSlice = createSlice({
     initialize: (state, action: PayloadAction<InitializeActionPayload>) => {
       const { payload } = action;
 
-      const historyLenDiff = payload.sessionCount - state.history.length;
+      const desiredLength = payload.sessionCount + payload.sessionCount;
+      const historyLenDiff = desiredLength - state.history.length;
 
       if (historyLenDiff == 0) {
         state.history.forEach((item) => {
@@ -90,8 +91,6 @@ export const timerSlice = createSlice({
       }
 
       if (historyLenDiff > 0) {
-        const desiredLength = payload.sessionCount + payload.sessionCount;
-
         for (let i = state.history.length; i < desiredLength; i++) {
           if (i % 2 == 0) {
             // Session item
