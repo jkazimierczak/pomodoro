@@ -65,19 +65,19 @@ export function Settings({ onClose, ...params }: Settings) {
         </header>
 
         <FormSection title="General">
-          <p>Session duration</p>
+          <p className="mb-1">Session duration</p>
           <Controller
             control={control}
             name="sessionDuration"
             render={({ field }) => <RangeInput min={1} max={120} {...field} />}
           />
-          <p>Break duration</p>
+          <p className="mb-1">Break duration</p>
           <Controller
             control={control}
             name="breakDuration"
             render={({ field }) => <RangeInput min={1} max={60} {...field} />}
           />
-          <p>Long break duration</p>
+          <p className="mb-1">Long break duration</p>
           <Controller
             control={control}
             name="longBreakDuration"
@@ -85,13 +85,13 @@ export function Settings({ onClose, ...params }: Settings) {
           />
         </FormSection>
         <FormSection title="Other">
-          <p>Sessions before long break</p>
+          <p className="mb-1">Sessions before long break</p>
           <Controller
             control={control}
             name="sessionsBeforeLongBreak"
             render={({ field }) => <RangeInput min={1} max={10} {...field} />}
           />
-          <p>Daily goal</p>
+          <p className="mb-1">Daily goal</p>
           <Controller
             control={control}
             name="dailyGoal"
