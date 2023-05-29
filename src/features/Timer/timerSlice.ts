@@ -41,7 +41,7 @@ export enum SessionResult {
 export interface SessionHistoryItem {
   type: HistoryItemType;
   result: SessionResult;
-  duration?: number;
+  duration: number;
 }
 
 export interface TimerState {

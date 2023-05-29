@@ -47,11 +47,7 @@ export function Timer({ ...props }: ITimerProps) {
 
   // Using refs to mitigate stale state within a closure
   const [readableTimeLeft, setReadableTimeLeft] = useState("");
-  const timer = useTimer({
-    sessionDuration: settings.sessionDuration,
-    breakDuration: settings.breakDuration,
-    longBreakDuration: settings.longBreakDuration,
-  });
+  const timer = useTimer(settings.sessionDuration);
 
   function updateTimerSettings() {
     const common = {
@@ -66,9 +62,6 @@ export function Timer({ ...props }: ITimerProps) {
         sessionCount: settings.dailyGoal,
       })
     );
-    timer.setDurations(common);
-
-    setReadableTimeLeft(readableTime(timer.timeLeft));
   }
 
   useEffect(updateTimerSettings, [
@@ -78,13 +71,18 @@ export function Timer({ ...props }: ITimerProps) {
     settings.longBreakDuration,
   ]);
 
+  useEffect(() => {
+    timer.setDuration(nextSession.duration);
+    setReadableTimeLeft(readableTime(Temporal.Duration.from({ minutes: nextSession.duration })));
+  }, [nextSession.duration]);
+
   function _stop(reducerAction: ActionCreatorWithoutPayload) {
     setTimeout(() => dispatch(reducerAction()), 1100);
     timer.stop();
   }
 
   useEffect(() => {
-    setReadableTimeLeft(readableTime(timer.timeLeft));
+    setReadableTimeLeft(readableTime(timer.timeLeft()));
 
     if (timer.progress >= 1) {
       _stop(finished);
@@ -93,8 +91,17 @@ export function Timer({ ...props }: ITimerProps) {
 
   //#region EventHandlers
   const onStartClick = () => {
+    let sessionDuration;
+    if (nextSession.type === HistoryItemType.SESSION) {
+      sessionDuration = nextSession.duration;
+    } else if (nextSession.type === HistoryItemType.BREAK) {
+      sessionDuration = nextSession.duration;
+    } else {
+      sessionDuration = nextSession.duration;
+    }
+
     dispatch(start());
-    timer.start(nextSession.type);
+    timer.start(sessionDuration);
   };
 
   const onStopClick = () => {
