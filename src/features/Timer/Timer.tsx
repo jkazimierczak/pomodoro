@@ -15,6 +15,8 @@ import {
   start,
   stop,
 } from "@/features/Timer/timerSlice";
+import { useTimer } from "@/features/Timer/useTimer";
+import { ActionCreatorWithoutPayload } from "@reduxjs/toolkit";
 
 interface ITimerProps extends React.ComponentProps<"div"> {}
 
@@ -44,24 +46,29 @@ export function Timer({ ...props }: ITimerProps) {
   );
 
   // Using refs to mitigate stale state within a closure
-  const [progress, setProgress] = useState<number>(0);
-  const startDate = useRef<Temporal.PlainTime>();
-  const endDate = useRef<Temporal.PlainTime>();
-  const [timeLeft, setTimeLeft] = useState<Temporal.Duration>(
-    Temporal.Duration.from({ minutes: settings.sessionDuration })
-  );
-  const [readableTimeLeft, setReadableTimeLeft] = useState(readableTime(timeLeft));
-  const intervalRef = useRef<number>();
+  const [readableTimeLeft, setReadableTimeLeft] = useState("");
+  const timer = useTimer({
+    sessionDuration: settings.sessionDuration,
+    breakDuration: settings.breakDuration,
+    longBreakDuration: settings.longBreakDuration,
+  });
 
   function updateTimerSettings() {
+    const common = {
+      sessionDuration: settings.sessionDuration,
+      breakDuration: settings.breakDuration,
+      longBreakDuration: settings.longBreakDuration,
+    };
+
     dispatch(
       initialize({
+        ...common,
         sessionCount: settings.dailyGoal,
-        sessionDuration: settings.sessionDuration,
-        breakDuration: settings.breakDuration,
-        longBreakDuration: settings.longBreakDuration,
       })
     );
+    timer.setDurations(common);
+
+    setReadableTimeLeft(readableTime(timer.timeLeft));
   }
 
   useEffect(updateTimerSettings, [
@@ -71,97 +78,37 @@ export function Timer({ ...props }: ITimerProps) {
     settings.longBreakDuration,
   ]);
 
-  useEffect(() => {
-    if (timerState.status === SessionStatus.UNSTARTED) {
-      setTimeLeft(Temporal.Duration.from({ minutes: nextSession.duration }));
-    }
-  }, [nextSession.duration]);
-
-  const secondsLeft = () => timeLeft?.total("seconds") ?? settings.sessionDuration * 60;
-
-  // Beware - it's a closure
-  const advanceTimer = () => {
-    if (!endDate.current) return;
-
-    setTimeLeft(
-      Temporal.Now.plainTimeISO()
-        .round({
-          smallestUnit: "seconds",
-          roundingMode: "floor",
-        })
-        .until(endDate.current)
-    );
-  };
-
-  useEffect(() => {
-    setReadableTimeLeft(readableTime(timeLeft));
-  }, [timeLeft.total("seconds")]);
-
-  function cleanupTimer() {
-    clearInterval(intervalRef.current);
-    setProgress(0);
-    setTimeout(() => setTimeLeft(Temporal.Duration.from({ minutes: nextSession.duration })), 1100);
+  function _stop(reducerAction: ActionCreatorWithoutPayload) {
+    setTimeout(() => dispatch(reducerAction()), 1100);
+    timer.stop();
   }
 
   useEffect(() => {
-    if (timerState.status === SessionStatus.RUNNING) {
-      setProgress(1 - secondsLeft() / (settings.sessionDuration * 60));
+    setReadableTimeLeft(readableTime(timer.timeLeft));
+
+    if (timer.progress >= 1) {
+      _stop(finished);
     }
-
-    if (secondsLeft() >= 0) return;
-
-    setTimeout(() => dispatch(finished()), 1100);
-    cleanupTimer();
-  }, [timeLeft?.total("seconds")]);
+  }, [timer.progress]);
 
   //#region EventHandlers
   const onStartClick = () => {
     dispatch(start());
-
-    let sessionDuration;
-    if (nextSession.type === HistoryItemType.SESSION) {
-      sessionDuration = Temporal.Duration.from({ minutes: settings.sessionDuration });
-    } else if (nextSession.type === HistoryItemType.BREAK) {
-      sessionDuration = Temporal.Duration.from({ minutes: settings.breakDuration });
-    } else {
-      sessionDuration = Temporal.Duration.from({ minutes: settings.longBreakDuration });
-    }
-
-    const timeNow = Temporal.Now.plainTimeISO().round({
-      smallestUnit: "seconds",
-      roundingMode: "floor",
-    });
-    startDate.current = timeNow;
-    endDate.current = timeNow.add(sessionDuration);
-
-    advanceTimer();
-    intervalRef.current = setInterval(() => advanceTimer(), 1000);
+    timer.start(nextSession.type);
   };
 
   const onStopClick = () => {
-    setTimeout(() => dispatch(stop()), 1100);
-    cleanupTimer();
+    _stop(stop);
   };
 
   const onPauseClick = () => {
     dispatch(pause());
-
-    clearInterval(intervalRef.current);
+    timer.pause();
   };
 
   const onResumeClick = () => {
-    if (!timeLeft) return;
-
     dispatch(resume());
-
-    endDate.current = Temporal.Now.plainTimeISO()
-      .round({
-        smallestUnit: "seconds",
-        roundingMode: "floor",
-      })
-      .add(timeLeft);
-
-    intervalRef.current = setInterval(advanceTimer, 1000);
+    timer.resume();
   };
   //#endregion
 
@@ -216,7 +163,7 @@ export function Timer({ ...props }: ITimerProps) {
             timerState.status === SessionStatus.RUNNING ||
             timerState.status === SessionStatus.PAUSED
           }
-          progress={progress}
+          progress={timer.progress}
           timeRemaining={readableTimeLeft}
         />
       )}
