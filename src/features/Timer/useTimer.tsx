@@ -26,14 +26,7 @@ export function useTimer({ sessionDuration, breakDuration, longBreakDuration }: 
   const advanceTimer = () => {
     if (!endDate.current) return;
 
-    setTimeLeft(
-      Temporal.Now.plainTimeISO()
-        .round({
-          smallestUnit: "seconds",
-          roundingMode: "floor",
-        })
-        .until(endDate.current)
-    );
+    setTimeLeft(Temporal.Now.plainTimeISO().until(endDate.current));
   };
 
   useEffect(() => {
@@ -60,10 +53,7 @@ export function useTimer({ sessionDuration, breakDuration, longBreakDuration }: 
       sessionDuration = Temporal.Duration.from({ minutes: durations.longBreakDuration });
     }
 
-    const timeNow = Temporal.Now.plainTimeISO().round({
-      smallestUnit: "seconds",
-      roundingMode: "floor",
-    });
+    const timeNow = Temporal.Now.plainTimeISO();
     startDate.current = timeNow;
     endDate.current = timeNow.add(sessionDuration);
 
@@ -76,14 +66,9 @@ export function useTimer({ sessionDuration, breakDuration, longBreakDuration }: 
   }
 
   function resume() {
-    endDate.current = Temporal.Now.plainTimeISO()
-      .round({
-        smallestUnit: "seconds",
-        roundingMode: "floor",
-      })
-      .add(timeLeft);
+    endDate.current = Temporal.Now.plainTimeISO().add(timeLeft);
 
-    intervalRef.current = setInterval(advanceTimer, 1000);
+    intervalRef.current = setInterval(advanceTimer, 100);
   }
 
   function stop() {
