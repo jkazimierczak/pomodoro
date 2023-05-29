@@ -157,16 +157,13 @@ export function Timer({ ...props }: ITimerProps) {
           ))}
       </ul>
 
-      {timerState.history.length && (
-        <Circle
-          showProgress={
-            timerState.status === SessionStatus.RUNNING ||
-            timerState.status === SessionStatus.PAUSED
-          }
-          progress={timer.progress}
-          timeRemaining={readableTimeLeft}
-        />
-      )}
+      <Circle
+        showProgress={
+          timerState.status === SessionStatus.RUNNING || timerState.status === SessionStatus.PAUSED
+        }
+        progress={timer.progress}
+        timeRemaining={readableTimeLeft}
+      />
       <div className="relative top-10 flex justify-center gap-6">
         <IconContext.Provider value={{ size: "2.25em" }}>
           {timerState.status === SessionStatus.UNSTARTED && (
