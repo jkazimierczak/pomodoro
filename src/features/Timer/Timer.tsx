@@ -47,6 +47,7 @@ export function Timer({ ...props }: ITimerProps) {
 
   // Using refs to mitigate stale state within a closure
   const [readableTimeLeft, setReadableTimeLeft] = useState("");
+  const [sessionStateText, setSessionStateText] = useState("Start session?");
   const timer = useTimer(settings.sessionDuration);
 
   function updateTimerSettings() {
@@ -82,12 +83,37 @@ export function Timer({ ...props }: ITimerProps) {
   }
 
   useEffect(() => {
-    setReadableTimeLeft(readableTime(timer.timeLeft()));
+    const readableTimeLeft = readableTime(timer.timeLeft());
+    setReadableTimeLeft(readableTimeLeft);
+    const stateText = getSessionStateText() + ` | ${readableTimeLeft}`;
+    document.title = stateText;
 
     if (timer.progress >= 1) {
       _stop(finished);
     }
   }, [timer.progress]);
+
+  function getSessionStateText() {
+    if (timerState.status === SessionStatus.UNSTARTED)
+      return `Start ${nextSession.type.toLowerCase()}?`;
+
+    let sessionText = "";
+    if (currentSession.type === HistoryItemType.SESSION) {
+      sessionText += "Session";
+    } else {
+      sessionText += "Break";
+    }
+    if (timerState.status === SessionStatus.RUNNING) sessionText += " ongoing";
+    if (timerState.status === SessionStatus.PAUSED) sessionText += " paused";
+
+    return sessionText;
+  }
+
+  useEffect(() => {
+    const stateText = getSessionStateText();
+    setSessionStateText(stateText);
+    document.title = stateText;
+  }, [timerState.status]);
 
   //#region EventHandlers
   const onStartClick = () => {
@@ -121,18 +147,7 @@ export function Timer({ ...props }: ITimerProps) {
 
   return (
     <div {...props}>
-      <p className="relative bottom-10 text-center text-4xl">
-        {timerState.history.length && (
-          <>
-            {timerState.status === SessionStatus.UNSTARTED &&
-              `Start ${nextSession.type.toLowerCase()}?`}
-            {timerState.status !== SessionStatus.UNSTARTED &&
-              (currentSession.type === HistoryItemType.SESSION ? "Session " : "Break ")}
-            {timerState.status === SessionStatus.RUNNING && "ongoing"}
-            {timerState.status === SessionStatus.PAUSED && "paused"}
-          </>
-        )}
-      </p>
+      <p className="relative bottom-10 text-center text-4xl">{sessionStateText}</p>
 
       <ul
         className="absolute left-1/2 top-2.5 flex justify-center"
