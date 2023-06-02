@@ -19,6 +19,7 @@ export function Settings({ onClose, ...params }: Settings) {
   const settingsState = useAppSelector((state) => state.settings);
 
   const {
+    register,
     control,
     handleSubmit,
     reset,
@@ -97,6 +98,10 @@ export function Settings({ onClose, ...params }: Settings) {
             name="dailyGoal"
             render={({ field }) => <RangeInput min={1} max={16} {...field} />}
           />
+          <div className={"mt-2 flex justify-between"}>
+            <label htmlFor="canPlaySound">Play sound when session ends</label>
+            <input type="checkbox" id="canPlaySound" {...register("canPlaySound")} />
+          </div>
         </FormSection>
       </form>
     </>

@@ -6,6 +6,7 @@ export const settingsSchema = z.object({
   longBreakDuration: z.coerce.number().min(1).max(60),
   sessionsBeforeLongBreak: z.coerce.number().min(1).max(10),
   dailyGoal: z.coerce.number().min(1).max(16),
+  canPlaySound: z.boolean(),
 });
 
 export type SettingsFormData = z.infer<typeof settingsSchema>;
@@ -16,4 +17,5 @@ export const defaultSettings: SettingsFormData = {
   longBreakDuration: 20,
   sessionsBeforeLongBreak: 4,
   dailyGoal: 8,
+  canPlaySound: false,
 };

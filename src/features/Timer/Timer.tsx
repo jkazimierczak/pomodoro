@@ -85,6 +85,11 @@ export function Timer({ ...props }: ITimerProps) {
       setReadableTimeLeft(readableTime(nextSessionDuration));
     }, 1100);
     timer.stop();
+
+    if (settings.canPlaySound) {
+      const audio = new Audio("/sounds/complete-chime.mp3");
+      audio.play();
+    }
   }
 
   useEffect(() => {
