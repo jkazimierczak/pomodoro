@@ -25,8 +25,9 @@ interface ITimerProps extends React.ComponentProps<"div"> {}
  * @param duration A Temporal.Duration instance.
  */
 function readableTime(duration: Temporal.Duration): string {
-  let seconds = duration.round("seconds").total("seconds") % 60;
-  let minutes = Math.floor(duration.total("minutes"));
+  const rounded = duration.round("seconds");
+  let seconds = rounded.total("seconds") % 60;
+  let minutes = Math.floor(rounded.total("minutes"));
 
   if (minutes < 0) minutes = 0;
   if (seconds < 0) seconds = 0;
