@@ -213,6 +213,11 @@ export function Timer({ ...props }: ITimerProps) {
               <FiPause />
             </button>
           )}
+          {timerState.status === SessionStatus.RUNNING && (
+            <button onClick={timer.addOneMinute} className={"text-3xl"}>
+              +1
+            </button>
+          )}
           {timerState.status === SessionStatus.PAUSED && (
             <button onClick={onResumeClick}>
               <FiPlay />
