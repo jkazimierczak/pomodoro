@@ -45,6 +45,7 @@ export function Timer({ ...props }: ITimerProps) {
   const nextSession = useAppSelector(
     (state) => state.timer.history[state.timer.currentSessionIdx + 1]
   );
+  const nextSessionDuration = Temporal.Duration.from({ minutes: nextSession.duration });
 
   // Using refs to mitigate stale state within a closure
   const [readableTimeLeft, setReadableTimeLeft] = useState("");
@@ -75,11 +76,14 @@ export function Timer({ ...props }: ITimerProps) {
 
   useEffect(() => {
     timer.setDuration(nextSession.duration);
-    setReadableTimeLeft(readableTime(Temporal.Duration.from({ minutes: nextSession.duration })));
+    setReadableTimeLeft(readableTime(nextSessionDuration));
   }, [nextSession.duration]);
 
   function _stop(reducerAction: ActionCreatorWithoutPayload) {
-    setTimeout(() => dispatch(reducerAction()), 1100);
+    setTimeout(() => {
+      dispatch(reducerAction());
+      setReadableTimeLeft(readableTime(nextSessionDuration));
+    }, 1100);
     timer.stop();
   }
 
