@@ -29,6 +29,11 @@ export function Settings({ onClose, ...params }: Settings) {
     defaultValues: defaultSettings,
   });
 
+  function restoreDefault() {
+    dispatch(updateSettings(defaultSettings));
+    reset(defaultSettings);
+  }
+
   const onSubmit: SubmitHandler<SettingsFormData> = (data) => {
     dispatch(updateSettings(data));
   };
@@ -85,6 +90,7 @@ export function Settings({ onClose, ...params }: Settings) {
             render={({ field }) => <RangeInput min={1} max={60} {...field} />}
           />
         </FormSection>
+
         <FormSection title="Other">
           <p className="mb-1">Sessions before long break</p>
           <Controller
@@ -102,6 +108,13 @@ export function Settings({ onClose, ...params }: Settings) {
             <label htmlFor="canPlaySound">Play sound when session ends</label>
             <input type="checkbox" id="canPlaySound" {...register("canPlaySound")} />
           </div>
+
+          <p
+            className={"mt-4 flex items-center gap-2 hover:cursor-pointer"}
+            onClick={restoreDefault}
+          >
+            <FiRotateCcw /> Restore default settings
+          </p>
         </FormSection>
       </form>
     </>
