@@ -50,6 +50,7 @@ export function Timer({ ...props }: ITimerProps) {
   // Using refs to mitigate stale state within a closure
   const [readableTimeLeft, setReadableTimeLeft] = useState("");
   const [sessionStateText, setSessionStateText] = useState("Start session?");
+  const [disableButtons, setdisableButtons] = useState(false);
   const timer = useTimer(settings.sessionDuration);
 
   function updateTimerSettings() {
@@ -83,6 +84,7 @@ export function Timer({ ...props }: ITimerProps) {
     setTimeout(() => {
       dispatch(reducerAction());
       setReadableTimeLeft(readableTime(nextSessionDuration));
+      setdisableButtons(false);
     }, 1100);
     timer.stop();
 
@@ -141,12 +143,16 @@ export function Timer({ ...props }: ITimerProps) {
   };
 
   const onStopClick = () => {
+    setdisableButtons(true);
     _stop(stop);
   };
 
   const onPauseClick = () => {
     dispatch(pause());
     timer.pause();
+
+    setdisableButtons(true);
+    setTimeout(() => setdisableButtons(false), 1100);
   };
 
   const onResumeClick = () => {
@@ -204,12 +210,12 @@ export function Timer({ ...props }: ITimerProps) {
             </button>
           )}
           {[SessionStatus.RUNNING, SessionStatus.PAUSED].includes(timerState.status) && (
-            <button onClick={onStopClick}>
+            <button onClick={onStopClick} disabled={disableButtons}>
               <FiX />
             </button>
           )}
           {timerState.status === SessionStatus.RUNNING && (
-            <button onClick={onPauseClick}>
+            <button onClick={onPauseClick} disabled={disableButtons}>
               <FiPause />
             </button>
           )}
