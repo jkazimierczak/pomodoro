@@ -1,11 +1,11 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { defaultSettings } from "./schema";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { defaultSettings, SettingsFormData } from "./schema";
 
 export const settingsSlice = createSlice({
   name: "settings",
   initialState: defaultSettings,
   reducers: {
-    updateSettings: (state, action) => {
+    updateSettings: (state, action: PayloadAction<SettingsFormData>) => {
       return action.payload;
     },
   },
