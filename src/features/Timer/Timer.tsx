@@ -90,7 +90,8 @@ export function Timer({ ...props }: ITimerProps) {
 
     if (reducerAction == finished && settings.canPlaySound) {
       const audio = new Audio("/sounds/complete-chime.mp3");
-      audio.play();
+      audio.addEventListener("canplay", () => audio.play());
+      audio.addEventListener("error", () => console.log("Audio Error"));
     }
   }
 
