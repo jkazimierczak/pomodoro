@@ -1,15 +1,15 @@
 import React from "react";
-import {ComponentPreview, Previews} from "@react-buddy/ide-toolbox";
-import {PaletteTree} from "./palette";
-import {Circle} from "@/features/Timer/Circle";
+import { ComponentPreview, Previews } from "@react-buddy/ide-toolbox";
+import { PaletteTree } from "./palette";
+import { Circle } from "@/features/Timer/Circle";
 import App from "@/App";
-import {Timer} from "@/features/Timer";
+import { Timer } from "@/features/Timer";
 
 const ComponentPreviews = () => {
   return (
     <Previews palette={<PaletteTree />}>
       <ComponentPreview path="/Circle">
-        <Circle />
+        <Circle showProgress={true} progress={0.35} timeRemaining={"17:24"} />
       </ComponentPreview>
       <ComponentPreview path="/App">
         <App />

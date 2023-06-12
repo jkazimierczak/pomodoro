@@ -44,7 +44,7 @@ export function Settings({ onClose, ...params }: Settings) {
 
   return (
     <>
-      <DevTool control={control} placement="top-left" />
+      {import.meta.env.DEV && <DevTool control={control} placement="top-left" />}
 
       <form {...params} onSubmit={handleSubmit(onSubmit)}>
         <header className="between mb-4 flex justify-between">
