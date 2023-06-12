@@ -180,7 +180,7 @@ export function Timer({ ...props }: ITimerProps) {
           <IconContext.Provider
             key={`TimerState${idx}`}
             value={
-              idx + idx === timerState.currentSessionIdx &&
+              idx === timerState.currentSessionIdx - 1 &&
               timerState.status !== PomodoroStatus.UNSTARTED &&
               currentSession.type !== PomodoroType.BREAK
                 ? { size: "1.25em" }

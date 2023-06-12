@@ -102,7 +102,9 @@ export const timerSlice = createSlice({
     },
     start: (state) => {
       state.status = PomodoroStatus.RUNNING;
-      state.currentSessionIdx++;
+      if (state.currentSession.type === PomodoroType.SESSION) {
+        state.currentSessionIdx++;
+      }
     },
     finished: (state) => {
       state.status = PomodoroStatus.UNSTARTED;
@@ -132,7 +134,9 @@ export const timerSlice = createSlice({
     },
     stop: (state) => {
       state.status = PomodoroStatus.UNSTARTED;
-      state.currentSessionIdx--;
+      if (state.currentSession.type === PomodoroType.SESSION) {
+        state.currentSessionIdx--;
+      }
     },
     pause: (state) => {
       state.status = PomodoroStatus.PAUSED;
