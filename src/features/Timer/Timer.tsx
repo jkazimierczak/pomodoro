@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Temporal } from "@js-temporal/polyfill";
 import { Circle } from "@/features/Timer/Circle";
 import { FiCheckCircle, FiCircle, FiPause, FiPauseCircle, FiPlay, FiX } from "react-icons/fi";
@@ -7,13 +7,12 @@ import { useAppDispatch, useAppSelector } from "@/store";
 import {
   finished,
   HistoryItemType,
-  initialize,
   pause,
   resume,
-  SessionResult,
   SessionStatus,
   start,
   stop,
+  updateDurations,
 } from "@/features/Timer/timerSlice";
 import { useTimer } from "@/features/Timer/useTimer";
 import { ActionCreatorWithoutPayload } from "@reduxjs/toolkit";
@@ -39,13 +38,9 @@ export function Timer({ ...props }: ITimerProps) {
   const dispatch = useAppDispatch();
   const timerState = useAppSelector((state) => state.timer);
   const settings = useAppSelector((state) => state.settings);
-  const currentSession = useAppSelector(
-    (state) => state.timer.history[state.timer.currentSessionIdx]
-  );
-  const nextSession = useAppSelector(
-    (state) => state.timer.history[state.timer.currentSessionIdx + 1]
-  );
-  const nextSessionDuration = Temporal.Duration.from({ minutes: nextSession.duration });
+
+  const currentSession = useAppSelector((state) => state.timer.currentSession);
+  const nextSessionDuration = Temporal.Duration.from({ minutes: currentSession.duration });
 
   // Using refs to mitigate stale state within a closure
   const [readableTimeLeft, setReadableTimeLeft] = useState("");
@@ -53,22 +48,16 @@ export function Timer({ ...props }: ITimerProps) {
   const [disableButtons, setdisableButtons] = useState(false);
   const timer = useTimer(settings.sessionDuration);
 
-  function updateTimerSettings() {
-    const common = {
-      sessionDuration: settings.sessionDuration,
-      breakDuration: settings.breakDuration,
-      longBreakDuration: settings.longBreakDuration,
-    };
-
+  useEffect(() => {
     dispatch(
-      initialize({
-        ...common,
-        sessionCount: settings.dailyGoal,
+      updateDurations({
+        dailyGoal: settings.dailyGoal,
+        sessionDuration: settings.sessionDuration,
+        breakDuration: settings.breakDuration,
+        longBreakDuration: settings.longBreakDuration,
       })
     );
-  }
-
-  useEffect(updateTimerSettings, [
+  }, [
     settings.dailyGoal,
     settings.sessionDuration,
     settings.breakDuration,
@@ -76,9 +65,14 @@ export function Timer({ ...props }: ITimerProps) {
   ]);
 
   useEffect(() => {
-    timer.setDuration(nextSession.duration);
+    console.log(
+      currentSession.duration,
+      readableTime(nextSessionDuration),
+      nextSessionDuration.toString()
+    );
+    timer.setDuration(currentSession.duration);
     setReadableTimeLeft(readableTime(nextSessionDuration));
-  }, [nextSession.duration]);
+  }, [currentSession.duration]);
 
   function _stop(reducerAction: ActionCreatorWithoutPayload) {
     setTimeout(() => {
@@ -108,7 +102,7 @@ export function Timer({ ...props }: ITimerProps) {
 
   function getSessionStateText() {
     if (timerState.status === SessionStatus.UNSTARTED)
-      return `Start ${nextSession.type.toLowerCase()}?`;
+      return `Start ${currentSession.type.toLowerCase()}?`;
 
     let sessionText = "";
     if (currentSession.type === HistoryItemType.SESSION) {
@@ -131,12 +125,12 @@ export function Timer({ ...props }: ITimerProps) {
   //#region EventHandlers
   const onStartClick = () => {
     let sessionDuration;
-    if (nextSession.type === HistoryItemType.SESSION) {
-      sessionDuration = nextSession.duration;
-    } else if (nextSession.type === HistoryItemType.BREAK) {
-      sessionDuration = nextSession.duration;
+    if (currentSession.type === HistoryItemType.SESSION) {
+      sessionDuration = currentSession.duration;
+    } else if (currentSession.type === HistoryItemType.BREAK) {
+      sessionDuration = currentSession.duration;
     } else {
-      sessionDuration = nextSession.duration;
+      sessionDuration = currentSession.duration;
     }
 
     dispatch(start());
@@ -162,6 +156,32 @@ export function Timer({ ...props }: ITimerProps) {
   };
   //#endregion
 
+  const progressCircles = useMemo(() => {
+    const circles = [];
+
+    for (let i = 0; i < timerState.history.length; i++) {
+      circles.push(<FiCheckCircle />);
+    }
+    for (let i = timerState.history.length; i < settings.dailyGoal; i++) {
+      circles.push(<FiCircle />);
+    }
+
+    if (
+      timerState.status === SessionStatus.PAUSED &&
+      currentSession.type === HistoryItemType.SESSION
+    ) {
+      circles[timerState.currentSessionIdx - 1] = <FiPauseCircle />;
+    }
+
+    return circles;
+  }, [
+    timerState.history.length,
+    settings.dailyGoal,
+    timerState.status,
+    currentSession.type,
+    timerState.currentSessionIdx,
+  ]);
+
   return (
     <div {...props}>
       <p className="relative bottom-10 text-center text-4xl">{sessionStateText}</p>
@@ -170,30 +190,20 @@ export function Timer({ ...props }: ITimerProps) {
         className="absolute left-1/2 top-2.5 flex justify-center"
         style={{ transform: "translateX(-50%)" }}
       >
-        {timerState.history
-          .filter((item) => item.type === HistoryItemType.SESSION)
-          .map((item, idx) => (
-            <IconContext.Provider
-              key={`TimerState${idx}`}
-              value={
-                idx + idx === timerState.currentSessionIdx &&
-                timerState.status !== SessionStatus.UNSTARTED
-                  ? { size: "1.25em" }
-                  : { size: "1.25em", color: "#bcbcbcc9" }
-              }
-            >
-              <li>
-                {item.result === SessionResult.COMPLETED ? (
-                  <FiCheckCircle />
-                ) : timerState.status === SessionStatus.PAUSED &&
-                  idx + idx === timerState.currentSessionIdx ? (
-                  <FiPauseCircle />
-                ) : (
-                  <FiCircle />
-                )}
-              </li>
-            </IconContext.Provider>
-          ))}
+        {progressCircles.map((circle, idx) => (
+          <IconContext.Provider
+            key={`TimerState${idx}`}
+            value={
+              idx + idx === timerState.currentSessionIdx &&
+              timerState.status !== SessionStatus.UNSTARTED &&
+              currentSession.type !== HistoryItemType.BREAK
+                ? { size: "1.25em" }
+                : { size: "1.25em", color: "#bcbcbcc9" }
+            }
+          >
+            {circle}
+          </IconContext.Provider>
+        ))}
       </ul>
 
       <Circle

@@ -1,6 +1,7 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
 import { defaultSettings } from "@/features/Settings/schema";
+import { Temporal } from "@js-temporal/polyfill";
 
 /**
  * Represents current focus session state.
@@ -39,37 +40,46 @@ export enum SessionResult {
 }
 
 export interface SessionHistoryItem {
-  type: HistoryItemType;
-  result: SessionResult;
   duration: number;
+  finishedAt: string;
+}
+
+export interface Session {
+  type: HistoryItemType;
+  duration: number;
+  result: SessionResult;
 }
 
 export interface TimerState {
-  history: SessionHistoryItem[];
+  currentSession: Session;
+  nextSession: Session;
   currentSessionIdx: number;
   status: SessionStatus;
-  // temporal: {
-  //   duration: Temporal.Duration;
-  //   start: Temporal.PlainTime;
-  //   end: Temporal.PlainTime;
-  //   timeLeft: Temporal.Duration;
-  // };
+  history: SessionHistoryItem[];
+  durations: InitializeActionPayload;
 }
 
 const initialState: TimerState = {
-  history: [
-    {
-      type: HistoryItemType.SESSION,
-      duration: defaultSettings.sessionDuration,
-      result: SessionResult.UNKNOWN,
-    },
-  ],
-  currentSessionIdx: -1,
+  currentSession: {
+    type: HistoryItemType.SESSION,
+    duration: defaultSettings.sessionDuration,
+    result: SessionResult.UNKNOWN,
+  },
+  nextSession: {
+    type: HistoryItemType.BREAK,
+    duration: defaultSettings.breakDuration,
+    result: SessionResult.UNKNOWN,
+  },
+  history: [],
+  currentSessionIdx: 0,
+  durations: {
+    ...defaultSettings,
+  },
   status: SessionStatus.UNSTARTED,
 };
 
 interface InitializeActionPayload {
-  sessionCount: number;
+  dailyGoal: number;
   sessionDuration: number;
   breakDuration: number;
   longBreakDuration: number;
@@ -79,53 +89,11 @@ export const timerSlice = createSlice({
   name: "timer",
   initialState,
   reducers: {
-    initialize: (state, action: PayloadAction<InitializeActionPayload>) => {
-      const { payload } = action;
+    updateDurations: (state, action: PayloadAction<InitializeActionPayload>) => {
+      state.durations = { ...action.payload };
 
-      const desiredLength = payload.sessionCount + payload.sessionCount;
-      const historyLenDiff = desiredLength - state.history.length;
-
-      if (historyLenDiff == 0) {
-        state.history.forEach((item) => {
-          if (item.type === HistoryItemType.SESSION) {
-            item.duration = payload.sessionDuration;
-          } else if (item.type === HistoryItemType.BREAK) {
-            item.duration = payload.breakDuration;
-          } else {
-            item.duration = payload.longBreakDuration;
-          }
-        });
-      }
-
-      if (historyLenDiff > 0) {
-        for (let i = state.history.length; i < desiredLength; i++) {
-          if (i % 2 == 0) {
-            // Session item
-            state.history.push({
-              type: HistoryItemType.SESSION,
-              result: SessionResult.UNKNOWN,
-              duration: payload.sessionDuration,
-            });
-          } else {
-            // Break item
-            state.history.push({
-              type: HistoryItemType.BREAK,
-              result: SessionResult.UNKNOWN,
-              duration: payload.breakDuration,
-            });
-          }
-        }
-      } else if (historyLenDiff < 0) {
-        for (let i = 0; i < -historyLenDiff; i++) {
-          state.history.pop();
-        }
-      }
-
-      state.status = SessionStatus.UNSTARTED;
-    },
-    setLongBreakAfter: (state, action: PayloadAction<number>) => {
-      const item = state.history[action.payload + 1];
-      item.type = HistoryItemType.LONG_BREAK;
+      const key = state.currentSession.type.toLowerCase();
+      state.currentSession.duration = action.payload[`${key}Duration`];
     },
     start: (state) => {
       state.status = SessionStatus.RUNNING;
@@ -133,7 +101,32 @@ export const timerSlice = createSlice({
     },
     finished: (state) => {
       state.status = SessionStatus.UNSTARTED;
-      state.history[state.currentSessionIdx].result = SessionResult.COMPLETED;
+      state.currentSession.result = SessionResult.COMPLETED;
+
+      // Save finished session to a history
+      if (state.currentSession.type === HistoryItemType.SESSION) {
+        state.history.push({
+          duration: state.currentSession.duration,
+          finishedAt: Temporal.Now.plainDateTimeISO().toString(),
+        });
+      }
+
+      // Bootstrap new session
+      const finishedSession = state.currentSession.type === HistoryItemType.SESSION;
+      if (finishedSession) {
+        state.nextSession = {
+          type: HistoryItemType.BREAK,
+          duration: state.durations.breakDuration,
+          result: SessionResult.UNKNOWN,
+        };
+      } else {
+        state.nextSession = {
+          type: HistoryItemType.SESSION,
+          duration: state.durations.sessionDuration,
+          result: SessionResult.UNKNOWN,
+        };
+      }
+      state.currentSession = { ...state.nextSession };
     },
     stop: (state) => {
       state.status = SessionStatus.UNSTARTED;
@@ -148,5 +141,5 @@ export const timerSlice = createSlice({
   },
 });
 
-export const { initialize, start, stop, pause, resume, finished } = timerSlice.actions;
+export const { updateDurations, start, stop, pause, resume, finished } = timerSlice.actions;
 export default timerSlice.reducer;
