@@ -87,7 +87,7 @@ export function Timer({ ...props }: ITimerProps) {
   useEffect(() => {
     const readableTimeLeft = readableTime(timer.timeLeft());
     setReadableTimeLeft(readableTimeLeft);
-    const stateText = getSessionStateText() + ` | ${readableTimeLeft}`;
+    const stateText = `${readableTimeLeft} | ${getSessionStateText()}`;
     document.title = stateText;
 
     if (timer.progress >= 1) {
