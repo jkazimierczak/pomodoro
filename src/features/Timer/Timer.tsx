@@ -1,38 +1,24 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Temporal } from "@js-temporal/polyfill";
-import { Circle } from "@/features/Timer/Circle";
+import { Circle } from "./Circle";
 import { FiCheckCircle, FiCircle, FiPause, FiPauseCircle, FiPlay, FiX } from "react-icons/fi";
 import { IconContext } from "react-icons";
 import { useAppDispatch, useAppSelector } from "@/store";
 import {
   finished,
-  PomodoroType,
   pause,
-  resume,
   PomodoroStatus,
+  PomodoroType,
+  resume,
   start,
   stop,
   updateDurations,
-} from "@/features/Timer/timerSlice";
-import { useTimer } from "@/features/Timer/useTimer";
+} from "./timerSlice";
+import { useTimer } from "./useTimer";
 import { ActionCreatorWithoutPayload } from "@reduxjs/toolkit";
+import { readableTime } from "./helpers";
 
 interface ITimerProps extends React.ComponentProps<"div"> {}
-
-/**
- * Return MM:SS formatted string from duration.
- * @param duration A Temporal.Duration instance.
- */
-function readableTime(duration: Temporal.Duration): string {
-  const rounded = duration.round("seconds");
-  let seconds = rounded.total("seconds") % 60;
-  let minutes = Math.floor(rounded.total("minutes"));
-
-  if (minutes < 0) minutes = 0;
-  if (seconds < 0) seconds = 0;
-
-  return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-}
 
 export function Timer({ ...props }: ITimerProps) {
   const dispatch = useAppDispatch();
