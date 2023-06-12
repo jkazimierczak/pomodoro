@@ -48,7 +48,6 @@ export interface FinishedPomodoro {
 
 export interface TimerState {
   currentSession: PomodoroSession;
-  nextSession: PomodoroSession;
   currentSessionIdx: number;
   status: PomodoroStatus;
   history: FinishedPomodoro[];
@@ -59,10 +58,6 @@ const initialState: TimerState = {
   currentSession: {
     type: PomodoroType.SESSION,
     duration: defaultSettings.sessionDuration,
-  },
-  nextSession: {
-    type: PomodoroType.BREAK,
-    duration: defaultSettings.breakDuration,
   },
   history: [],
   currentSessionIdx: 0,
@@ -120,17 +115,16 @@ export const timerSlice = createSlice({
       // Bootstrap new session
       const finishedSession = state.currentSession.type === PomodoroType.SESSION;
       if (finishedSession) {
-        state.nextSession = {
+        state.currentSession = {
           type: PomodoroType.BREAK,
           duration: state.durations.breakDuration,
         };
       } else {
-        state.nextSession = {
+        state.currentSession = {
           type: PomodoroType.SESSION,
           duration: state.durations.sessionDuration,
         };
       }
-      state.currentSession = { ...state.nextSession };
     },
     stop: (state) => {
       state.status = PomodoroStatus.UNSTARTED;
