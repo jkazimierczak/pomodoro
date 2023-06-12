@@ -6,10 +6,10 @@ import { IconContext } from "react-icons";
 import { useAppDispatch, useAppSelector } from "@/store";
 import {
   finished,
-  HistoryItemType,
+  PomodoroType,
   pause,
   resume,
-  SessionStatus,
+  PomodoroStatus,
   start,
   stop,
   updateDurations,
@@ -45,7 +45,7 @@ export function Timer({ ...props }: ITimerProps) {
   // Using refs to mitigate stale state within a closure
   const [readableTimeLeft, setReadableTimeLeft] = useState("");
   const [sessionStateText, setSessionStateText] = useState("Start session?");
-  const [disableButtons, setdisableButtons] = useState(false);
+  const [disableButtons, setDisableButtons] = useState(false);
   const timer = useTimer(settings.sessionDuration);
 
   useEffect(() => {
@@ -65,11 +65,6 @@ export function Timer({ ...props }: ITimerProps) {
   ]);
 
   useEffect(() => {
-    console.log(
-      currentSession.duration,
-      readableTime(nextSessionDuration),
-      nextSessionDuration.toString()
-    );
     timer.setDuration(currentSession.duration);
     setReadableTimeLeft(readableTime(nextSessionDuration));
   }, [currentSession.duration]);
@@ -78,7 +73,7 @@ export function Timer({ ...props }: ITimerProps) {
     setTimeout(() => {
       dispatch(reducerAction());
       setReadableTimeLeft(readableTime(nextSessionDuration));
-      setdisableButtons(false);
+      setDisableButtons(false);
     }, 1100);
     timer.stop();
 
@@ -101,17 +96,17 @@ export function Timer({ ...props }: ITimerProps) {
   }, [timer.progress]);
 
   function getSessionStateText() {
-    if (timerState.status === SessionStatus.UNSTARTED)
+    if (timerState.status === PomodoroStatus.UNSTARTED)
       return `Start ${currentSession.type.toLowerCase()}?`;
 
     let sessionText = "";
-    if (currentSession.type === HistoryItemType.SESSION) {
+    if (currentSession.type === PomodoroType.SESSION) {
       sessionText += "Session";
     } else {
       sessionText += "Break";
     }
-    if (timerState.status === SessionStatus.RUNNING) sessionText += " ongoing";
-    if (timerState.status === SessionStatus.PAUSED) sessionText += " paused";
+    if (timerState.status === PomodoroStatus.RUNNING) sessionText += " ongoing";
+    if (timerState.status === PomodoroStatus.PAUSED) sessionText += " paused";
 
     return sessionText;
   }
@@ -124,21 +119,12 @@ export function Timer({ ...props }: ITimerProps) {
 
   //#region EventHandlers
   const onStartClick = () => {
-    let sessionDuration;
-    if (currentSession.type === HistoryItemType.SESSION) {
-      sessionDuration = currentSession.duration;
-    } else if (currentSession.type === HistoryItemType.BREAK) {
-      sessionDuration = currentSession.duration;
-    } else {
-      sessionDuration = currentSession.duration;
-    }
-
     dispatch(start());
-    timer.start(sessionDuration);
+    timer.start(currentSession.duration);
   };
 
   const onStopClick = () => {
-    setdisableButtons(true);
+    setDisableButtons(true);
     _stop(stop);
   };
 
@@ -146,8 +132,8 @@ export function Timer({ ...props }: ITimerProps) {
     dispatch(pause());
     timer.pause();
 
-    setdisableButtons(true);
-    setTimeout(() => setdisableButtons(false), 1100);
+    setDisableButtons(true);
+    setTimeout(() => setDisableButtons(false), 1100);
   };
 
   const onResumeClick = () => {
@@ -167,8 +153,8 @@ export function Timer({ ...props }: ITimerProps) {
     }
 
     if (
-      timerState.status === SessionStatus.PAUSED &&
-      currentSession.type === HistoryItemType.SESSION
+      timerState.status === PomodoroStatus.PAUSED &&
+      currentSession.type === PomodoroType.SESSION
     ) {
       circles[timerState.currentSessionIdx - 1] = <FiPauseCircle />;
     }
@@ -195,8 +181,8 @@ export function Timer({ ...props }: ITimerProps) {
             key={`TimerState${idx}`}
             value={
               idx + idx === timerState.currentSessionIdx &&
-              timerState.status !== SessionStatus.UNSTARTED &&
-              currentSession.type !== HistoryItemType.BREAK
+              timerState.status !== PomodoroStatus.UNSTARTED &&
+              currentSession.type !== PomodoroType.BREAK
                 ? { size: "1.25em" }
                 : { size: "1.25em", color: "#bcbcbcc9" }
             }
@@ -208,34 +194,33 @@ export function Timer({ ...props }: ITimerProps) {
 
       <Circle
         showProgress={
-          timerState.status === SessionStatus.RUNNING || timerState.status === SessionStatus.PAUSED
+          timerState.status === PomodoroStatus.RUNNING ||
+          timerState.status === PomodoroStatus.PAUSED
         }
         progress={timer.progress}
         timeRemaining={readableTimeLeft}
       />
       <div className="relative top-10 flex justify-center gap-6">
         <IconContext.Provider value={{ size: "2.25em" }}>
-          {timerState.status === SessionStatus.UNSTARTED && (
+          {timerState.status === PomodoroStatus.UNSTARTED && (
             <button onClick={onStartClick}>
               <FiPlay />
             </button>
           )}
-          {[SessionStatus.RUNNING, SessionStatus.PAUSED].includes(timerState.status) && (
+          {[PomodoroStatus.RUNNING, PomodoroStatus.PAUSED].includes(timerState.status) && (
             <button onClick={onStopClick} disabled={disableButtons}>
               <FiX />
             </button>
           )}
-          {timerState.status === SessionStatus.RUNNING && (
+          {timerState.status === PomodoroStatus.RUNNING && (
             <button onClick={onPauseClick} disabled={disableButtons}>
               <FiPause />
             </button>
           )}
-          {timerState.status === SessionStatus.RUNNING && (
-            <button onClick={timer.addOneMinute} className={"text-3xl"}>
-              +1
-            </button>
+          {timerState.status === PomodoroStatus.RUNNING && (
+            <button onClick={timer.addOneMinute}>+1</button>
           )}
-          {timerState.status === SessionStatus.PAUSED && (
+          {timerState.status === PomodoroStatus.PAUSED && (
             <button onClick={onResumeClick}>
               <FiPlay />
             </button>

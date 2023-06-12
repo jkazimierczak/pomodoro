@@ -1,12 +1,12 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, current } from "@reduxjs/toolkit";
 import { defaultSettings } from "@/features/Settings/schema";
 import { Temporal } from "@js-temporal/polyfill";
 
 /**
- * Represents current focus session state.
+ * Represents current pomodoro session state.
  */
-export enum SessionStatus {
+export enum PomodoroStatus {
   /**
    * Initial session state - defines a new, non-started session.
    */
@@ -19,63 +19,57 @@ export enum SessionStatus {
    * Paused session state.
    */
   PAUSED = "PAUSED",
-  /**
-   * Finished session state.
-   */
-  FINISHED = "FINISHED",
 }
 
 /**
- * Represents session type.
+ * Represents pomodoro session type.
  */
-export enum HistoryItemType {
+export enum PomodoroType {
   BREAK = "BREAK",
   SESSION = "SESSION",
   LONG_BREAK = "LONG_BREAK",
 }
 
-export enum SessionResult {
-  COMPLETED = "COMPLETED",
-  UNKNOWN = "UNKNOWN",
+/**
+ * Represents a single pomodoro session.
+ */
+export interface PomodoroSession {
+  type: PomodoroType;
+  duration: number;
 }
 
-export interface SessionHistoryItem {
+/**
+ * Represents already finished pomodoro session.
+ */
+export interface FinishedPomodoro {
   duration: number;
   finishedAt: string;
 }
 
-export interface Session {
-  type: HistoryItemType;
-  duration: number;
-  result: SessionResult;
-}
-
 export interface TimerState {
-  currentSession: Session;
-  nextSession: Session;
+  currentSession: PomodoroSession;
+  nextSession: PomodoroSession;
   currentSessionIdx: number;
-  status: SessionStatus;
-  history: SessionHistoryItem[];
+  status: PomodoroStatus;
+  history: FinishedPomodoro[];
   durations: InitializeActionPayload;
 }
 
 const initialState: TimerState = {
   currentSession: {
-    type: HistoryItemType.SESSION,
+    type: PomodoroType.SESSION,
     duration: defaultSettings.sessionDuration,
-    result: SessionResult.UNKNOWN,
   },
   nextSession: {
-    type: HistoryItemType.BREAK,
+    type: PomodoroType.BREAK,
     duration: defaultSettings.breakDuration,
-    result: SessionResult.UNKNOWN,
   },
   history: [],
   currentSessionIdx: 0,
   durations: {
     ...defaultSettings,
   },
-  status: SessionStatus.UNSTARTED,
+  status: PomodoroStatus.UNSTARTED,
 };
 
 interface InitializeActionPayload {
@@ -90,21 +84,31 @@ export const timerSlice = createSlice({
   initialState,
   reducers: {
     updateDurations: (state, action: PayloadAction<InitializeActionPayload>) => {
-      state.durations = { ...action.payload };
+      const durations = action.payload;
+      state.durations = { ...durations };
 
-      const key = state.currentSession.type.toLowerCase();
-      state.currentSession.duration = action.payload[`${key}Duration`];
+      const currentSession = state.currentSession;
+      switch (state.currentSession.type) {
+        case PomodoroType.SESSION:
+          currentSession.duration = durations.sessionDuration;
+          break;
+        case PomodoroType.BREAK:
+          currentSession.duration = durations.breakDuration;
+          break;
+        case PomodoroType.LONG_BREAK:
+          currentSession.duration = durations.longBreakDuration;
+          break;
+      }
     },
     start: (state) => {
-      state.status = SessionStatus.RUNNING;
+      state.status = PomodoroStatus.RUNNING;
       state.currentSessionIdx++;
     },
     finished: (state) => {
-      state.status = SessionStatus.UNSTARTED;
-      state.currentSession.result = SessionResult.COMPLETED;
+      state.status = PomodoroStatus.UNSTARTED;
 
       // Save finished session to a history
-      if (state.currentSession.type === HistoryItemType.SESSION) {
+      if (state.currentSession.type === PomodoroType.SESSION) {
         state.history.push({
           duration: state.currentSession.duration,
           finishedAt: Temporal.Now.plainDateTimeISO().toString(),
@@ -112,31 +116,29 @@ export const timerSlice = createSlice({
       }
 
       // Bootstrap new session
-      const finishedSession = state.currentSession.type === HistoryItemType.SESSION;
+      const finishedSession = state.currentSession.type === PomodoroType.SESSION;
       if (finishedSession) {
         state.nextSession = {
-          type: HistoryItemType.BREAK,
+          type: PomodoroType.BREAK,
           duration: state.durations.breakDuration,
-          result: SessionResult.UNKNOWN,
         };
       } else {
         state.nextSession = {
-          type: HistoryItemType.SESSION,
+          type: PomodoroType.SESSION,
           duration: state.durations.sessionDuration,
-          result: SessionResult.UNKNOWN,
         };
       }
       state.currentSession = { ...state.nextSession };
     },
     stop: (state) => {
-      state.status = SessionStatus.UNSTARTED;
+      state.status = PomodoroStatus.UNSTARTED;
       state.currentSessionIdx--;
     },
     pause: (state) => {
-      state.status = SessionStatus.PAUSED;
+      state.status = PomodoroStatus.PAUSED;
     },
     resume: (state) => {
-      state.status = SessionStatus.RUNNING;
+      state.status = PomodoroStatus.RUNNING;
     },
   },
 });

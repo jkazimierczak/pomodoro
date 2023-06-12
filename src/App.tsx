@@ -4,7 +4,7 @@ import { Portal, usePortal } from "@/features/Portal";
 import { FiBell, FiBellOff, FiSettings } from "react-icons/all";
 import { IconContext } from "react-icons";
 import { useAppDispatch, useAppSelector } from "@/store";
-import { SessionStatus } from "@/features/Timer/timerSlice";
+import { PomodoroStatus } from "@/features/Timer/timerSlice";
 import { updateSettings } from "@/features/Settings/settingsSlice";
 
 function App() {
@@ -31,7 +31,7 @@ function App() {
         <div className="absolute right-0 top-0 m-6 flex gap-4">
           <IconContext.Provider value={{ size: "2em" }}>
             <span onClick={toggleSound}>{isSoundEnabled ? <FiBell /> : <FiBellOff />}</span>
-            {timerStatus === SessionStatus.UNSTARTED && <FiSettings onClick={openPortal} />}
+            {timerStatus === PomodoroStatus.UNSTARTED && <FiSettings onClick={openPortal} />}
           </IconContext.Provider>
         </div>
         <Portal isOpen={isOpen}>
