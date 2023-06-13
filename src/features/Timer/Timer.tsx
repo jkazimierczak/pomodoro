@@ -41,6 +41,7 @@ export function Timer({ ...props }: ITimerProps) {
         sessionDuration: settings.sessionDuration,
         breakDuration: settings.breakDuration,
         longBreakDuration: settings.longBreakDuration,
+        sessionsBeforeLongBreak: settings.sessionsBeforeLongBreak,
       })
     );
   }, [
@@ -168,12 +169,17 @@ export function Timer({ ...props }: ITimerProps) {
             value={
               idx === timerState.currentSessionIdx &&
               timerState.status !== PomodoroStatus.UNSTARTED &&
-              currentSession.type !== PomodoroType.BREAK
+              currentSession.type === PomodoroType.SESSION
                 ? { size: "1.25em" }
                 : { size: "1.25em", color: "#bcbcbcc9" }
             }
           >
-            {circle}
+            <>
+              {idx !== 0 && idx % settings.sessionsBeforeLongBreak === 0 && (
+                <span className={"mx-1 block"} />
+              )}
+              {circle}
+            </>
           </IconContext.Provider>
         ))}
       </ul>

@@ -27,7 +27,7 @@ export enum PomodoroStatus {
 export enum PomodoroType {
   BREAK = "BREAK",
   SESSION = "SESSION",
-  LONG_BREAK = "LONG_BREAK",
+  LONG_BREAK = "LONG BREAK",
 }
 
 /**
@@ -51,7 +51,7 @@ export interface TimerState {
   currentSessionIdx: number;
   status: PomodoroStatus;
   history: FinishedPomodoro[];
-  durations: InitializeActionPayload;
+  settings: InitializeActionPayload;
 }
 
 const initialState: TimerState = {
@@ -61,7 +61,7 @@ const initialState: TimerState = {
   },
   history: [],
   currentSessionIdx: 0,
-  durations: {
+  settings: {
     ...defaultSettings,
   },
   status: PomodoroStatus.UNSTARTED,
@@ -72,6 +72,7 @@ interface InitializeActionPayload {
   sessionDuration: number;
   breakDuration: number;
   longBreakDuration: number;
+  sessionsBeforeLongBreak: number;
 }
 
 export const timerSlice = createSlice({
@@ -80,7 +81,7 @@ export const timerSlice = createSlice({
   reducers: {
     updateDurations: (state, action: PayloadAction<InitializeActionPayload>) => {
       const durations = action.payload;
-      state.durations = { ...durations };
+      state.settings = { ...durations };
 
       const currentSession = state.currentSession;
       switch (state.currentSession.type) {
@@ -115,14 +116,21 @@ export const timerSlice = createSlice({
       // Bootstrap new session
       const finishedSession = state.currentSession.type === PomodoroType.SESSION;
       if (finishedSession) {
-        state.currentSession = {
-          type: PomodoroType.BREAK,
-          duration: state.durations.breakDuration,
-        };
+        if (state.currentSessionIdx % state.settings.sessionsBeforeLongBreak === 0) {
+          state.currentSession = {
+            type: PomodoroType.LONG_BREAK,
+            duration: state.settings.longBreakDuration,
+          };
+        } else {
+          state.currentSession = {
+            type: PomodoroType.BREAK,
+            duration: state.settings.breakDuration,
+          };
+        }
       } else {
         state.currentSession = {
           type: PomodoroType.SESSION,
-          duration: state.durations.sessionDuration,
+          duration: state.settings.sessionDuration,
         };
       }
     },
