@@ -97,12 +97,12 @@ export const timerSlice = createSlice({
     },
     start: (state) => {
       state.status = PomodoroStatus.RUNNING;
-      if (state.currentSession.type === PomodoroType.SESSION) {
-        state.currentSessionIdx++;
-      }
     },
     finished: (state) => {
       state.status = PomodoroStatus.UNSTARTED;
+      if (state.currentSession.type === PomodoroType.SESSION) {
+        state.currentSessionIdx++;
+      }
 
       // Save finished session to a history
       if (state.currentSession.type === PomodoroType.SESSION) {
@@ -128,9 +128,6 @@ export const timerSlice = createSlice({
     },
     stop: (state) => {
       state.status = PomodoroStatus.UNSTARTED;
-      if (state.currentSession.type === PomodoroType.SESSION) {
-        state.currentSessionIdx--;
-      }
     },
     pause: (state) => {
       state.status = PomodoroStatus.PAUSED;

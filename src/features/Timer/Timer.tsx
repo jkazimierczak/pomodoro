@@ -142,7 +142,7 @@ export function Timer({ ...props }: ITimerProps) {
       timerState.status === PomodoroStatus.PAUSED &&
       currentSession.type === PomodoroType.SESSION
     ) {
-      circles[timerState.currentSessionIdx - 1] = <FiPauseCircle />;
+      circles[timerState.currentSessionIdx] = <FiPauseCircle />;
     }
 
     return circles;
@@ -166,7 +166,7 @@ export function Timer({ ...props }: ITimerProps) {
           <IconContext.Provider
             key={`TimerState${idx}`}
             value={
-              idx === timerState.currentSessionIdx - 1 &&
+              idx === timerState.currentSessionIdx &&
               timerState.status !== PomodoroStatus.UNSTARTED &&
               currentSession.type !== PomodoroType.BREAK
                 ? { size: "1.25em" }
