@@ -134,6 +134,10 @@ export const timerSlice = createSlice({
         };
       }
     },
+    resetProgress: (state) => {
+      state.currentSessionIdx = 0;
+      state.history = [];
+    },
     stop: (state) => {
       state.status = PomodoroStatus.UNSTARTED;
     },
@@ -146,5 +150,6 @@ export const timerSlice = createSlice({
   },
 });
 
-export const { updateDurations, start, stop, pause, resume, finished } = timerSlice.actions;
+export const { updateDurations, resetProgress, start, stop, pause, resume, finished } =
+  timerSlice.actions;
 export default timerSlice.reducer;
