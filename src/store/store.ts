@@ -1,13 +1,21 @@
 import { configureStore, TypedStartListening } from "@reduxjs/toolkit";
-import timerReducer from "@/features/Timer/timerSlice";
+import timerReducer, { initialState as initialTimerState } from "@/features/Timer/timerSlice";
 import settingsReducer from "@/features/Settings/settingsSlice";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { getStoredSettings, settingsMiddleware } from "@/store/settingsMiddleware";
-import { progressMiddleware } from "@/store/progressHistoryMiddleware";
+import { getStoredProgressHistory, progressMiddleware } from "@/store/progressHistoryMiddleware";
+
+const preloadedSettings = getStoredSettings();
+const preloadedProgressHistory = getStoredProgressHistory();
 
 export const store = configureStore({
   preloadedState: {
-    settings: getStoredSettings(),
+    settings: preloadedSettings,
+    timer: {
+      ...initialTimerState,
+      history: preloadedProgressHistory,
+      currentSessionIdx: preloadedProgressHistory.length % preloadedSettings.dailyGoal,
+    },
   },
   reducer: {
     timer: timerReducer,

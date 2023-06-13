@@ -132,10 +132,11 @@ export function Timer({ ...props }: ITimerProps) {
   const progressCircles = useMemo(() => {
     const circles = [];
 
-    for (let i = 0; i < timerState.history.length; i++) {
+    const historyLenMod = timerState.history.length % settings.dailyGoal;
+    for (let i = 0; i < historyLenMod; i++) {
       circles.push(<FiCheckCircle />);
     }
-    for (let i = timerState.history.length; i < settings.dailyGoal; i++) {
+    for (let i = historyLenMod; i < settings.dailyGoal; i++) {
       circles.push(<FiCircle />);
     }
 
