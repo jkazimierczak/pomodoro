@@ -108,6 +108,10 @@ export function Settings({ onClose, ...params }: Settings) {
             <label htmlFor="canPlaySound">Play sound when session ends</label>
             <input type="checkbox" id="canPlaySound" {...register("canPlaySound")} />
           </div>
+          <div className={"mt-2 flex justify-between"}>
+            <label htmlFor="startNewDayAt">Start next day at</label>
+            <input type="time" id="startNewDayAt" {...register("startNewDayAt")} />
+          </div>
 
           <p
             className={"mt-4 flex items-center gap-2 hover:cursor-pointer"}
