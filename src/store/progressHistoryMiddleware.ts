@@ -6,7 +6,7 @@ import { wasSessionFinished } from "@/store/predicate";
 
 const LS_PROGRESS_KEY = "progressHistory";
 
-export function getStoredProgressHistory() {
+export function getStoredProgressHistory(): FinishedPomodoro[] {
   const storedProgress = localStorage.getItem(LS_PROGRESS_KEY);
   return storedProgress ? JSON.parse(storedProgress) : [];
 }
