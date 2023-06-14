@@ -6,11 +6,8 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { getStoredSettings, settingsMiddleware } from "@/store/settingsMiddleware";
 import { getStoredProgressHistory, progressMiddleware } from "@/store/progressHistoryMiddleware";
 import { defaultSettings } from "@/features/Settings/schema";
-import {
-  getNextMidnightFromString,
-  getStoredNextMidnight,
-  nightOwlMiddleware,
-} from "@/store/nightOwlMiddleware";
+import { getStoredNextMidnight, nightOwlMiddleware } from "@/store/nightOwlMiddleware";
+import { getNextMidnightFromString } from "@/store/helpers";
 
 const preloadedSettings = getStoredSettings();
 const preloadedProgressHistory = getStoredProgressHistory();

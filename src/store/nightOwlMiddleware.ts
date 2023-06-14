@@ -3,6 +3,7 @@ import { AppStartListening } from "@/store/store";
 import { Temporal } from "@js-temporal/polyfill";
 import { setNextMidnight } from "@/appSlice";
 import { finished } from "@/features/Timer/timerSlice";
+import { getNextMidnight } from "@/store/helpers";
 
 const LS_NEXT_MIDNIGHT_KEY = "next_midnight";
 
@@ -42,17 +43,22 @@ startAppListening({
     const nextMidnight = Temporal.PlainDateTime.from(state.app.nextMidnight);
     const offset = Temporal.PlainTime.from(state.settings.startNewDayAt);
 
-    if (!getStoredNextMidnight()) {
-      localStorage.setItem(LS_NEXT_MIDNIGHT_KEY, nextMidnight.toString());
-    }
-
     const now = Temporal.Now.plainDateTime("gregory");
     if (Temporal.PlainDateTime.compare(nextMidnight, now) < 0) {
       const nextMidnight = getNextMidnight(offset.hour, offset.minute);
 
       listenerApi.dispatch(setNextMidnight(nextMidnight));
-
-      localStorage.setItem(LS_NEXT_MIDNIGHT_KEY, nextMidnight.toString());
     }
+  },
+});
+
+startAppListening({
+  actionCreator: setNextMidnight,
+  effect: (action, listenerApi) => {
+    console.log("saved");
+    const state = listenerApi.getState();
+    const nextMidnight = Temporal.PlainDateTime.from(state.app.nextMidnight);
+
+    localStorage.setItem(LS_NEXT_MIDNIGHT_KEY, nextMidnight.toString());
   },
 });

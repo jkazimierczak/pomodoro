@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Temporal } from "@js-temporal/polyfill";
-import { getNextMidnight } from "@/store/nightOwlMiddleware";
+import { getNextMidnight } from "@/store/helpers";
 
 interface AppState {
   nextMidnight: string;

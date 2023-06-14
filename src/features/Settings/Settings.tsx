@@ -10,7 +10,7 @@ import { defaultSettings, SettingsFormData, settingsSchema } from "@/features/Se
 import { useAppDispatch, useAppSelector } from "@/store";
 import { updateSettings } from "@/features/Settings/settingsSlice";
 import { setNextMidnight } from "@/appSlice";
-import { getNextMidnightFromString } from "@/store/nightOwlMiddleware";
+import { getNextMidnightFromString } from "@/store/helpers";
 
 interface Settings extends ComponentProps<"form"> {
   onClose: () => void;
