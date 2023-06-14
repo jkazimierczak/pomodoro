@@ -1,5 +1,5 @@
 import { configureStore, TypedStartListening } from "@reduxjs/toolkit";
-import timerReducer, { initialState as initialTimerState } from "@/features/Timer/timerSlice";
+import timerReducer, { initialTimerState as initialTimerState } from "@/features/Timer/timerSlice";
 import settingsReducer from "@/features/Settings/settingsSlice";
 import appReducer, { initialAppState } from "@/appSlice";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";

@@ -54,7 +54,7 @@ export interface TimerState {
   settings: InitializeActionPayload;
 }
 
-export const initialState: TimerState = {
+export const initialTimerState: TimerState = {
   currentSession: {
     type: PomodoroType.SESSION,
     duration: defaultSettings.sessionDuration,
@@ -77,7 +77,7 @@ interface InitializeActionPayload {
 
 export const timerSlice = createSlice({
   name: "timer",
-  initialState,
+  initialState: initialTimerState,
   reducers: {
     updateDurations: (state, action: PayloadAction<InitializeActionPayload>) => {
       const durations = action.payload;
