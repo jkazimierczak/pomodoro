@@ -42,6 +42,10 @@ startAppListening({
     const nextMidnight = Temporal.PlainDateTime.from(state.app.nextMidnight);
     const offset = Temporal.PlainTime.from(state.settings.startNewDayAt);
 
+    if (!getStoredNextMidnight()) {
+      localStorage.setItem(LS_NEXT_MIDNIGHT_KEY, nextMidnight.toString());
+    }
+
     const now = Temporal.Now.plainDateTime("gregory");
     if (Temporal.PlainDateTime.compare(nextMidnight, now) < 0) {
       const nextMidnight = getNextMidnight(offset.hour, offset.minute);

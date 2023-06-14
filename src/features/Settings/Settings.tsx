@@ -9,6 +9,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { defaultSettings, SettingsFormData, settingsSchema } from "@/features/Settings/schema";
 import { useAppDispatch, useAppSelector } from "@/store";
 import { updateSettings } from "@/features/Settings/settingsSlice";
+import { setNextMidnight } from "@/appSlice";
+import { getNextMidnightFromString } from "@/store/nightOwlMiddleware";
 
 interface Settings extends ComponentProps<"form"> {
   onClose: () => void;
@@ -36,6 +38,7 @@ export function Settings({ onClose, ...params }: Settings) {
 
   const onSubmit: SubmitHandler<SettingsFormData> = (data) => {
     dispatch(updateSettings(data));
+    dispatch(setNextMidnight(getNextMidnightFromString(data.startNewDayAt)));
   };
 
   useEffect(() => {
