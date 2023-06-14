@@ -1,7 +1,8 @@
 import { createListenerMiddleware } from "@reduxjs/toolkit";
-import { FinishedPomodoro, PomodoroType, resetProgress } from "@/features/Timer/timerSlice";
+import { FinishedPomodoro, resetProgress } from "@/features/Timer/timerSlice";
 import { Temporal } from "@js-temporal/polyfill";
 import { AppStartListening } from "@/store/store";
+import { wasSessionFinished } from "@/store/predicate";
 
 const LS_PROGRESS_KEY = "progressHistory";
 
@@ -14,22 +15,13 @@ export const progressMiddleware = createListenerMiddleware();
 export const startAppListening = progressMiddleware.startListening as AppStartListening;
 
 startAppListening({
-  predicate: (action, currentState, originalState) => {
-    const previousType = originalState.timer.currentSession.type;
-    const currentType = currentState.timer.currentSession.type;
-    return (
-      previousType === PomodoroType.SESSION &&
-      (currentType === PomodoroType.BREAK || currentType === PomodoroType.LONG_BREAK)
-    );
-  },
+  predicate: wasSessionFinished,
   effect: (action, listenerApi) => {
     const state = listenerApi.getState().timer;
     const stored: FinishedPomodoro[] = getStoredProgressHistory();
 
-    let newestStored: Temporal.PlainDateTime;
-    if (stored.length === 0) {
-      newestStored = Temporal.PlainDateTime.from("1970-01-01");
-    } else {
+    let newestStored = Temporal.PlainDateTime.from("1970-01-01");
+    if (stored.length > 0) {
       const storedDates = stored.map((item) => Temporal.PlainDateTime.from(item.finishedAt));
       newestStored = storedDates[storedDates.length - 1];
     }
