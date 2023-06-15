@@ -4,15 +4,20 @@ import settingsReducer from "@/features/Settings/settingsSlice";
 import appReducer, { initialAppState } from "@/appSlice";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { getStoredSettings, settingsMiddleware } from "@/store/settingsMiddleware";
-import { getStoredProgressHistory, progressMiddleware } from "@/store/progressHistoryMiddleware";
+import {
+  getStoredProgressHistorySince,
+  progressMiddleware,
+} from "@/store/progressHistoryMiddleware";
 import { defaultSettings } from "@/features/Settings/schema";
 import { getStoredNextMidnight, nightOwlMiddleware } from "@/store/nightOwlMiddleware";
 import { getNextMidnightFromString } from "@/store/helpers";
 
 const preloadedSettings = getStoredSettings();
-const preloadedProgressHistory = getStoredProgressHistory();
 const preloadedNextMidnight =
   getStoredNextMidnight() ?? getNextMidnightFromString(preloadedSettings.startNewDayAt);
+const preloadedProgressHistory = getStoredProgressHistorySince(
+  preloadedNextMidnight.subtract({ days: 1 })
+);
 
 export const store = configureStore({
   preloadedState: {

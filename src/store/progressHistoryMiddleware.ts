@@ -10,6 +10,18 @@ export function getStoredProgressHistory(): FinishedPomodoro[] {
   return storedProgress ? JSON.parse(storedProgress) : [];
 }
 
+export function getStoredProgressHistorySince(since: Temporal.PlainDateTime) {
+  const storedProgress = getStoredProgressHistory();
+  return filterProgressSince(since, storedProgress);
+}
+
+function filterProgressSince(since: Temporal.PlainDateTime, pomodoroHistory: FinishedPomodoro[]) {
+  return pomodoroHistory.filter((pomodoro) => {
+    const pomodoroDate = Temporal.PlainDateTime.from(pomodoro.finishedAt);
+    return Temporal.PlainDateTime.compare(since, pomodoroDate) <= 0;
+  });
+}
+
 export const progressMiddleware = createListenerMiddleware();
 export const startAppListening = progressMiddleware.startListening as AppStartListening;
 
