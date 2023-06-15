@@ -46,7 +46,10 @@ export function Circle({ showProgress, progress, timeRemaining }: ICircle) {
           ></circle>
         )}
       </svg>
-      <p className="self-center justify-self-center text-4xl" style={{ gridArea: "clock" }}>
+      <p
+        className="select-none self-center justify-self-center text-4xl"
+        style={{ gridArea: "clock" }}
+      >
         {timeRemaining}
       </p>
     </div>

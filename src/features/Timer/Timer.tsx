@@ -1,10 +1,19 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Temporal } from "@js-temporal/polyfill";
 import { Circle } from "./Circle";
-import { FiCheckCircle, FiCircle, FiPause, FiPauseCircle, FiPlay, FiX } from "react-icons/fi";
+import {
+  FiCheckCircle,
+  FiCircle,
+  FiCode,
+  FiPause,
+  FiPauseCircle,
+  FiPlay,
+  FiX,
+} from "react-icons/fi";
 import { IconContext } from "react-icons";
 import { useAppDispatch, useAppSelector } from "../../store";
 import {
+  changeNextSessionType,
   finished,
   pause,
   PomodoroStatus,
@@ -102,7 +111,7 @@ export function Timer({ ...props }: ITimerProps) {
     const stateText = getSessionStateText();
     setSessionStateText(stateText);
     document.title = stateText;
-  }, [timerState.status]);
+  }, [timerState.status, timerState.currentSession.type]);
 
   //#region EventHandlers
   const onStartClick = () => {
@@ -127,6 +136,10 @@ export function Timer({ ...props }: ITimerProps) {
     dispatch(resume());
     timer.resume();
   };
+
+  function toggleNextSessionType() {
+    dispatch(changeNextSessionType());
+  }
   //#endregion
 
   const progressCircles = useMemo(() => {
@@ -158,7 +171,17 @@ export function Timer({ ...props }: ITimerProps) {
 
   return (
     <div {...props}>
-      <p className="relative bottom-10 text-center text-4xl">{sessionStateText}</p>
+      <span
+        className="relative bottom-10 flex items-center justify-center gap-2 hover:cursor-pointer"
+        onClick={toggleNextSessionType}
+      >
+        <p className="select-none text-center text-4xl">{sessionStateText}</p>
+        <span className="rotate-90">
+          <IconContext.Provider value={{ size: "1em" }}>
+            <FiCode />
+          </IconContext.Provider>
+        </span>
+      </span>
 
       <ul
         className="absolute left-1/2 top-2.5 flex justify-center"

@@ -147,9 +147,33 @@ export const timerSlice = createSlice({
     resume: (state) => {
       state.status = PomodoroStatus.RUNNING;
     },
+    changeNextSessionType: (state) => {
+      switch (state.currentSession.type) {
+        case PomodoroType.SESSION:
+          state.currentSession.type = PomodoroType.BREAK;
+          state.currentSession.duration = state.settings.breakDuration;
+          break;
+        case PomodoroType.BREAK:
+          state.currentSession.type = PomodoroType.LONG_BREAK;
+          state.currentSession.duration = state.settings.longBreakDuration;
+          break;
+        case PomodoroType.LONG_BREAK:
+          state.currentSession.type = PomodoroType.SESSION;
+          state.currentSession.duration = state.settings.sessionDuration;
+          break;
+      }
+    },
   },
 });
 
-export const { updateDurations, resetProgress, start, stop, pause, resume, finished } =
-  timerSlice.actions;
+export const {
+  updateDurations,
+  resetProgress,
+  start,
+  stop,
+  pause,
+  resume,
+  finished,
+  changeNextSessionType,
+} = timerSlice.actions;
 export default timerSlice.reducer;
