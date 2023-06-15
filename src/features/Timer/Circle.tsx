@@ -20,20 +20,18 @@ export function Circle({ showProgress, progress, timeRemaining }: ICircle) {
           cx="130"
           cy="130"
           r="123"
-          stroke="#E1E1E1"
           strokeWidth="6"
           fill="none"
-          className="outer-circle"
+          className="outer-circle stroke-gray-300"
         ></circle>
         {showProgress && (
           <circle
             cx="130"
             cy="130"
             r="123"
-            stroke="#292929"
             strokeWidth="7"
             fill="none"
-            className="progress-circle"
+            className="progress-circle stroke-zinc-900"
             strokeDasharray="772"
             strokeDashoffset="772"
             style={{

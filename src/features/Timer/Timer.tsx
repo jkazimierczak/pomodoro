@@ -195,7 +195,7 @@ export function Timer({ ...props }: ITimerProps) {
               timerState.status !== PomodoroStatus.UNSTARTED &&
               currentSession.type === PomodoroType.SESSION
                 ? { size: "1.25em" }
-                : { size: "1.25em", color: "#bcbcbcc9" }
+                : { size: "1.25em", className: "text-gray-300" }
             }
           >
             <>
