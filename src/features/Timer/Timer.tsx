@@ -210,8 +210,8 @@ export function Timer({ ...props }: ITimerProps) {
               idx === timerState.currentSessionIdx &&
               timerState.status !== PomodoroStatus.UNSTARTED &&
               currentSession.type === PomodoroType.SESSION
-                ? { size: "1.25em" }
-                : { size: "1.25em", className: "text-gray-300" }
+                ? { size: "1.25em", className: "transition-all duration-500" }
+                : { size: "1.25em", className: "text-gray-300 transition-all duration-500" }
             }
           >
             <>

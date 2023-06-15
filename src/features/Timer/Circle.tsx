@@ -31,14 +31,13 @@ export function Circle({ showProgress, progress, timeRemaining }: ICircle) {
             r="123"
             strokeWidth="7"
             fill="none"
-            className="progress-circle stroke-zinc-900"
+            className="progress-circle stroke-zinc-900 transition-all duration-500 ease-linear"
             strokeDasharray="772"
             strokeDashoffset="772"
             style={{
               rotate: "-90deg",
               transformOrigin: "50% 50%",
               display: "initial",
-              transition: "stroke-dashoffset 1s linear 0s",
               strokeDashoffset: 770.771 * (1 - progress),
             }}
           ></circle>
