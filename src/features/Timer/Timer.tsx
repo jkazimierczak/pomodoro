@@ -3,7 +3,7 @@ import { Temporal } from "@js-temporal/polyfill";
 import { Circle } from "./Circle";
 import { FiCheckCircle, FiCircle, FiPause, FiPauseCircle, FiPlay, FiX } from "react-icons/fi";
 import { IconContext } from "react-icons";
-import { useAppDispatch, useAppSelector } from "@/store";
+import { useAppDispatch, useAppSelector } from "../../store";
 import {
   finished,
   pause,

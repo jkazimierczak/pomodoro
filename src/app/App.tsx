@@ -3,11 +3,11 @@ import { Settings } from "@/features/Settings/Settings";
 import { Portal, usePortal } from "@/features/Portal";
 import { FiBell, FiBellOff, FiSettings } from "react-icons/all";
 import { IconContext } from "react-icons";
-import { useAppDispatch, useAppSelector } from "@/store";
+import { useAppDispatch, useAppSelector } from "../store";
 import { PomodoroStatus } from "@/features/Timer/timerSlice";
 import { updateSettings } from "@/features/Settings/settingsSlice";
 
-function App() {
+export function App() {
   const { isOpen, openPortal, closePortal } = usePortal(false);
   const timerStatus = useAppSelector((state) => state.timer.status);
   const appSettings = useAppSelector((state) => state.settings);
@@ -44,5 +44,3 @@ function App() {
     </div>
   );
 }
-
-export default App;

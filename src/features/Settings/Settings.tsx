@@ -7,9 +7,9 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { defaultSettings, SettingsFormData, settingsSchema } from "@/features/Settings/schema";
-import { useAppDispatch, useAppSelector } from "@/store";
+import { useAppDispatch, useAppSelector } from "../../store";
 import { updateSettings } from "@/features/Settings/settingsSlice";
-import { setNextMidnight } from "@/appSlice";
+import { setNextMidnight } from "@/app/appSlice";
 import { getNextMidnightFromString } from "@/store/helpers";
 
 interface Settings extends ComponentProps<"form"> {

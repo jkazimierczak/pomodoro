@@ -1,7 +1,7 @@
 import { AnyAction, createListenerMiddleware, isAnyOf, ListenerEffectAPI } from "@reduxjs/toolkit";
-import { AppDispatch, AppStartListening, RootState } from "@/store/store";
+import { AppDispatch, AppStartListening, RootState } from "@/app/store";
 import { Temporal } from "@js-temporal/polyfill";
-import { setNextMidnight } from "@/appSlice";
+import { setNextMidnight } from "@/app/appSlice";
 import { finished, resetProgress, start } from "@/features/Timer/timerSlice";
 import { getNextMidnight } from "@/store/helpers";
 
