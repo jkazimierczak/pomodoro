@@ -176,11 +176,11 @@ export function Timer({ ...props }: ITimerProps) {
         onClick={toggleNextSessionType}
       >
         <p className="select-none text-center text-4xl">{sessionStateText}</p>
-        <span className="rotate-90">
-          <IconContext.Provider value={{ size: "1em" }}>
+        {timerState.status === PomodoroStatus.UNSTARTED && (
+          <span className="rotate-90">
             <FiCode />
-          </IconContext.Provider>
-        </span>
+          </span>
+        )}
       </span>
 
       <ul

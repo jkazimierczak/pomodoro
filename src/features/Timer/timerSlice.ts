@@ -148,6 +148,8 @@ export const timerSlice = createSlice({
       state.status = PomodoroStatus.RUNNING;
     },
     changeNextSessionType: (state) => {
+      if ([PomodoroStatus.RUNNING, PomodoroStatus.PAUSED].includes(state.status)) return;
+
       switch (state.currentSession.type) {
         case PomodoroType.SESSION:
           state.currentSession.type = PomodoroType.BREAK;
