@@ -19,7 +19,7 @@ export function App() {
   }
 
   return (
-    <div className="relative grid h-screen justify-center">
+    <div className="relative grid h-screen justify-center dark:bg-dark">
       <Timer
         className="absolute left-1/2 top-1/2"
         style={{
@@ -29,14 +29,14 @@ export function App() {
 
       <>
         <div className="absolute right-0 top-0 m-6 flex gap-4">
-          <IconContext.Provider value={{ size: "2em" }}>
+          <IconContext.Provider value={{ size: "2em", className: "dark:text-neutral-200" }}>
             <span onClick={toggleSound}>{isSoundEnabled ? <FiBell /> : <FiBellOff />}</span>
             {timerStatus === PomodoroStatus.UNSTARTED && <FiSettings onClick={openPortal} />}
           </IconContext.Provider>
         </div>
         <Portal isOpen={isOpen}>
           <Settings
-            className="absolute right-0 top-0 h-full w-screen bg-white p-5 shadow shadow-gray-700 sm:w-[440px]"
+            className="absolute right-0 top-0 h-full w-screen bg-white p-5 shadow shadow-gray-700 dark:bg-dark dark:text-neutral-200 sm:w-[440px]"
             onClose={closePortal}
           />
         </Portal>

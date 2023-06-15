@@ -191,10 +191,12 @@ export function Timer({ ...props }: ITimerProps) {
         className="relative bottom-10 flex items-center justify-center gap-2 hover:cursor-pointer"
         onClick={toggleNextSessionType}
       >
-        <p className="select-none text-center text-4xl">{sessionStateText}</p>
+        <p className="select-none text-center text-4xl dark:text-neutral-200">{sessionStateText}</p>
         {timerState.status === PomodoroStatus.UNSTARTED && (
           <span className="rotate-90">
-            <FiCode />
+            <IconContext.Provider value={{ className: "dark:text-neutral-200" }}>
+              <FiCode />
+            </IconContext.Provider>
           </span>
         )}
       </span>
@@ -210,8 +212,11 @@ export function Timer({ ...props }: ITimerProps) {
               idx === timerState.currentSessionIdx &&
               timerState.status !== PomodoroStatus.UNSTARTED &&
               currentSession.type === PomodoroType.SESSION
-                ? { size: "1.25em", className: "transition-all duration-500" }
-                : { size: "1.25em", className: "text-gray-300 transition-all duration-500" }
+                ? { size: "1.25em", className: "transition-all duration-500 dark:text-neutral-200" }
+                : {
+                    size: "1.25em",
+                    className: "text-gray-300 transition-all duration-500 dark:text-neutral-500",
+                  }
             }
           >
             <>
@@ -241,8 +246,8 @@ export function Timer({ ...props }: ITimerProps) {
                 onMouseEnter={() => dimAllButtonsExcept(ButtonNames.START)}
                 onMouseLeave={() => setDimmedButtons([])}
                 className={clsx({
-                  "transition-colors duration-200 ease-linear": true,
-                  "text-gray-300": dimmedButtons.includes(ButtonNames.START),
+                  "transition-colors duration-200 ease-linear dark:text-neutral-200": true,
+                  "text-gray-300 dark:text-neutral-500": dimmedButtons.includes(ButtonNames.START),
                 })}
               >
                 <FiPlay />
@@ -255,8 +260,8 @@ export function Timer({ ...props }: ITimerProps) {
                 onMouseEnter={() => dimAllButtonsExcept(ButtonNames.STOP)}
                 onMouseLeave={() => setDimmedButtons([])}
                 className={clsx({
-                  "transition-colors duration-200 ease-linear": true,
-                  "text-gray-300": dimmedButtons.includes(ButtonNames.STOP),
+                  "transition-colors duration-200 ease-linear dark:text-neutral-200": true,
+                  "text-gray-300 dark:text-neutral-500": dimmedButtons.includes(ButtonNames.STOP),
                 })}
               >
                 <FiX />
@@ -269,8 +274,8 @@ export function Timer({ ...props }: ITimerProps) {
                 onMouseEnter={() => dimAllButtonsExcept(ButtonNames.PAUSE)}
                 onMouseLeave={() => setDimmedButtons([])}
                 className={clsx({
-                  "transition-colors duration-200 ease-linear": true,
-                  "text-gray-300": dimmedButtons.includes(ButtonNames.PAUSE),
+                  "transition-colors duration-200 ease-linear dark:text-neutral-200": true,
+                  "text-gray-300 dark:text-neutral-500": dimmedButtons.includes(ButtonNames.PAUSE),
                 })}
               >
                 <FiPause />
@@ -282,8 +287,11 @@ export function Timer({ ...props }: ITimerProps) {
                 onMouseEnter={() => dimAllButtonsExcept(ButtonNames.ADD_ONE_MINUTE)}
                 onMouseLeave={() => setDimmedButtons([])}
                 className={clsx({
-                  "w-9 text-center text-3xl transition-colors duration-200 ease-linear": true,
-                  "text-gray-300": dimmedButtons.includes(ButtonNames.ADD_ONE_MINUTE),
+                  "w-9 text-center text-3xl transition-colors duration-200 ease-linear dark:text-neutral-200":
+                    true,
+                  "text-gray-300 dark:text-neutral-500": dimmedButtons.includes(
+                    ButtonNames.ADD_ONE_MINUTE
+                  ),
                 })}
               >
                 +1
@@ -296,8 +304,10 @@ export function Timer({ ...props }: ITimerProps) {
                   onMouseEnter={() => dimAllButtonsExcept(ButtonNames.RESUME)}
                   onMouseLeave={() => setDimmedButtons([])}
                   className={clsx({
-                    "transition-colors duration-200 ease-linear": true,
-                    "text-gray-300": dimmedButtons.includes(ButtonNames.RESUME),
+                    "transition-colors duration-200 ease-linear dark:text-neutral-200": true,
+                    "text-gray-300 dark:text-neutral-500": dimmedButtons.includes(
+                      ButtonNames.RESUME
+                    ),
                   })}
                 >
                   <FiPlay />

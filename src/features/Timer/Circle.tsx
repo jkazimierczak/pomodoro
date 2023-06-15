@@ -22,7 +22,7 @@ export function Circle({ showProgress, progress, timeRemaining }: ICircle) {
           r="123"
           strokeWidth="6"
           fill="none"
-          className="outer-circle stroke-gray-300"
+          className="outer-circle stroke-gray-300 dark:stroke-neutral-600"
         ></circle>
         {showProgress && (
           <circle
@@ -31,7 +31,7 @@ export function Circle({ showProgress, progress, timeRemaining }: ICircle) {
             r="123"
             strokeWidth="7"
             fill="none"
-            className="progress-circle stroke-zinc-900 transition-all duration-500 ease-linear"
+            className="progress-circle stroke-zinc-900 transition-all duration-500 ease-linear dark:stroke-neutral-300"
             strokeDasharray="772"
             strokeDashoffset="772"
             style={{
@@ -44,7 +44,7 @@ export function Circle({ showProgress, progress, timeRemaining }: ICircle) {
         )}
       </svg>
       <p
-        className="select-none self-center justify-self-center text-4xl"
+        className="select-none self-center justify-self-center text-4xl dark:text-gray-300"
         style={{ gridArea: "clock" }}
       >
         {timeRemaining}

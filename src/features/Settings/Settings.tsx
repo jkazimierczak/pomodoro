@@ -76,19 +76,19 @@ export function Settings({ onClose, ...params }: Settings) {
         </header>
 
         <FormSection title="General">
-          <p className="mb-1">Session duration</p>
+          <p className="mb-1 dark:text-neutral-300">Session duration</p>
           <Controller
             control={control}
             name="sessionDuration"
             render={({ field }) => <RangeInput min={1} max={120} {...field} />}
           />
-          <p className="mb-1">Break duration</p>
+          <p className="mb-1 dark:text-neutral-300">Break duration</p>
           <Controller
             control={control}
             name="breakDuration"
             render={({ field }) => <RangeInput min={1} max={60} {...field} />}
           />
-          <p className="mb-1">Long break duration</p>
+          <p className="mb-1 dark:text-neutral-300">Long break duration</p>
           <Controller
             control={control}
             name="longBreakDuration"
@@ -97,13 +97,13 @@ export function Settings({ onClose, ...params }: Settings) {
         </FormSection>
 
         <FormSection title="Other">
-          <p className="mb-1">Sessions before long break</p>
+          <p className="mb-1 dark:text-neutral-300">Sessions before long break</p>
           <Controller
             control={control}
             name="sessionsBeforeLongBreak"
             render={({ field }) => <RangeInput min={1} max={10} {...field} />}
           />
-          <p className="mb-1">Daily goal</p>
+          <p className="mb-1 dark:text-neutral-300">Daily goal</p>
           <Controller
             control={control}
             name="dailyGoal"
@@ -115,7 +115,12 @@ export function Settings({ onClose, ...params }: Settings) {
           </div>
           <div className={"mt-2 flex justify-between"}>
             <label htmlFor="startNewDayAt">Start next day at</label>
-            <input type="time" id="startNewDayAt" {...register("startNewDayAt")} />
+            <input
+              type="time"
+              id="startNewDayAt"
+              {...register("startNewDayAt")}
+              className="dark:bg-dark"
+            />
           </div>
 
           <p

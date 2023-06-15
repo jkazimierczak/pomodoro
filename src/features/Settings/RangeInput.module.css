@@ -5,9 +5,14 @@
  */
 
 :root {
-    /* --thumb-color: #0099ff; */
     --thumb-color: #000000;
     --thumb-size: 16px;
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --thumb-color: #0ea5e9;
+        --slider-background: #404040;
+    }
 }
 
 .range-field {
@@ -76,7 +81,7 @@ input[type=range] {
 
 input[type=range]::-webkit-slider-runnable-track {
     height: 3px;
-    background: #c2c0c2;
+    background: var(--slider-background);
     border: none;
 }
 
@@ -110,7 +115,7 @@ input[type=range] {
 
 input[type=range]::-moz-range-track {
     height: 3px;
-    background: #c2c0c2;
+    background: var(--slider-background);
     border: none;
 }
 
