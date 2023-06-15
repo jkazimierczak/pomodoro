@@ -234,12 +234,17 @@ export function Timer({ ...props }: ITimerProps) {
             </button>
           )}
           {timerState.status === PomodoroStatus.RUNNING && (
-            <button onClick={timer.addOneMinute}>+1</button>
+            <button onClick={timer.addOneMinute} className={"w-9 text-center text-3xl"}>
+              +1
+            </button>
           )}
           {timerState.status === PomodoroStatus.PAUSED && (
-            <button onClick={onResumeClick}>
-              <FiPlay />
-            </button>
+            <>
+              <button onClick={onResumeClick}>
+                <FiPlay />
+              </button>
+              <span className={"block w-9"} />
+            </>
           )}
         </IconContext.Provider>
       </div>
