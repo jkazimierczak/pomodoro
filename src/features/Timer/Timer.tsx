@@ -26,6 +26,15 @@ import {
 import { useTimer } from "./useTimer";
 import { ActionCreatorWithoutPayload } from "@reduxjs/toolkit";
 import { readableTime } from "./helpers";
+import clsx from "clsx";
+
+enum ButtonNames {
+  START = "START",
+  STOP = "STOP",
+  PAUSE = "PAUSE",
+  RESUME = "RESUME",
+  ADD_ONE_MINUTE = "ADD_ONE_MINUTE",
+}
 
 interface ITimerProps extends React.ComponentProps<"div"> {}
 
@@ -42,6 +51,8 @@ export function Timer({ ...props }: ITimerProps) {
   const [sessionStateText, setSessionStateText] = useState("Start session?");
   const [disableButtons, setDisableButtons] = useState(false);
   const timer = useTimer(settings.sessionDuration);
+
+  const [dimmedButtons, setDimmedButtons] = useState<string[]>([]);
 
   useEffect(() => {
     dispatch(
@@ -140,6 +151,11 @@ export function Timer({ ...props }: ITimerProps) {
   function toggleNextSessionType() {
     dispatch(changeNextSessionType());
   }
+
+  function dimAllButtonsExcept(buttonName: ButtonNames) {
+    const buttonsToDim = Object.values(ButtonNames).filter((value) => value != buttonName);
+    setDimmedButtons(buttonsToDim);
+  }
   //#endregion
 
   const progressCircles = useMemo(() => {
@@ -216,37 +232,81 @@ export function Timer({ ...props }: ITimerProps) {
         progress={timer.progress}
         timeRemaining={readableTimeLeft}
       />
-      <div className="relative top-10 flex justify-center gap-6">
-        <IconContext.Provider value={{ size: "2.25em" }}>
-          {timerState.status === PomodoroStatus.UNSTARTED && (
-            <button onClick={onStartClick}>
-              <FiPlay />
-            </button>
-          )}
-          {[PomodoroStatus.RUNNING, PomodoroStatus.PAUSED].includes(timerState.status) && (
-            <button onClick={onStopClick} disabled={disableButtons}>
-              <FiX />
-            </button>
-          )}
-          {timerState.status === PomodoroStatus.RUNNING && (
-            <button onClick={onPauseClick} disabled={disableButtons}>
-              <FiPause />
-            </button>
-          )}
-          {timerState.status === PomodoroStatus.RUNNING && (
-            <button onClick={timer.addOneMinute} className={"w-9 text-center text-3xl"}>
-              +1
-            </button>
-          )}
-          {timerState.status === PomodoroStatus.PAUSED && (
-            <>
-              <button onClick={onResumeClick}>
+      <div className="relative top-10 flex justify-center">
+        <div className="inline-flex justify-center gap-6">
+          <IconContext.Provider value={{ size: "2.25em" }}>
+            {timerState.status === PomodoroStatus.UNSTARTED && (
+              <button
+                onClick={onStartClick}
+                onMouseEnter={() => dimAllButtonsExcept(ButtonNames.START)}
+                onMouseLeave={() => setDimmedButtons([])}
+                className={clsx({
+                  "transition-colors duration-200 ease-linear": true,
+                  "text-gray-300": dimmedButtons.includes(ButtonNames.START),
+                })}
+              >
                 <FiPlay />
               </button>
-              <span className={"block w-9"} />
-            </>
-          )}
-        </IconContext.Provider>
+            )}
+            {[PomodoroStatus.RUNNING, PomodoroStatus.PAUSED].includes(timerState.status) && (
+              <button
+                onClick={onStopClick}
+                disabled={disableButtons}
+                onMouseEnter={() => dimAllButtonsExcept(ButtonNames.STOP)}
+                onMouseLeave={() => setDimmedButtons([])}
+                className={clsx({
+                  "transition-colors duration-200 ease-linear": true,
+                  "text-gray-300": dimmedButtons.includes(ButtonNames.STOP),
+                })}
+              >
+                <FiX />
+              </button>
+            )}
+            {timerState.status === PomodoroStatus.RUNNING && (
+              <button
+                onClick={onPauseClick}
+                disabled={disableButtons}
+                onMouseEnter={() => dimAllButtonsExcept(ButtonNames.PAUSE)}
+                onMouseLeave={() => setDimmedButtons([])}
+                className={clsx({
+                  "transition-colors duration-200 ease-linear": true,
+                  "text-gray-300": dimmedButtons.includes(ButtonNames.PAUSE),
+                })}
+              >
+                <FiPause />
+              </button>
+            )}
+            {timerState.status === PomodoroStatus.RUNNING && (
+              <button
+                onClick={timer.addOneMinute}
+                onMouseEnter={() => dimAllButtonsExcept(ButtonNames.ADD_ONE_MINUTE)}
+                onMouseLeave={() => setDimmedButtons([])}
+                className={clsx({
+                  "w-9 text-center text-3xl transition-colors duration-200 ease-linear": true,
+                  "text-gray-300": dimmedButtons.includes(ButtonNames.ADD_ONE_MINUTE),
+                })}
+              >
+                +1
+              </button>
+            )}
+            {timerState.status === PomodoroStatus.PAUSED && (
+              <>
+                <button
+                  onClick={onResumeClick}
+                  onMouseEnter={() => dimAllButtonsExcept(ButtonNames.RESUME)}
+                  onMouseLeave={() => setDimmedButtons([])}
+                  className={clsx({
+                    "transition-colors duration-200 ease-linear": true,
+                    "text-gray-300": dimmedButtons.includes(ButtonNames.RESUME),
+                  })}
+                >
+                  <FiPlay />
+                </button>
+                <span className={"block w-9"} />
+              </>
+            )}
+          </IconContext.Provider>
+        </div>
       </div>
     </div>
   );
