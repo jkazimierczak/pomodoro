@@ -12,7 +12,10 @@ import { defaultSettings } from "@/features/Settings/schema";
 import { getStoredNextMidnight, nightOwlMiddleware } from "@/store/nightOwlMiddleware";
 import { getNextMidnightFromString } from "@/store/helpers";
 
-const preloadedSettings = getStoredSettings();
+const preloadedSettings = {
+  ...defaultSettings,
+  ...getStoredSettings(),
+};
 const preloadedNextMidnight =
   getStoredNextMidnight() ?? getNextMidnightFromString(preloadedSettings.startNewDayAt);
 const preloadedProgressHistory = getStoredProgressHistorySince(
@@ -25,10 +28,7 @@ export const store = configureStore({
       ...initialAppState,
       nextMidnight: preloadedNextMidnight.toString(),
     },
-    settings: {
-      ...defaultSettings,
-      ...preloadedSettings,
-    },
+    settings: preloadedSettings,
     timer: {
       ...initialTimerState,
       history: preloadedProgressHistory,
