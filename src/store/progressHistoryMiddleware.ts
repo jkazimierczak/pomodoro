@@ -2,6 +2,7 @@ import { AnyAction, createListenerMiddleware } from "@reduxjs/toolkit";
 import { FinishedPomodoro, PomodoroType, resetProgress } from "@/features/Timer/timerSlice";
 import { Temporal } from "@js-temporal/polyfill";
 import { AppStartListening, RootState } from "@/app/store";
+import { finishDailyGoal } from "@/app";
 
 const LS_PROGRESS_KEY = "progressHistory";
 
@@ -56,6 +57,7 @@ startAppListening({
 
     if (state.currentSessionIdx === state.settings.dailyGoal) {
       listenerApi.dispatch(resetProgress());
+      listenerApi.dispatch(finishDailyGoal());
     }
   },
 });

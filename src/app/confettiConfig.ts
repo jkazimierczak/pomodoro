@@ -108,9 +108,9 @@ export const confettiConfig: ISourceOptions = {
   emitters: {
     name: "customConfetti",
     life: {
-      count: 2,
+      count: 8,
       duration: 0.1,
-      delay: 0.4,
+      delay: 0.2,
     },
     rate: {
       delay: 0.1,
