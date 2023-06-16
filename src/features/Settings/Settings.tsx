@@ -7,10 +7,12 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { defaultSettings, SettingsFormData, settingsSchema } from "@/features/Settings/schema";
-import { useAppDispatch, useAppSelector } from "../../store";
+import { useAppDispatch, useAppSelector } from "@/app";
 import { updateSettings } from "@/features/Settings/settingsSlice";
 import { setNextMidnight } from "@/app/appSlice";
 import { getNextMidnightFromString } from "@/store/helpers";
+import { isDarkMode, setTheme, Theme } from "@/common/darkMode";
+import clsx from "clsx";
 
 interface Settings extends ComponentProps<"form"> {
   onClose: () => void;
@@ -121,6 +123,29 @@ export function Settings({ onClose, ...params }: Settings) {
               {...register("startNewDayAt")}
               className="dark:bg-dark"
             />
+          </div>
+          <div className={"mt-2 flex justify-between"}>
+            <label htmlFor="startNewDayAt">Theme</label>
+            <div className="flex divide-x rounded border-2 dark:divide-neutral-600 dark:border-neutral-600">
+              <button
+                className={clsx({
+                  "rounded-l-sm px-4 transition-colors": true,
+                  "bg-sky-500": !isDarkMode(),
+                })}
+                onClick={() => setTheme(Theme.LIGHT)}
+              >
+                Light
+              </button>
+              <button
+                className={clsx({
+                  "rounded-r-sm px-4 transition-colors": true,
+                  "bg-sky-500": isDarkMode(),
+                })}
+                onClick={() => setTheme(Theme.DARK)}
+              >
+                Dark
+              </button>
+            </div>
           </div>
 
           <p
