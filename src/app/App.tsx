@@ -11,7 +11,7 @@ import { useState } from "react";
 import clsx from "clsx";
 
 export function App() {
-  const { isOpen, openPortal, closePortal } = usePortal(false);
+  const { isOpen, openPortal, closePortal } = usePortal(true);
   const timerStatus = useAppSelector((state) => state.timer.status);
   const appSettings = useAppSelector((state) => state.settings);
   const isSoundEnabled = useAppSelector((state) => state.settings.canPlaySound);
@@ -62,7 +62,7 @@ export function App() {
         </div>
         <Portal isOpen={isOpen} close={closePortal}>
           <Settings
-            className="absolute right-0 top-0 h-full w-screen bg-white p-5 shadow shadow-gray-700 dark:bg-neutral-900 dark:text-neutral-200 sm:w-[440px]"
+            className="absolute right-0 top-0 h-full w-screen bg-white p-5 shadow shadow-gray-700 transition-colors dark:bg-neutral-900 dark:text-neutral-200 sm:w-[440px]"
             onClose={closePortal}
           />
         </Portal>
