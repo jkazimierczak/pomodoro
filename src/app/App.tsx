@@ -8,6 +8,7 @@ import { PomodoroStatus } from "@/features/Timer/timerSlice";
 import { updateSettings } from "@/features/Settings/settingsSlice";
 import { isDarkMode, toggleTheme } from "@/common/darkMode";
 import { useState } from "react";
+import clsx from "clsx";
 
 export function App() {
   const { isOpen, openPortal, closePortal } = usePortal(false);
@@ -16,6 +17,8 @@ export function App() {
   const isSoundEnabled = useAppSelector((state) => state.settings.canPlaySound);
   const dispatch = useAppDispatch();
   const [isDarkModeEnabled, setIsDarkModeEnabled] = useState(isDarkMode());
+
+  const isStarted = timerStatus !== PomodoroStatus.UNSTARTED;
 
   function toggleSound() {
     dispatch(updateSettings({ ...appSettings, canPlaySound: !isSoundEnabled }));
@@ -40,11 +43,19 @@ export function App() {
           <IconContext.Provider value={{ size: "2em", className: "dark:text-neutral-200" }}>
             <button onClick={toggleAppTheme}>{isDarkModeEnabled ? <FiSun /> : <FiMoon />}</button>
             <button onClick={toggleSound}>{isSoundEnabled ? <FiBell /> : <FiBellOff />}</button>
-            {timerStatus === PomodoroStatus.UNSTARTED && (
-              <button onClick={openPortal}>
+            <IconContext.Provider
+              value={{
+                size: "2em",
+                className: clsx({
+                  "transition-colors": true,
+                  "text-neutral-300": isStarted,
+                }),
+              }}
+            >
+              <button onClick={openPortal} disabled={isStarted}>
                 <FiSettings />
               </button>
-            )}
+            </IconContext.Provider>
           </IconContext.Provider>
         </div>
         <Portal isOpen={isOpen} close={closePortal}>
