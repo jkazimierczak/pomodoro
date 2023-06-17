@@ -191,7 +191,9 @@ export function Timer({ ...props }: ITimerProps) {
         className="relative bottom-10 flex items-center justify-center gap-2 hover:cursor-pointer"
         onClick={toggleNextSessionType}
       >
-        <p className="select-none text-center text-4xl dark:text-neutral-200">{sessionStateText}</p>
+        <p className="w-max select-none text-center text-4xl dark:text-neutral-200">
+          {sessionStateText}
+        </p>
         {timerState.status === PomodoroStatus.UNSTARTED && (
           <span className="rotate-90">
             <IconContext.Provider value={{ className: "dark:text-neutral-200" }}>
