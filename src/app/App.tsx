@@ -47,7 +47,7 @@ export function App() {
             )}
           </IconContext.Provider>
         </div>
-        <Portal isOpen={isOpen}>
+        <Portal isOpen={isOpen} close={closePortal}>
           <Settings
             className="absolute right-0 top-0 h-full w-screen bg-white p-5 shadow shadow-gray-700 dark:bg-dark dark:text-neutral-200 sm:w-[440px]"
             onClose={closePortal}
