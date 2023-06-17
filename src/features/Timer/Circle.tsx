@@ -31,7 +31,7 @@ export function Circle({ showProgress, progress, timeRemaining }: ICircle) {
             r="123"
             strokeWidth="7"
             fill="none"
-            className="progress-circle stroke-sky-500 transition-all duration-500 ease-linear"
+            className="progress-circle stroke-sky-500 transition-all duration-700 ease-linear"
             strokeDasharray="772"
             strokeDashoffset="772"
             style={{

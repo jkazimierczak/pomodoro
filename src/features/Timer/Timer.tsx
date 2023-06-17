@@ -38,7 +38,7 @@ enum ButtonNames {
 
 interface ITimerProps extends React.ComponentProps<"div"> {}
 
-const animationMs = 500;
+const animationMs = 750;
 
 export function Timer({ ...props }: ITimerProps) {
   const dispatch = useAppDispatch();
@@ -83,7 +83,7 @@ export function Timer({ ...props }: ITimerProps) {
       dispatch(reducerAction());
       setReadableTimeLeft(readableTime(nextSessionDuration));
       setDisableButtons(false);
-    }, 1100);
+    }, animationMs);
     timer.stop();
 
     if (reducerAction == finished && settings.canPlaySound) {
@@ -142,7 +142,7 @@ export function Timer({ ...props }: ITimerProps) {
     timer.pause();
 
     setDisableButtons(true);
-    setTimeout(() => setDisableButtons(false), 1100);
+    setTimeout(() => setDisableButtons(false), animationMs);
   };
 
   const onResumeClick = () => {
