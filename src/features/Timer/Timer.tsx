@@ -253,6 +253,7 @@ export function Timer({ ...props }: ITimerProps) {
             {timerState.status === PomodoroStatus.UNSTARTED && (
               <button
                 onClick={onStartClick}
+                disabled={disableButtons}
                 onMouseEnter={() => dimAllButtonsExcept(ButtonNames.START)}
                 onMouseLeave={() => setDimmedButtons([])}
                 className={clsx({
@@ -303,6 +304,7 @@ export function Timer({ ...props }: ITimerProps) {
             {timerState.status === PomodoroStatus.RUNNING && (
               <button
                 onClick={timer.addOneMinute}
+                disabled={disableButtons}
                 onMouseEnter={() => dimAllButtonsExcept(ButtonNames.ADD_ONE_MINUTE)}
                 onMouseLeave={() => setDimmedButtons([])}
                 className={clsx({
@@ -320,6 +322,7 @@ export function Timer({ ...props }: ITimerProps) {
               <>
                 <button
                   onClick={onResumeClick}
+                  disabled={disableButtons}
                   onMouseEnter={() => dimAllButtonsExcept(ButtonNames.RESUME)}
                   onMouseLeave={() => setDimmedButtons([])}
                   className={clsx({
