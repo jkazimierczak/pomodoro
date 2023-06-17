@@ -1,10 +1,11 @@
 import { useRef, useState } from "react";
 import { Temporal } from "@js-temporal/polyfill";
 
-export function useTimer(initialMinutes: number) {
+export function useTimer(initialMinutes: number, intervalMs: number, animationMs?: number) {
   const [duration, setDuration] = useState(initialMinutes * 60);
   const previousDuration = useRef(initialMinutes * 60);
   const [progress, setProgress] = useState(0);
+  const [animationSafeProgress, setAnimationSafeProgress] = useState(0);
 
   const startDate = useRef<Temporal.PlainDateTime>();
   const endDate = useRef<Temporal.PlainDateTime>();
@@ -25,9 +26,18 @@ export function useTimer(initialMinutes: number) {
     const timePassed = startDate.current.until(Temporal.Now.plainDateTimeISO());
     startDate.current = startDate.current.add(timePassed);
 
-    const secondsLeft = getTimeLeft().total("seconds");
-    const totalDuration = previousDuration.current;
-    setProgress(1 - secondsLeft / totalDuration);
+    const secondsLeft = getTimeLeft().total("milliseconds");
+    const totalDuration = previousDuration.current * 1000;
+
+    const progress = 1 - secondsLeft / totalDuration;
+    if (progress < 0.5) {
+      setProgress(progress);
+      setAnimationSafeProgress(progress);
+    } else {
+      const animationSafe = 1 - (secondsLeft - (animationMs ?? 0)) / totalDuration;
+      setProgress(progress);
+      setAnimationSafeProgress(animationSafe);
+    }
   }
 
   function start(duration: number) {
@@ -40,7 +50,7 @@ export function useTimer(initialMinutes: number) {
     endDate.current = timeNow.add(_duration);
 
     advanceTimer();
-    intervalRef.current = setInterval(() => advanceTimer(), 100);
+    intervalRef.current = setInterval(() => advanceTimer(), intervalMs);
   }
 
   function addOneMinute() {
@@ -57,12 +67,13 @@ export function useTimer(initialMinutes: number) {
   function resume() {
     endDate.current = Temporal.Now.plainDateTimeISO().add(getTimeLeft());
 
-    intervalRef.current = setInterval(advanceTimer, 100);
+    intervalRef.current = setInterval(advanceTimer, intervalMs);
   }
 
   function stop() {
     clearInterval(intervalRef.current);
     setProgress(0);
+    setAnimationSafeProgress(0);
   }
 
   function setDurationFromMinutes(minutes: number) {
@@ -71,6 +82,7 @@ export function useTimer(initialMinutes: number) {
 
   return {
     progress,
+    animationSafeProgress,
     start,
     addOneMinute,
     pause,

@@ -38,6 +38,8 @@ enum ButtonNames {
 
 interface ITimerProps extends React.ComponentProps<"div"> {}
 
+const animationMs = 500;
+
 export function Timer({ ...props }: ITimerProps) {
   const dispatch = useAppDispatch();
   const timerState = useAppSelector((state) => state.timer);
@@ -50,7 +52,7 @@ export function Timer({ ...props }: ITimerProps) {
   const [readableTimeLeft, setReadableTimeLeft] = useState("");
   const [sessionStateText, setSessionStateText] = useState("Start session?");
   const [disableButtons, setDisableButtons] = useState(false);
-  const timer = useTimer(settings.sessionDuration);
+  const timer = useTimer(settings.sessionDuration, 100, animationMs);
 
   const [dimmedButtons, setDimmedButtons] = useState<string[]>([]);
 
@@ -242,7 +244,7 @@ export function Timer({ ...props }: ITimerProps) {
           timerState.status === PomodoroStatus.RUNNING ||
           timerState.status === PomodoroStatus.PAUSED
         }
-        progress={timer.progress}
+        progress={timer.animationSafeProgress}
         timeRemaining={readableTimeLeft}
       />
       <div className="relative top-10 flex justify-center">
