@@ -22,10 +22,6 @@ export function App() {
     await loadFull(engine);
   }, []);
 
-  const particlesLoaded = useCallback(async (container: Container | undefined) => {
-    (container as EmitterContainer)?.removeEmitter("customConfetti");
-  }, []);
-
   const { isOpen, openPortal, closePortal } = usePortal(false);
   const timerStatus = useAppSelector((state) => state.timer.status);
   const appSettings = useAppSelector((state) => state.settings);
@@ -45,15 +41,11 @@ export function App() {
 
   function showConfetti() {
     (containerRef.current as EmitterContainer)?.addEmitter(confettiEmitter);
-    containerRef.current?.play();
   }
 
   useEffect(() => {
-    console.log(containerRef.current?.destroyed);
-
     if (finishedDailyGoal) {
-      console.log(containerRef.current);
-      containerRef.current?.play();
+      showConfetti();
       dispatch(resetDailyGoal());
     }
   }, [finishedDailyGoal]);
@@ -63,7 +55,6 @@ export function App() {
       <Particles
         id="tsparticles"
         init={particlesInit}
-        loaded={particlesLoaded}
         container={containerRef}
         className="left-0, pointer-events-none absolute top-0 z-50 h-full w-full"
         options={confettiConfig}

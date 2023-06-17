@@ -2,27 +2,17 @@ import { ISourceOptions, RecursivePartial } from "tsparticles-engine";
 import { IEmitter } from "tsparticles-plugin-emitters/types/Options/Interfaces/IEmitter";
 
 export const confettiEmitter: RecursivePartial<IEmitter> = {
-  autoPlay: true,
-  fill: true,
   life: {
     wait: false,
-    count: 8,
-    delay: 0.2,
-    duration: 0.1,
+    count: 12,
+    delay: 0.25,
+    duration: 0.075,
   },
   rate: {
-    quantity: 150,
+    quantity: 120,
     delay: 0.1,
   },
   shape: "square",
-  startCount: 0,
-  size: {
-    mode: "percent",
-    height: 0,
-    width: 0,
-  },
-  name: "customConfetti",
-  particles: {},
 };
 
 export const confettiConfig: ISourceOptions = {
@@ -37,7 +27,7 @@ export const confettiConfig: ISourceOptions = {
       value: ["#00FFFC", "#FC00FF", "#fffc00"],
     },
     shape: {
-      type: ["circle", "square"],
+      type: ["circle", "square", "polygon"],
       options: {},
     },
     opacity: {
@@ -130,7 +120,7 @@ export const confettiConfig: ISourceOptions = {
       },
     },
   },
-  emitters: confettiEmitter,
+  emitters: [],
   // duration: 3,
   detectRetina: true,
 };
