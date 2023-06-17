@@ -44,6 +44,9 @@ dependencies:
   tsparticles-engine:
     specifier: ^2.10.1
     version: 2.10.1
+  tsparticles-plugin-emitters:
+    specifier: ^2.10.1
+    version: 2.10.1
   zod:
     specifier: ^3.21.4
     version: 3.21.4

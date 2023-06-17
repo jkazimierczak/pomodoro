@@ -10,19 +10,20 @@ import { isDarkMode, toggleTheme } from "@/common/darkMode";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { loadFull } from "tsparticles";
 import type { Container, Engine } from "tsparticles-engine";
+import type { EmitterContainer } from "tsparticles-plugin-emitters";
 import Particles from "react-tsparticles";
-import { confettiConfig } from "@/app/confettiConfig";
+import { confettiConfig, confettiEmitter } from "@/app/confettiConfig";
 import { resetDailyGoal } from "@/app/appSlice";
 
 export function App() {
-  const containerRef = useRef<Container | null>(null);
+  const containerRef = useRef<EmitterContainer | null>(null);
 
   const particlesInit = useCallback(async (engine: Engine) => {
     await loadFull(engine);
   }, []);
 
   const particlesLoaded = useCallback(async (container: Container | undefined) => {
-    container?.pause();
+    container?.removeEmitter("customConfetti");
   }, []);
 
   const { isOpen, openPortal, closePortal } = usePortal(false);
@@ -43,8 +44,8 @@ export function App() {
   }
 
   function showConfetti() {
+    containerRef.current?.addEmitter(confettiEmitter);
     containerRef.current?.play();
-    setTimeout(() => containerRef.current?.stop(), 8000);
   }
 
   useEffect(() => {

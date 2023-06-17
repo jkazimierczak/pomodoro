@@ -1,4 +1,29 @@
-import { ISourceOptions } from "tsparticles-engine";
+import { ISourceOptions, RecursivePartial } from "tsparticles-engine";
+import { IEmitter } from "tsparticles-plugin-emitters/types/Options/Interfaces/IEmitter";
+
+export const confettiEmitter: RecursivePartial<IEmitter> = {
+  autoPlay: true,
+  fill: true,
+  life: {
+    wait: false,
+    count: 8,
+    delay: 0.2,
+    duration: 0.1,
+  },
+  rate: {
+    quantity: 150,
+    delay: 0.1,
+  },
+  shape: "square",
+  startCount: 0,
+  size: {
+    mode: "percent",
+    height: 0,
+    width: 0,
+  },
+  name: "customConfetti",
+  particles: {},
+};
 
 export const confettiConfig: ISourceOptions = {
   fullScreen: {
@@ -105,22 +130,7 @@ export const confettiConfig: ISourceOptions = {
       },
     },
   },
-  emitters: {
-    name: "customConfetti",
-    life: {
-      count: 8,
-      duration: 0.1,
-      delay: 0.2,
-    },
-    rate: {
-      delay: 0.1,
-      quantity: 150,
-    },
-    size: {
-      width: 0,
-      height: 0,
-    },
-  },
+  emitters: confettiEmitter,
   // duration: 3,
   detectRetina: true,
 };
