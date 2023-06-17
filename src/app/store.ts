@@ -1,16 +1,16 @@
-import { configureStore, TypedStartListening } from "@reduxjs/toolkit";
-import timerReducer, { initialTimerState as initialTimerState } from "@/features/Timer/timerSlice";
-import settingsReducer from "@/features/Settings/settingsSlice";
-import appReducer, { initialAppState } from "@/app/appSlice";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
+import { configureStore, TypedStartListening } from "@reduxjs/toolkit";
+import appReducer, { initialAppState } from "@/app/appSlice";
+import { initialTimerState, timerReducer } from "@/features/Timer";
+import { defaultSettings } from "@/features/Settings/schema";
 import { getStoredSettings, settingsMiddleware } from "@/store/settingsMiddleware";
 import {
   getStoredProgressHistorySince,
   progressMiddleware,
 } from "@/store/progressHistoryMiddleware";
-import { defaultSettings } from "@/features/Settings/schema";
 import { getStoredNextMidnight, nightOwlMiddleware } from "@/store/nightOwlMiddleware";
-import { getNextMidnightFromString } from "@/store/helpers";
+import { getNextMidnightFromString } from "@/common/helpers";
+import { settingsReducer } from "@/features/Settings";
 
 const preloadedSettings = {
   ...defaultSettings,

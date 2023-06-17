@@ -10,7 +10,7 @@ import { defaultSettings, SettingsFormData, settingsSchema } from "@/features/Se
 import { useAppDispatch, useAppSelector } from "@/app";
 import { updateSettings } from "@/features/Settings/settingsSlice";
 import { setNextMidnight } from "@/app/appSlice";
-import { getNextMidnightFromString } from "@/store/helpers";
+import { getNextMidnightFromString } from "@/common/helpers";
 import { isDarkMode, setTheme, Theme } from "@/common/darkMode";
 import clsx from "clsx";
 

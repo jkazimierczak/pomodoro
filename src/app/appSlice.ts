@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { getNextMidnight } from "@/store/helpers";
+import { getNextMidnight } from "@/common/helpers";
 
 interface AppState {
   nextMidnight: string;

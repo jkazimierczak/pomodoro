@@ -3,7 +3,7 @@ import { AppDispatch, AppStartListening, RootState } from "@/app/store";
 import { Temporal } from "@js-temporal/polyfill";
 import { setNextMidnight } from "@/app/appSlice";
 import { finished, resetProgress, start } from "@/features/Timer/timerSlice";
-import { getNextMidnight } from "@/store/helpers";
+import { getNextMidnight } from "@/common/helpers";
 
 const LS_NEXT_MIDNIGHT_KEY = "next_midnight";
 
