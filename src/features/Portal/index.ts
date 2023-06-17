@@ -1,2 +1,2 @@
-export { usePortal } from "./hooks";
+export { usePortal } from "./usePortal";
 export { Portal } from "./Portal";
