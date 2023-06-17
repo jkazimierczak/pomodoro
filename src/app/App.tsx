@@ -16,14 +16,14 @@ import { confettiConfig, confettiEmitter } from "@/app/confettiConfig";
 import { resetDailyGoal } from "@/app/appSlice";
 
 export function App() {
-  const containerRef = useRef<EmitterContainer | null>(null);
+  const containerRef = useRef<Container | null>(null);
 
   const particlesInit = useCallback(async (engine: Engine) => {
     await loadFull(engine);
   }, []);
 
   const particlesLoaded = useCallback(async (container: Container | undefined) => {
-    container?.removeEmitter("customConfetti");
+    (container as EmitterContainer)?.removeEmitter("customConfetti");
   }, []);
 
   const { isOpen, openPortal, closePortal } = usePortal(false);
@@ -44,7 +44,7 @@ export function App() {
   }
 
   function showConfetti() {
-    containerRef.current?.addEmitter(confettiEmitter);
+    (containerRef.current as EmitterContainer)?.addEmitter(confettiEmitter);
     containerRef.current?.play();
   }
 
