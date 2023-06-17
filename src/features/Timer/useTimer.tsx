@@ -4,14 +4,14 @@ import { Temporal } from "@js-temporal/polyfill";
 export function useTimer(initialMinutes: number) {
   const [duration, setDuration] = useState(initialMinutes * 60);
   const previousDuration = useRef(initialMinutes * 60);
-  const [progress, setProgress] = useState<number>(0);
+  const [progress, setProgress] = useState(0);
 
   const startDate = useRef<Temporal.PlainDateTime>();
   const endDate = useRef<Temporal.PlainDateTime>();
 
   const intervalRef = useRef<number>();
 
-  function timeLeft() {
+  function getTimeLeft() {
     if (startDate.current && endDate.current) {
       return startDate.current.until(endDate.current);
     } else {
@@ -19,16 +19,16 @@ export function useTimer(initialMinutes: number) {
     }
   }
 
-  const advanceTimer = () => {
+  function advanceTimer() {
     if (!startDate.current || !endDate.current) return;
 
     const timePassed = startDate.current.until(Temporal.Now.plainDateTimeISO());
     startDate.current = startDate.current.add(timePassed);
 
-    const secondsLeft = timeLeft().total("seconds");
+    const secondsLeft = getTimeLeft().total("seconds");
     const totalDuration = previousDuration.current;
     setProgress(1 - secondsLeft / totalDuration);
-  };
+  }
 
   function start(duration: number) {
     const _duration = Temporal.Duration.from({ minutes: duration });
@@ -55,7 +55,7 @@ export function useTimer(initialMinutes: number) {
   }
 
   function resume() {
-    endDate.current = Temporal.Now.plainDateTimeISO().add(timeLeft());
+    endDate.current = Temporal.Now.plainDateTimeISO().add(getTimeLeft());
 
     intervalRef.current = setInterval(advanceTimer, 100);
   }
@@ -77,6 +77,6 @@ export function useTimer(initialMinutes: number) {
     resume,
     stop,
     setDuration: setDurationFromMinutes,
-    timeLeft,
+    timeLeft: getTimeLeft,
   };
 }
