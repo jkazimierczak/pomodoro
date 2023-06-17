@@ -185,6 +185,14 @@ export function Timer({ ...props }: ITimerProps) {
     timerState.currentSessionIdx,
   ]);
 
+  function isSessionPaused(idx: number) {
+    return (
+      idx === timerState.currentSessionIdx &&
+      timerState.status !== PomodoroStatus.UNSTARTED &&
+      currentSession.type === PomodoroType.SESSION
+    );
+  }
+
   return (
     <div {...props}>
       <span
@@ -210,16 +218,14 @@ export function Timer({ ...props }: ITimerProps) {
         {progressCircles.map((circle, idx) => (
           <IconContext.Provider
             key={`TimerState${idx}`}
-            value={
-              idx === timerState.currentSessionIdx &&
-              timerState.status !== PomodoroStatus.UNSTARTED &&
-              currentSession.type === PomodoroType.SESSION
-                ? { size: "1.25em", className: "transition-all duration-500 dark:text-neutral-200" }
-                : {
-                    size: "1.25em",
-                    className: "text-gray-300 transition-all duration-500 dark:text-neutral-500",
-                  }
-            }
+            value={{
+              size: "1.25em",
+              className: clsx({
+                "transition-all duration-500": true,
+                "dark:text-neutral-200": isSessionPaused(idx),
+                "text-gray-300 dark:text-neutral-500": !isSessionPaused(idx),
+              }),
+            }}
           >
             <>
               {idx !== 0 && idx % settings.sessionsBeforeLongBreak === 0 && (
@@ -249,7 +255,9 @@ export function Timer({ ...props }: ITimerProps) {
                 onMouseLeave={() => setDimmedButtons([])}
                 className={clsx({
                   "transition-colors duration-200 ease-linear dark:text-neutral-200": true,
-                  "text-gray-300 dark:text-neutral-500": dimmedButtons.includes(ButtonNames.START),
+                  "text-neutral-300 dark:text-neutral-500": dimmedButtons.includes(
+                    ButtonNames.START
+                  ),
                 })}
               >
                 <FiPlay />
@@ -263,7 +271,9 @@ export function Timer({ ...props }: ITimerProps) {
                 onMouseLeave={() => setDimmedButtons([])}
                 className={clsx({
                   "transition-colors duration-200 ease-linear dark:text-neutral-200": true,
-                  "text-gray-300 dark:text-neutral-500": dimmedButtons.includes(ButtonNames.STOP),
+                  "text-neutral-300 dark:text-neutral-500": dimmedButtons.includes(
+                    ButtonNames.STOP
+                  ),
                 })}
               >
                 <FiX />
@@ -277,7 +287,9 @@ export function Timer({ ...props }: ITimerProps) {
                 onMouseLeave={() => setDimmedButtons([])}
                 className={clsx({
                   "transition-colors duration-200 ease-linear dark:text-neutral-200": true,
-                  "text-gray-300 dark:text-neutral-500": dimmedButtons.includes(ButtonNames.PAUSE),
+                  "text-neutral-300 dark:text-neutral-500": dimmedButtons.includes(
+                    ButtonNames.PAUSE
+                  ),
                 })}
               >
                 <FiPause />
@@ -291,7 +303,7 @@ export function Timer({ ...props }: ITimerProps) {
                 className={clsx({
                   "w-9 text-center text-3xl transition-colors duration-200 ease-linear dark:text-neutral-200":
                     true,
-                  "text-gray-300 dark:text-neutral-500": dimmedButtons.includes(
+                  "text-neutral-300 dark:text-neutral-500": dimmedButtons.includes(
                     ButtonNames.ADD_ONE_MINUTE
                   ),
                 })}
@@ -307,7 +319,7 @@ export function Timer({ ...props }: ITimerProps) {
                   onMouseLeave={() => setDimmedButtons([])}
                   className={clsx({
                     "transition-colors duration-200 ease-linear dark:text-neutral-200": true,
-                    "text-gray-300 dark:text-neutral-500": dimmedButtons.includes(
+                    "text-neutral-300 dark:text-neutral-500": dimmedButtons.includes(
                       ButtonNames.RESUME
                     ),
                   })}
