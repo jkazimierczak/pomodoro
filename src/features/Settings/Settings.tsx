@@ -121,7 +121,7 @@ export function Settings({ onClose, ...params }: Settings) {
               type="time"
               id="startNewDayAt"
               {...register("startNewDayAt")}
-              className="dark:bg-dark"
+              className="dark:bg-neutral-900"
             />
           </div>
           <div className={"mt-2 flex justify-between"}>

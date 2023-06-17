@@ -30,7 +30,7 @@ export function App() {
   }
 
   return (
-    <div className="relative grid h-screen justify-center transition-colors dark:bg-dark">
+    <div className="relative grid h-screen justify-center transition-colors dark:bg-neutral-900">
       <Timer
         className="absolute left-1/2 top-1/2"
         style={{
@@ -40,15 +40,17 @@ export function App() {
 
       <>
         <div className="absolute right-0 top-0 m-6 flex gap-4">
-          <IconContext.Provider value={{ size: "2em", className: "dark:text-neutral-200" }}>
+          <IconContext.Provider
+            value={{ size: "1.75em", className: "text-neutral-900 dark:text-neutral-300" }}
+          >
             <button onClick={toggleAppTheme}>{isDarkModeEnabled ? <FiSun /> : <FiMoon />}</button>
             <button onClick={toggleSound}>{isSoundEnabled ? <FiBell /> : <FiBellOff />}</button>
             <IconContext.Provider
               value={{
-                size: "2em",
+                size: "1.75em",
                 className: clsx({
-                  "transition-colors": true,
-                  "text-neutral-300": isStarted,
+                  "text-neutral-900 transition-colors dark:text-neutral-300": true,
+                  "!text-neutral-200 dark:!text-neutral-700": isStarted,
                 }),
               }}
             >
@@ -60,7 +62,7 @@ export function App() {
         </div>
         <Portal isOpen={isOpen} close={closePortal}>
           <Settings
-            className="absolute right-0 top-0 h-full w-screen bg-white p-5 shadow shadow-gray-700 dark:bg-dark dark:text-neutral-200 sm:w-[440px]"
+            className="absolute right-0 top-0 h-full w-screen bg-white p-5 shadow shadow-gray-700 dark:bg-neutral-900 dark:text-neutral-200 sm:w-[440px]"
             onClose={closePortal}
           />
         </Portal>

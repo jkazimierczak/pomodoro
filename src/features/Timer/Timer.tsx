@@ -185,7 +185,7 @@ export function Timer({ ...props }: ITimerProps) {
     timerState.currentSessionIdx,
   ]);
 
-  function isSessionPaused(idx: number) {
+  function isPomodoroStarted(idx: number) {
     return (
       idx === timerState.currentSessionIdx &&
       timerState.status !== PomodoroStatus.UNSTARTED &&
@@ -199,12 +199,12 @@ export function Timer({ ...props }: ITimerProps) {
         className="relative bottom-10 flex items-center justify-center gap-2 hover:cursor-pointer"
         onClick={toggleNextSessionType}
       >
-        <p className="w-max select-none text-center text-4xl dark:text-neutral-200">
+        <p className="w-max select-none text-center text-4xl text-neutral-900 dark:text-neutral-100">
           {sessionStateText}
         </p>
         {timerState.status === PomodoroStatus.UNSTARTED && (
           <span className="rotate-90">
-            <IconContext.Provider value={{ className: "dark:text-neutral-200" }}>
+            <IconContext.Provider value={{ className: "text-neutral-700 dark:text-neutral-300" }}>
               <FiCode />
             </IconContext.Provider>
           </span>
@@ -221,15 +221,15 @@ export function Timer({ ...props }: ITimerProps) {
             value={{
               size: "1.25em",
               className: clsx({
-                "transition-all duration-500": true,
-                "dark:text-neutral-200": isSessionPaused(idx),
-                "text-gray-300 dark:text-neutral-500": !isSessionPaused(idx),
+                "transition-all": true,
+                "text-sky-500": isPomodoroStarted(idx),
+                "text-neutral-300 dark:text-neutral-500": !isPomodoroStarted(idx),
               }),
             }}
           >
             <>
               {idx !== 0 && idx % settings.sessionsBeforeLongBreak === 0 && (
-                <span className={"mx-1 block"} />
+                <span className="mx-1 block" />
               )}
               {circle}
             </>
@@ -247,15 +247,16 @@ export function Timer({ ...props }: ITimerProps) {
       />
       <div className="relative top-10 flex justify-center">
         <div className="inline-flex justify-center gap-6">
-          <IconContext.Provider value={{ size: "2.25em" }}>
+          <IconContext.Provider value={{ size: "2.5em" }}>
             {timerState.status === PomodoroStatus.UNSTARTED && (
               <button
                 onClick={onStartClick}
                 onMouseEnter={() => dimAllButtonsExcept(ButtonNames.START)}
                 onMouseLeave={() => setDimmedButtons([])}
                 className={clsx({
-                  "transition-colors duration-200 ease-linear dark:text-neutral-200": true,
-                  "text-neutral-300 dark:text-neutral-500": dimmedButtons.includes(
+                  "text-neutral-900 transition-colors duration-200 ease-linear dark:text-neutral-300":
+                    true,
+                  "!text-neutral-300 dark:!text-neutral-500": dimmedButtons.includes(
                     ButtonNames.START
                   ),
                 })}
@@ -270,8 +271,9 @@ export function Timer({ ...props }: ITimerProps) {
                 onMouseEnter={() => dimAllButtonsExcept(ButtonNames.STOP)}
                 onMouseLeave={() => setDimmedButtons([])}
                 className={clsx({
-                  "transition-colors duration-200 ease-linear dark:text-neutral-200": true,
-                  "text-neutral-300 dark:text-neutral-500": dimmedButtons.includes(
+                  "text-neutral-900 transition-colors duration-200 ease-linear dark:text-neutral-300":
+                    true,
+                  "!text-neutral-300 dark:!text-neutral-500": dimmedButtons.includes(
                     ButtonNames.STOP
                   ),
                 })}
@@ -286,8 +288,9 @@ export function Timer({ ...props }: ITimerProps) {
                 onMouseEnter={() => dimAllButtonsExcept(ButtonNames.PAUSE)}
                 onMouseLeave={() => setDimmedButtons([])}
                 className={clsx({
-                  "transition-colors duration-200 ease-linear dark:text-neutral-200": true,
-                  "text-neutral-300 dark:text-neutral-500": dimmedButtons.includes(
+                  "text-neutral-900 transition-colors duration-200 ease-linear dark:text-neutral-300":
+                    true,
+                  "!text-neutral-300 dark:!text-neutral-500": dimmedButtons.includes(
                     ButtonNames.PAUSE
                   ),
                 })}
@@ -301,9 +304,9 @@ export function Timer({ ...props }: ITimerProps) {
                 onMouseEnter={() => dimAllButtonsExcept(ButtonNames.ADD_ONE_MINUTE)}
                 onMouseLeave={() => setDimmedButtons([])}
                 className={clsx({
-                  "w-9 text-center text-3xl transition-colors duration-200 ease-linear dark:text-neutral-200":
+                  "w-9 text-center text-3xl transition-colors duration-200 ease-linear dark:text-neutral-300":
                     true,
-                  "text-neutral-300 dark:text-neutral-500": dimmedButtons.includes(
+                  "!text-neutral-300 dark:!text-neutral-500": dimmedButtons.includes(
                     ButtonNames.ADD_ONE_MINUTE
                   ),
                 })}
@@ -318,8 +321,9 @@ export function Timer({ ...props }: ITimerProps) {
                   onMouseEnter={() => dimAllButtonsExcept(ButtonNames.RESUME)}
                   onMouseLeave={() => setDimmedButtons([])}
                   className={clsx({
-                    "transition-colors duration-200 ease-linear dark:text-neutral-200": true,
-                    "text-neutral-300 dark:text-neutral-500": dimmedButtons.includes(
+                    "text-neutral-900 transition-colors duration-200 ease-linear dark:text-neutral-300":
+                      true,
+                    "!text-neutral-300 dark:!text-neutral-500": dimmedButtons.includes(
                       ButtonNames.RESUME
                     ),
                   })}
