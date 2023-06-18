@@ -11,9 +11,9 @@ import { updateSettings } from "@/features/Settings/settingsSlice";
 import { setNextMidnight } from "@/app/appSlice";
 import { getNextMidnightFromString } from "@/common/helpers";
 import { isDarkMode, setTheme, Theme } from "@/common/darkMode";
-import { LargeInputTile } from "@/features/Settings/Inputs/LargeInputTile";
+import { LargeInputTile } from "./Inputs";
+import { InputNumber } from "./Inputs";
 import clsx from "clsx";
-import { InputTile } from "@/features/Settings/Inputs/InputTile";
 
 interface Settings extends ComponentProps<"form"> {
   onClose: () => void;
@@ -122,19 +122,37 @@ export function Settings({ onClose, ...params }: Settings) {
 
         <FormSection title="Other">
           <div className="mb-2.5 flex items-center justify-between">
-            <p className="dark:text-neutral-300">Sessions before long break</p>
+            <label htmlFor="sessionsBeforeLongBreak">Sessions before long break</label>
             <Controller
               control={control}
               name="sessionsBeforeLongBreak"
-              render={({ field }) => <InputTile min={1} max={10} size={2} {...field} />}
+              render={({ field }) => (
+                <InputNumber
+                  id="sessionsBeforeLongBreak"
+                  min={1}
+                  max={10}
+                  size={2}
+                  {...field}
+                  onClick={(event) => event.currentTarget.select()}
+                />
+              )}
             />
           </div>
           <div className="mb-2.5 flex items-center justify-between">
-            <p className="dark:text-neutral-300">Daily goal</p>
+            <label htmlFor="dailyGoal">Daily goal</label>
             <Controller
               control={control}
               name="dailyGoal"
-              render={({ field }) => <InputTile min={1} max={16} size={2} {...field} />}
+              render={({ field }) => (
+                <InputNumber
+                  id="dailyGoal"
+                  min={1}
+                  max={10}
+                  size={2}
+                  {...field}
+                  onClick={(event) => event.currentTarget.select()}
+                />
+              )}
             />
           </div>
           <div className="mb-2.5 flex items-center justify-between">
