@@ -1,8 +1,8 @@
-import { createListenerMiddleware } from "@reduxjs/toolkit";
-import { AppStartListening } from "@/store/store";
+import { AnyAction, createListenerMiddleware, isAnyOf, ListenerEffectAPI } from "@reduxjs/toolkit";
+import { AppDispatch, AppStartListening, RootState } from "@/store/store";
 import { Temporal } from "@js-temporal/polyfill";
 import { setNextMidnight } from "@/appSlice";
-import { finished, resetProgress } from "@/features/Timer/timerSlice";
+import { finished, resetProgress, start } from "@/features/Timer/timerSlice";
 import { getNextMidnight } from "@/store/helpers";
 
 const LS_NEXT_MIDNIGHT_KEY = "next_midnight";
@@ -15,28 +15,55 @@ export function getStoredNextMidnight(): string | null {
 export const nightOwlMiddleware = createListenerMiddleware();
 export const startAppListening = nightOwlMiddleware.startListening as AppStartListening;
 
+/**
+ * Try to update the next midnight if the current one is out of date.
+ * If the current one is up-to-date nothing is changed.
+ */
+function tryUpdateNextMidnight(
+  action: AnyAction,
+  listenerApi: ListenerEffectAPI<RootState, AppDispatch>
+) {
+  const state = listenerApi.getState();
+
+  const nextMidnight = Temporal.PlainDateTime.from(state.app.nextMidnight);
+  const now = Temporal.Now.plainDateTime("gregory");
+
+  if (Temporal.PlainDateTime.compare(nextMidnight, now) < 0) {
+    const offset = Temporal.PlainTime.from(state.settings.startNewDayAt);
+    const nextMidnight = getNextMidnight(offset.hour, offset.minute);
+
+    listenerApi.dispatch(setNextMidnight(nextMidnight.toString()));
+    listenerApi.dispatch(resetProgress());
+  }
+}
+
+/**
+ * Ensure that the next midnight is up-to-date at start-up.
+ * That is, the current date < next midnight.
+ */
 startAppListening({
-  actionCreator: finished,
+  predicate: () => true,
   effect: (action, listenerApi) => {
-    const state = listenerApi.getState();
-
-    const nextMidnight = Temporal.PlainDateTime.from(state.app.nextMidnight);
-    const now = Temporal.Now.plainDateTime("gregory");
-
-    if (Temporal.PlainDateTime.compare(nextMidnight, now) < 0) {
-      const offset = Temporal.PlainTime.from(state.settings.startNewDayAt);
-      const nextMidnight = getNextMidnight(offset.hour, offset.minute);
-
-      listenerApi.dispatch(setNextMidnight(nextMidnight.toString()));
-      listenerApi.dispatch(resetProgress());
-    }
+    tryUpdateNextMidnight(action, listenerApi);
+    listenerApi.unsubscribe();
   },
 });
 
+/**
+ * Ensure that the next midnight is up-to-date at runtime.
+ * That is, the current date < next midnight.
+ */
+startAppListening({
+  matcher: isAnyOf(start, finished),
+  effect: tryUpdateNextMidnight,
+});
+
+/**
+ * Save the next midnight into the local storage.
+ */
 startAppListening({
   actionCreator: setNextMidnight,
   effect: (action, listenerApi) => {
-    console.log("saved");
     const state = listenerApi.getState();
     const nextMidnight = Temporal.PlainDateTime.from(state.app.nextMidnight);
 
