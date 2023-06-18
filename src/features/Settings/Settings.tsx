@@ -165,7 +165,8 @@ export function Settings({ onClose, ...params }: Settings) {
               type="time"
               id="startNewDayAt"
               {...register("startNewDayAt")}
-              className="border-0 p-0 dark:bg-neutral-900"
+              className="max-w-max border-0 p-0 text-right dark:bg-neutral-900"
+              onKeyDown={(event) => event.key === "Enter" && event.currentTarget.blur()}
             />
           </div>
           <div className="mb-2.5 flex items-center justify-between">
