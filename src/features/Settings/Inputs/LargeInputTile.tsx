@@ -1,27 +1,34 @@
 import { ComponentProps, forwardRef, useImperativeHandle, useRef } from "react";
-import { UnstyledNumberInput } from "./UnstyledNumberInput";
 
-interface LargeInputTile extends ComponentProps<"input"> {
-  title?: string;
+interface LargeInputTileProps extends ComponentProps<"input"> {
+  title: string;
 }
 
-export const LargeInputTile = forwardRef<HTMLInputElement, LargeInputTile>((props, ref) => {
-  const inputRef = useRef<HTMLInputElement>(null);
+export const LargeInputTile = forwardRef<HTMLInputElement, LargeInputTileProps>(
+  ({ title, ...props }, ref) => {
+    const inputRef = useRef<HTMLInputElement>(null);
 
-  useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
+    useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
 
-  function focusInput() {
-    if (!inputRef.current) return;
+    function focusInput() {
+      if (!inputRef.current) return;
 
-    inputRef.current.focus();
+      inputRef.current.select();
+    }
+
+    return (
+      <div
+        className="flex w-full flex-col justify-center rounded bg-sky-500 py-3 text-neutral-100"
+        onClick={focusInput}
+      >
+        <label className="mb-1 text-center text-sm font-light uppercase">{title}</label>
+        <input
+          type="number"
+          ref={inputRef}
+          className="border-none bg-transparent p-0 text-center text-3xl font-medium [appearance:textfield] focus:ring-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+          {...props}
+        />
+      </div>
+    );
   }
-
-  return (
-    <UnstyledNumberInput
-      ref={inputRef}
-      inputClassName="text-3xl font-medium"
-      className="flex w-full flex-col justify-center rounded bg-sky-500 py-3 text-neutral-100"
-      {...props}
-    />
-  );
-});
+);
