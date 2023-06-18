@@ -1,6 +1,6 @@
-import { ComponentProps, useEffect } from "react";
+import { ComponentProps, FormEvent, useEffect, useState } from "react";
 import { IconContext } from "react-icons";
-import { FiSettings, FiRotateCcw, FiSave, FiX } from "react-icons/fi";
+import { FiRotateCcw, FiSave, FiSettings, FiX } from "react-icons/fi";
 import { FormSection } from "@/features/Settings/FormSection";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
@@ -14,7 +14,6 @@ import { isDarkMode, setTheme, Theme } from "@/common/darkMode";
 import { LargeInputTile } from "@/features/Settings/Inputs/LargeInputTile";
 import clsx from "clsx";
 import { InputTile } from "@/features/Settings/Inputs/InputTile";
-import { UnstyledNumberInput } from "@/features/Settings/Inputs/UnstyledNumberInput";
 
 interface Settings extends ComponentProps<"form"> {
   onClose: () => void;
@@ -23,6 +22,8 @@ interface Settings extends ComponentProps<"form"> {
 export function Settings({ onClose, ...params }: Settings) {
   const dispatch = useAppDispatch();
   const settingsState = useAppSelector((state) => state.settings);
+
+  const [selectedTheme, setSelectedTheme] = useState(isDarkMode() ? Theme.DARK : Theme.LIGHT);
 
   const {
     register,
@@ -53,6 +54,13 @@ export function Settings({ onClose, ...params }: Settings) {
   useEffect(() => {
     reset(settingsState);
   }, [isSubmitSuccessful]);
+
+  function selectTheme(e: FormEvent<HTMLButtonElement>, theme: Theme) {
+    e.preventDefault();
+
+    setTheme(theme);
+    setSelectedTheme(theme);
+  }
 
   return (
     <>
@@ -148,18 +156,18 @@ export function Settings({ onClose, ...params }: Settings) {
               <button
                 className={clsx({
                   "rounded-l-sm px-4 transition-colors": true,
-                  "bg-sky-500 text-neutral-100": !isDarkMode(),
+                  "bg-sky-500 text-neutral-100": selectedTheme === Theme.LIGHT,
                 })}
-                onClick={() => setTheme(Theme.LIGHT)}
+                onClick={(e) => selectTheme(e, Theme.LIGHT)}
               >
                 Light
               </button>
               <button
                 className={clsx({
                   "rounded-r-sm px-4 transition-colors": true,
-                  "bg-sky-500": isDarkMode(),
+                  "bg-sky-500": selectedTheme === Theme.DARK,
                 })}
-                onClick={() => setTheme(Theme.DARK)}
+                onClick={(e) => selectTheme(e, Theme.DARK)}
               >
                 Dark
               </button>
