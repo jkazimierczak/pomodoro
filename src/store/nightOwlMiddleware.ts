@@ -7,9 +7,9 @@ import { getNextMidnight } from "@/store/helpers";
 
 const LS_NEXT_MIDNIGHT_KEY = "next_midnight";
 
-export function getStoredNextMidnight(): string | null {
+export function getStoredNextMidnight(): Temporal.PlainDateTime | null {
   const stored = localStorage.getItem(LS_NEXT_MIDNIGHT_KEY);
-  return stored ? stored : null;
+  return stored ? Temporal.PlainDateTime.from(stored) : null;
 }
 
 export const nightOwlMiddleware = createListenerMiddleware();
