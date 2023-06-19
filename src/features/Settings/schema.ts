@@ -18,6 +18,6 @@ export const defaultSettings: SettingsFormData = {
   longBreakDuration: 20,
   sessionsBeforeLongBreak: 4,
   dailyGoal: 8,
-  canPlaySound: false,
+  canPlaySound: true,
   startNewDayAt: "04:00",
 };
