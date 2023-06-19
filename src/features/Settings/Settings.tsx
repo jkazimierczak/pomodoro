@@ -1,6 +1,6 @@
 import { ComponentProps, FormEvent, useEffect, useState } from "react";
 import { IconContext } from "react-icons";
-import { FiRotateCcw, FiSave, FiSettings, FiX } from "react-icons/fi";
+import { FiCheck, FiRotateCcw, FiSave, FiSettings, FiX } from "react-icons/fi";
 import { FormSection } from "@/features/Settings/FormSection";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
@@ -11,8 +11,7 @@ import { updateSettings } from "@/features/Settings/settingsSlice";
 import { setNextMidnight } from "@/app/appSlice";
 import { getNextMidnightFromString } from "@/common/helpers";
 import { isDarkMode, setTheme, Theme } from "@/common/darkMode";
-import { LargeInputTile } from "./Inputs";
-import { InputNumber } from "./Inputs";
+import { InputNumber, LargeInputTile } from "./Inputs";
 import clsx from "clsx";
 
 interface Settings extends ComponentProps<"form"> {
@@ -24,6 +23,7 @@ export function Settings({ onClose, ...params }: Settings) {
   const settingsState = useAppSelector((state) => state.settings);
 
   const [selectedTheme, setSelectedTheme] = useState(isDarkMode() ? Theme.DARK : Theme.LIGHT);
+  const [confirmRestore, setConfirmRestore] = useState(false);
 
   const {
     register,
@@ -195,9 +195,51 @@ export function Settings({ onClose, ...params }: Settings) {
         </FormSection>
 
         <FormSection title="Danger zone">
-          <p className={"flex items-center gap-2 hover:cursor-pointer"} onClick={restoreDefault}>
-            <FiRotateCcw /> Restore default settings
-          </p>
+          <IconContext.Provider value={{ size: "1em" }}>
+            {!confirmRestore ? (
+              <p
+                className={"flex items-center gap-2 hover:cursor-pointer"}
+                onClick={() => setConfirmRestore(true)}
+              >
+                <FiRotateCcw /> Restore default settings
+              </p>
+            ) : (
+              <div className="mb-2.5 flex items-center justify-between">
+                <p className="">Are you sure?</p>
+                <div className="text-md flex rounded border border-neutral-300 dark:border-neutral-700">
+                  <button
+                    className={clsx({
+                      "box-border flex w-20 items-center gap-2 rounded-l-sm px-4 transition-colors":
+                        true,
+                      "bg-sky-500 text-neutral-100": selectedTheme === Theme.LIGHT,
+                    })}
+                    onClick={() => {
+                      restoreDefault();
+                      setConfirmRestore(false);
+                    }}
+                  >
+                    <span>
+                      <FiCheck />
+                    </span>
+                    Yes
+                  </button>
+                  <button
+                    className={clsx({
+                      "box-border flex w-20 items-center gap-2 rounded-r-sm px-4 transition-colors":
+                        true,
+                      "bg-sky-500": selectedTheme === Theme.DARK,
+                    })}
+                    onClick={() => setConfirmRestore(false)}
+                  >
+                    <span>
+                      <FiX />
+                    </span>
+                    No
+                  </button>
+                </div>
+              </div>
+            )}
+          </IconContext.Provider>
         </FormSection>
       </form>
     </>
