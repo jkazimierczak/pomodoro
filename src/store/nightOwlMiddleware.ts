@@ -1,7 +1,6 @@
 import { AnyAction, createListenerMiddleware, isAnyOf, ListenerEffectAPI } from "@reduxjs/toolkit";
-import { AppDispatch, AppStartListening, RootState } from "@/app/store";
+import { AppDispatch, AppStartListening, RootState, setNextMidnight } from "@/app";
 import { Temporal } from "@js-temporal/polyfill";
-import { setNextMidnight } from "@/app/appSlice";
 import { finished, resetProgress, start } from "@/features/Timer/timerSlice";
 import { getNextMidnight } from "@/common/helpers";
 import { updateSettings } from "@/features/Settings/settingsSlice";
@@ -14,7 +13,7 @@ export function getStoredNextMidnight(): Temporal.PlainDateTime | null {
 }
 
 export const nightOwlMiddleware = createListenerMiddleware();
-export const startAppListening = nightOwlMiddleware.startListening as AppStartListening;
+const startAppListening = nightOwlMiddleware.startListening as AppStartListening;
 
 /**
  * Try to update the next midnight if the current one is out of date.

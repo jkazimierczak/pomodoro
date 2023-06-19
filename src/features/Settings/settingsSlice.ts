@@ -1,5 +1,15 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { defaultSettings, SettingsFormData } from "./schema";
+import { SettingsFormData } from "./schema";
+
+export const defaultSettings: SettingsFormData = {
+  sessionDuration: 25,
+  breakDuration: 5,
+  longBreakDuration: 20,
+  sessionsBeforeLongBreak: 4,
+  dailyGoal: 8,
+  canPlaySound: true,
+  startNewDayAt: "04:00",
+};
 
 export const settingsSlice = createSlice({
   name: "settings",

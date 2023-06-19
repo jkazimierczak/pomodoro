@@ -1,17 +1,13 @@
 import { ComponentProps, FormEvent, useEffect, useState } from "react";
 import { IconContext } from "react-icons";
-import { FiCheck, FiRotateCcw, FiSave, FiSettings, FiX } from "react-icons/fi";
-import { FormSection } from "@/features/Settings/FormSection";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { defaultSettings, SettingsFormData, settingsSchema } from "@/features/Settings/schema";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { FiCheck, FiRotateCcw, FiSave, FiSettings, FiX } from "react-icons/fi";
 import { useAppDispatch, useAppSelector } from "@/app";
-import { updateSettings } from "@/features/Settings/settingsSlice";
-import { setNextMidnight } from "@/app/appSlice";
-import { getNextMidnightFromString } from "@/common/helpers";
-import { isDarkMode, setTheme, Theme } from "@/common/darkMode";
+import { updateSettings, defaultSettings, SettingsFormData, settingsSchema, FormSection } from ".";
 import { InputNumber, LargeInputTile } from "./Inputs";
+import { isDarkMode, setTheme, Theme } from "@/common/darkMode";
 import clsx from "clsx";
 
 interface Settings extends ComponentProps<"form"> {

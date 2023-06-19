@@ -11,7 +11,7 @@ import {
   FiX,
 } from "react-icons/fi";
 import { IconContext } from "react-icons";
-import { useAppDispatch, useAppSelector } from "../../store";
+import { useAppDispatch, useAppSelector } from "@/app";
 import {
   changeNextSessionType,
   finished,
@@ -25,7 +25,7 @@ import {
 } from "./timerSlice";
 import { useTimer } from "./useTimer";
 import { ActionCreatorWithoutPayload } from "@reduxjs/toolkit";
-import { readableTime } from "./helpers";
+import { readableTime } from "@/common/helpers";
 import clsx from "clsx";
 
 enum ButtonNames {

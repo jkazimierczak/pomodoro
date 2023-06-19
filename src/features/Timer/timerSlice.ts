@@ -1,7 +1,7 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { createSlice, current } from "@reduxjs/toolkit";
-import { defaultSettings } from "@/features/Settings/schema";
+import { createSlice } from "@reduxjs/toolkit";
 import { Temporal } from "@js-temporal/polyfill";
+import { defaultSettings } from "@/features/Settings";
 
 /**
  * Represents current pomodoro session state.

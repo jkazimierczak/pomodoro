@@ -1,3 +1,3 @@
-export { Timer } from "./Timer.jsx";
-
-export { default as timerReducer, timerSlice, initialTimerState } from "./timerSlice";
+export * from "./Timer.jsx";
+export * from "./timerSlice";
+export { default as timerReducer } from "./timerSlice";

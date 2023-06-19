@@ -1,8 +1,7 @@
 import { AnyAction, createListenerMiddleware } from "@reduxjs/toolkit";
 import { FinishedPomodoro, PomodoroType, resetProgress } from "@/features/Timer/timerSlice";
 import { Temporal } from "@js-temporal/polyfill";
-import { AppStartListening, RootState } from "@/app/store";
-import { finishDailyGoal } from "@/app";
+import { AppStartListening, RootState, finishDailyGoal } from "@/app";
 
 const LS_PROGRESS_KEY = "progressHistory";
 
@@ -24,7 +23,7 @@ function filterProgressSince(since: Temporal.PlainDateTime, pomodoroHistory: Fin
 }
 
 export const progressMiddleware = createListenerMiddleware();
-export const startAppListening = progressMiddleware.startListening as AppStartListening;
+const startAppListening = progressMiddleware.startListening as AppStartListening;
 
 function wasSessionFinished(action: AnyAction, currentState: RootState, originalState: RootState) {
   const previousType = originalState.timer.currentSession.type;

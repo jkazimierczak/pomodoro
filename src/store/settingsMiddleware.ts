@@ -1,6 +1,5 @@
 import { createListenerMiddleware } from "@reduxjs/toolkit";
-import { updateSettings } from "@/features/Settings/settingsSlice";
-import { defaultSettings, SettingsFormData } from "@/features/Settings/schema";
+import { updateSettings, defaultSettings, SettingsFormData } from "@/features/Settings";
 
 const LS_SETTINGS_KEY = "settings";
 

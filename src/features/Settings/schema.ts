@@ -11,13 +11,3 @@ export const settingsSchema = z.object({
 });
 
 export type SettingsFormData = z.infer<typeof settingsSchema>;
-
-export const defaultSettings: SettingsFormData = {
-  sessionDuration: 25,
-  breakDuration: 5,
-  longBreakDuration: 20,
-  sessionsBeforeLongBreak: 4,
-  dailyGoal: 8,
-  canPlaySound: true,
-  startNewDayAt: "04:00",
-};

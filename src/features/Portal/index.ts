@@ -1,2 +1,2 @@
-export { usePortal } from "./usePortal";
-export { Portal } from "./Portal";
+export * from "./Portal";
+export * from "./usePortal";
