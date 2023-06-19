@@ -170,7 +170,7 @@ export function Settings({ onClose, ...params }: Settings) {
             />
           </div>
           <div className="mb-2.5 flex items-center justify-between">
-            <p className="dark:text-neutral-300">Theme</p>
+            <p>Theme</p>
             <div className="text-md flex rounded border border-neutral-300 dark:border-neutral-700">
               <button
                 className={clsx({
