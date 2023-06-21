@@ -150,6 +150,10 @@ export function Settings({ onClose, ...params }: Settings) {
             <input type="checkbox" id="autoStartBreaks" {...register("autoStartBreaks")} />
           </div>
           <div className="mb-2.5 flex items-center justify-between">
+            <label htmlFor="autoStartSessions">Auto start sessions</label>
+            <input type="checkbox" id="autoStartSessions" {...register("autoStartSessions")} />
+          </div>
+          <div className="mb-2.5 flex items-center justify-between">
             <label htmlFor="canPlaySound">Play sound when session ends</label>
             <input type="checkbox" id="canPlaySound" {...register("canPlaySound")} />
           </div>

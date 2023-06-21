@@ -8,7 +8,8 @@ export const defaultSettings: SettingsFormData = {
   sessionsBeforeLongBreak: 4,
   dailyGoal: 8,
   canPlaySound: true,
-  autoStartBreaks: false,
+  autoStartBreaks: true,
+  autoStartSessions: false,
   startNewDayAt: "04:00",
 };
 

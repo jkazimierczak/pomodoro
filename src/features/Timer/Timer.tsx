@@ -95,12 +95,23 @@ export function Timer({ ...props }: ITimerProps) {
       audio.addEventListener("error", () => console.log("Audio Error"));
     }
 
-    if (currentSession.type === PomodoroType.SESSION && settings.autoStartBreaks) {
-      setTimeout(() => {
-        dispatch(start());
-        timer.start(settings.breakDuration);
-      }, animationMs);
+    let nextTime: number;
+    switch (currentSession.type) {
+      case PomodoroType.SESSION:
+        if (!settings.autoStartBreaks) return;
+        nextTime = settings.breakDuration;
+        break;
+      case PomodoroType.BREAK:
+      case PomodoroType.LONG_BREAK:
+        if (!settings.autoStartSessions) return;
+        nextTime = settings.sessionDuration;
+        break;
     }
+
+    setTimeout(() => {
+      dispatch(start());
+      timer.start(nextTime);
+    }, animationMs);
   }
 
   useEffect(() => {

@@ -8,6 +8,7 @@ export const settingsSchema = z.object({
   dailyGoal: z.coerce.number().min(1).max(16),
   canPlaySound: z.boolean(),
   autoStartBreaks: z.boolean(),
+  autoStartSessions: z.boolean(),
   startNewDayAt: z.string(),
 });
 
