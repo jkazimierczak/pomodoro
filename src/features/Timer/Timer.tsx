@@ -91,6 +91,17 @@ export function Timer({ ...props }: ITimerProps) {
       audio.addEventListener("canplay", () => audio.play());
       audio.addEventListener("error", () => console.log("Audio Error"));
     }
+
+    if (
+      reducerAction == finished &&
+      currentSession.type === PomodoroType.SESSION &&
+      settings.autoStartBreaks
+    ) {
+      setTimeout(() => {
+        dispatch(start());
+        timer.start(settings.breakDuration);
+      }, animationMs);
+    }
   }
 
   useEffect(() => {

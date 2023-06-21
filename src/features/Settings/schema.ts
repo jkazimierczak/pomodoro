@@ -7,6 +7,7 @@ export const settingsSchema = z.object({
   sessionsBeforeLongBreak: z.coerce.number().min(1).max(10),
   dailyGoal: z.coerce.number().min(1).max(16),
   canPlaySound: z.boolean(),
+  autoStartBreaks: z.boolean(),
   startNewDayAt: z.string(),
 });
 
