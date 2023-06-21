@@ -86,17 +86,16 @@ export function Timer({ ...props }: ITimerProps) {
     }, animationMs);
     timer.stop();
 
-    if (reducerAction == finished && settings.canPlaySound) {
+    // finished-specific code
+    if (reducerAction != finished) return;
+
+    if (settings.canPlaySound) {
       const audio = new Audio(import.meta.env.BASE_URL + "sounds/complete-chime.mp3");
       audio.addEventListener("canplay", () => audio.play());
       audio.addEventListener("error", () => console.log("Audio Error"));
     }
 
-    if (
-      reducerAction == finished &&
-      currentSession.type === PomodoroType.SESSION &&
-      settings.autoStartBreaks
-    ) {
+    if (currentSession.type === PomodoroType.SESSION && settings.autoStartBreaks) {
       setTimeout(() => {
         dispatch(start());
         timer.start(settings.breakDuration);
