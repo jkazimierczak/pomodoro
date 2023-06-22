@@ -4,6 +4,7 @@ import { Temporal } from "@js-temporal/polyfill";
 import { setNextMidnight } from "@/app/appSlice";
 import { finished, resetProgress, start } from "@/features/Timer/timerSlice";
 import { getNextMidnight } from "@/common/helpers";
+import { updateSettings } from "@/features/Settings/settingsSlice";
 
 const LS_NEXT_MIDNIGHT_KEY = "next_midnight";
 
@@ -54,7 +55,7 @@ startAppListening({
  * That is, the current date < next midnight.
  */
 startAppListening({
-  matcher: isAnyOf(start, finished),
+  matcher: isAnyOf(start, finished, updateSettings),
   effect: tryUpdateNextMidnight,
 });
 

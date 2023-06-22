@@ -37,18 +37,12 @@ export function Settings({ onClose, ...params }: Settings) {
   });
 
   function restoreDefault() {
-    const nextMidnight = getNextMidnightFromString(defaultSettings.startNewDayAt).toString();
-
     dispatch(updateSettings(defaultSettings));
-    dispatch(setNextMidnight(nextMidnight));
     reset(defaultSettings);
   }
 
   const onSubmit: SubmitHandler<SettingsFormData> = (data) => {
-    const nextMidnight = getNextMidnightFromString(data.startNewDayAt).toString();
-
     dispatch(updateSettings(data));
-    dispatch(setNextMidnight(nextMidnight));
   };
 
   useEffect(() => {
