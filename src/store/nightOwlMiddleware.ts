@@ -27,7 +27,7 @@ startAppListening({
       const offset = Temporal.PlainTime.from(state.settings.startNewDayAt);
       const nextMidnight = getNextMidnight(offset.hour, offset.minute);
 
-      listenerApi.dispatch(setNextMidnight(nextMidnight));
+      listenerApi.dispatch(setNextMidnight(nextMidnight.toString()));
       listenerApi.dispatch(resetProgress());
     }
   },

@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Temporal } from "@js-temporal/polyfill";
 import { getNextMidnight } from "@/store/helpers";
 
 interface AppState {
@@ -14,8 +13,8 @@ export const appSlice = createSlice({
   name: "app",
   initialState: initialAppState,
   reducers: {
-    setNextMidnight: (state, action: PayloadAction<Temporal.PlainDateTime>) => {
-      state.nextMidnight = action.payload.toString();
+    setNextMidnight: (state, action: PayloadAction<string>) => {
+      state.nextMidnight = action.payload;
     },
   },
 });
