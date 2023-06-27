@@ -27,6 +27,7 @@ import { useTimer } from "./useTimer";
 import { ActionCreatorWithoutPayload } from "@reduxjs/toolkit";
 import { readableTime } from "@/common/helpers";
 import clsx from "clsx";
+import { dummyAudioSrc, timerAudio } from "./timerAudio";
 
 enum ButtonNames {
   START = "START",
@@ -90,9 +91,7 @@ export function Timer({ ...props }: ITimerProps) {
     if (reducerAction != finished) return;
 
     if (settings.canPlaySound) {
-      const audio = new Audio(import.meta.env.BASE_URL + "sounds/complete-chime.mp3");
-      audio.addEventListener("canplay", () => audio.play());
-      audio.addEventListener("error", () => console.log("Audio Error"));
+      timerAudio.src = import.meta.env.BASE_URL + "sounds/complete-chime.mp3";
     }
 
     let nextTime: number;
@@ -149,6 +148,8 @@ export function Timer({ ...props }: ITimerProps) {
 
   //#region EventHandlers
   const onStartClick = () => {
+    timerAudio.src = dummyAudioSrc;
+
     dispatch(start());
     timer.start(currentSession.duration);
   };
