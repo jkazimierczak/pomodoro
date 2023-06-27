@@ -11,16 +11,20 @@ import type { Container, Engine } from "tsparticles-engine";
 import type { EmitterContainer } from "tsparticles-plugin-emitters";
 import Particles from "react-tsparticles";
 import { confettiConfig, confettiEmitter, resetDailyGoal, useAppDispatch, useAppSelector } from ".";
+import { Transition } from "@/features/Transition";
+import { useDelayUnmount } from "@/features/Transition/useDelayUnmount";
 
 export function App() {
   const containerRef = useRef<Container | null>(null);
   const { isOpen, openPortal, closePortal } = usePortal(false);
+  const isSettingsOpen = useDelayUnmount(isOpen, 300);
+  const [isDarkModeEnabled, setIsDarkModeEnabled] = useState(isDarkMode());
+
   const timerStatus = useAppSelector((state) => state.timer.status);
   const appSettings = useAppSelector((state) => state.settings);
   const isSoundEnabled = useAppSelector((state) => state.settings.canPlaySound);
-  const dispatch = useAppDispatch();
-  const [isDarkModeEnabled, setIsDarkModeEnabled] = useState(isDarkMode());
   const finishedDailyGoal = useAppSelector((state) => state.app.finishedDailyGoal);
+  const dispatch = useAppDispatch();
 
   const isStarted = timerStatus !== PomodoroStatus.UNSTARTED;
 
@@ -86,13 +90,19 @@ export function App() {
             </IconContext.Provider>
           </IconContext.Provider>
         </div>
-        <Portal isOpen={isOpen} close={closePortal}>
-          <div>
+        <Portal isOpen={isSettingsOpen} close={closePortal}>
+          <Transition
+            from="right-[-440px]"
+            to="right-0"
+            active="fixed top-0 duration-300 transition-all"
+            transitionOut={!isOpen}
+            appear
+          >
             <Settings
-              className="absolute right-0 top-0 h-screen w-screen overflow-y-auto bg-white p-5 shadow shadow-gray-700 transition-colors dark:bg-neutral-900 dark:text-neutral-200 sm:w-[440px]"
+              className="h-screen w-screen overflow-y-auto bg-white p-5 shadow shadow-gray-700 transition-colors dark:bg-neutral-900 dark:text-neutral-200 sm:w-[440px]"
               onClose={closePortal}
             />
-          </div>
+          </Transition>
         </Portal>
       </div>
     </>
