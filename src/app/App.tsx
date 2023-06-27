@@ -17,7 +17,7 @@ import { useDelayUnmount } from "@/features/Transition/useDelayUnmount";
 export function App() {
   const containerRef = useRef<Container | null>(null);
   const { isOpen, openPortal, closePortal } = usePortal(false);
-  const isSettingsOpen = useDelayUnmount(isOpen, 300);
+  const delayedIsOpen = useDelayUnmount(isOpen, 300);
   const [isDarkModeEnabled, setIsDarkModeEnabled] = useState(isDarkMode());
 
   const timerStatus = useAppSelector((state) => state.timer.status);
@@ -90,7 +90,7 @@ export function App() {
             </IconContext.Provider>
           </IconContext.Provider>
         </div>
-        <Portal isOpen={isSettingsOpen} close={closePortal}>
+        <Portal isOpen={isOpen} delayedIsOpen={delayedIsOpen} close={closePortal}>
           <Transition
             from="right-[-440px]"
             to="right-0"
