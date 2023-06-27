@@ -87,10 +87,12 @@ export function App() {
           </IconContext.Provider>
         </div>
         <Portal isOpen={isOpen} close={closePortal}>
-          <Settings
-            className="absolute right-0 top-0 h-full w-screen bg-white p-5 shadow shadow-gray-700 transition-colors dark:bg-neutral-900 dark:text-neutral-200 sm:w-[440px]"
-            onClose={closePortal}
-          />
+          <div>
+            <Settings
+              className="absolute right-0 top-0 h-screen w-screen overflow-y-auto bg-white p-5 shadow shadow-gray-700 transition-colors dark:bg-neutral-900 dark:text-neutral-200 sm:w-[440px]"
+              onClose={closePortal}
+            />
+          </div>
         </Portal>
       </div>
     </>
