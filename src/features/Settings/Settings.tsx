@@ -1,4 +1,4 @@
-import { ComponentProps, FormEvent, useEffect, useState } from "react";
+import React, { ComponentProps, FormEvent, useEffect, useState } from "react";
 import { IconContext } from "react-icons";
 import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -52,6 +52,10 @@ export function Settings({ onClose, ...params }: Settings) {
     setSelectedTheme(theme);
   }
 
+  function blurOnEnterKey(event: React.KeyboardEvent<HTMLInputElement>) {
+    event.key === "Enter" && event.currentTarget.blur();
+  }
+
   return (
     <>
       {import.meta.env.DEV && <DevTool control={control} placement="top-left" />}
@@ -90,21 +94,42 @@ export function Settings({ onClose, ...params }: Settings) {
               control={control}
               name="sessionDuration"
               render={({ field }) => (
-                <LargeInputTile title="Pomodoro" min={1} max={120} size={3} {...field} />
+                <LargeInputTile
+                  title="Pomodoro"
+                  min={1}
+                  max={120}
+                  size={3}
+                  {...field}
+                  onKeyDown={blurOnEnterKey}
+                />
               )}
             />
             <Controller
               control={control}
               name="breakDuration"
               render={({ field }) => (
-                <LargeInputTile title="Break" min={1} max={60} size={3} {...field} />
+                <LargeInputTile
+                  title="Break"
+                  min={1}
+                  max={60}
+                  size={3}
+                  {...field}
+                  onKeyDown={blurOnEnterKey}
+                />
               )}
             />
             <Controller
               control={control}
               name="longBreakDuration"
               render={({ field }) => (
-                <LargeInputTile title="Long break" min={1} max={60} size={3} {...field} />
+                <LargeInputTile
+                  title="Long break"
+                  min={1}
+                  max={60}
+                  size={3}
+                  {...field}
+                  onKeyDown={blurOnEnterKey}
+                />
               )}
             />
           </div>
@@ -124,6 +149,7 @@ export function Settings({ onClose, ...params }: Settings) {
                   size={2}
                   {...field}
                   onClick={(event) => event.currentTarget.select()}
+                  onKeyDown={blurOnEnterKey}
                 />
               )}
             />
@@ -141,6 +167,7 @@ export function Settings({ onClose, ...params }: Settings) {
                   size={2}
                   {...field}
                   onClick={(event) => event.currentTarget.select()}
+                  onKeyDown={blurOnEnterKey}
                 />
               )}
             />
@@ -164,7 +191,7 @@ export function Settings({ onClose, ...params }: Settings) {
               id="startNewDayAt"
               {...register("startNewDayAt")}
               className="max-w-max border-0 p-0 text-right dark:bg-neutral-900"
-              onKeyDown={(event) => event.key === "Enter" && event.currentTarget.blur()}
+              onKeyDown={blurOnEnterKey}
             />
           </div>
           <div className="mb-2.5 flex items-center justify-between">

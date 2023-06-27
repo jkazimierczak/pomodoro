@@ -24,6 +24,7 @@ export const LargeInputTile = forwardRef<HTMLInputElement, LargeInputTileProps>(
         <label className="mb-1 text-center text-sm font-light uppercase">{title}</label>
         <input
           type="number"
+          enterKeyHint="done"
           ref={inputRef}
           className="border-none bg-transparent p-0 text-center text-3xl font-medium [appearance:textfield] focus:ring-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
           {...props}
