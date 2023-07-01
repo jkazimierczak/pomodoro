@@ -1,4 +1,4 @@
-import React, { ComponentProps, FormEvent, useEffect, useState } from "react";
+import React, { ComponentProps, FormEvent, forwardRef, useEffect, useState } from "react";
 import { IconContext } from "react-icons";
 import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,7 +14,7 @@ interface Settings extends ComponentProps<"form"> {
   onClose: () => void;
 }
 
-export function Settings({ onClose, ...params }: Settings) {
+export const Settings = forwardRef<HTMLFormElement, Settings>(({ onClose, ...params }, ref) => {
   const dispatch = useAppDispatch();
   const settingsState = useAppSelector((state) => state.settings);
 
@@ -60,7 +60,7 @@ export function Settings({ onClose, ...params }: Settings) {
     <>
       {import.meta.env.DEV && <DevTool control={control} placement="top-left" />}
 
-      <form {...params} onSubmit={handleSubmit(onSubmit)}>
+      <form {...params} onSubmit={handleSubmit(onSubmit)} ref={ref}>
         <header className="between flex justify-between">
           <IconContext.Provider value={{ size: "1.75em" }}>
             <div className="flex items-center gap-2">
@@ -269,4 +269,4 @@ export function Settings({ onClose, ...params }: Settings) {
       </form>
     </>
   );
-}
+});

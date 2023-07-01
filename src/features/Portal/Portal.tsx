@@ -1,30 +1,13 @@
-import { MouseEventHandler, ReactNode } from "react";
+import { cloneElement, ComponentProps, forwardRef, ReactNode } from "react";
 import ReactDOM from "react-dom";
-import { Transition } from "@/features/Transition";
 
-interface Portal {
+interface PortalProps extends ComponentProps<"div"> {
   children: ReactNode;
-  delayedIsOpen: boolean;
-  isOpen: boolean;
-  close: MouseEventHandler<HTMLDivElement>;
 }
 
-export function Portal({ children, delayedIsOpen, isOpen, close }: Portal) {
-  if (!delayedIsOpen) return null;
-
+export const Portal = forwardRef<HTMLDivElement, PortalProps>(({ children }, forwardedRef) => {
   return ReactDOM.createPortal(
-    <>
-      <Transition
-        from="opacity-0"
-        to="opacity-70"
-        active="transition-opacity duration-300"
-        appear
-        transitionOut={!isOpen}
-      >
-        <div className="fixed bottom-0 left-0 right-0 top-0 bg-black" onClick={close} />
-      </Transition>
-      <div className="z-50">{children}</div>
-    </>,
-    document.querySelector("#modal") as HTMLElement
+    cloneElement(children as React.ReactElement, { ref: forwardedRef }),
+    document.querySelector("#portal") as Element
   );
-}
+});
