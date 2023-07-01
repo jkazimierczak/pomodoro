@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Temporal } from "@js-temporal/polyfill";
 import { Circle } from "./Circle";
 import {
@@ -28,6 +28,8 @@ import { ActionCreatorWithoutPayload } from "@reduxjs/toolkit";
 import { readableTime } from "@/common/helpers";
 import clsx from "clsx";
 import { dummyAudioSrc, timerAudio } from "./timerAudio";
+import { SwitchTransition } from "react-transition-group";
+import { Fade, Slide } from "@/features/Transitions";
 
 enum ButtonNames {
   START = "START",
@@ -217,23 +219,36 @@ export function Timer({ ...props }: ITimerProps) {
     );
   }
 
+  const Transition = timerState.status === PomodoroStatus.UNSTARTED ? Slide : Fade;
+
   return (
     <div {...props}>
-      <span
-        className="relative bottom-10 flex items-center justify-center gap-2 hover:cursor-pointer"
+      <div
+        className={clsx({
+          "relative bottom-10 flex justify-center": true,
+          "hover:cursor-pointer": timerState.status === PomodoroStatus.UNSTARTED,
+        })}
         onClick={toggleNextSessionType}
       >
-        <p className="w-max select-none text-center text-4xl text-neutral-900 dark:text-neutral-100">
-          {sessionStateText}
-        </p>
-        {timerState.status === PomodoroStatus.UNSTARTED && (
-          <span className="rotate-90">
-            <IconContext.Provider value={{ className: "text-neutral-700 dark:text-neutral-300" }}>
-              <FiCode />
-            </IconContext.Provider>
-          </span>
-        )}
-      </span>
+        <div className="w-max select-none text-center text-4xl text-neutral-900 dark:text-neutral-100">
+          <SwitchTransition>
+            <Transition key={sessionStateText} from="top">
+              <span className="flex items-center justify-center gap-2">
+                <p>{sessionStateText}</p>
+                {timerState.status === PomodoroStatus.UNSTARTED && (
+                  <span className="rotate-90">
+                    <IconContext.Provider
+                      value={{ className: "text-neutral-700 dark:text-neutral-300 text-base" }}
+                    >
+                      <FiCode />
+                    </IconContext.Provider>
+                  </span>
+                )}
+              </span>
+            </Transition>
+          </SwitchTransition>
+        </div>
+      </div>
 
       <ul
         className="absolute left-1/2 top-2.5 flex justify-center"
