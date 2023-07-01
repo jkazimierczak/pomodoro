@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Temporal } from "@js-temporal/polyfill";
 import { Circle } from "./Circle";
 import {
@@ -262,6 +262,8 @@ export function Timer({ ...props }: ITimerProps) {
               className: clsx({
                 "transition-all": true,
                 "text-sky-500": isPomodoroStarted(idx),
+                "animate-pulse":
+                  isPomodoroStarted(idx) && timerState.status === PomodoroStatus.PAUSED,
                 "text-neutral-300 dark:text-neutral-500": !isPomodoroStarted(idx),
               }),
             }}
@@ -305,21 +307,26 @@ export function Timer({ ...props }: ITimerProps) {
               </button>
             )}
             {[PomodoroStatus.RUNNING, PomodoroStatus.PAUSED].includes(timerState.status) && (
-              <button
-                onClick={onStopClick}
-                disabled={disableButtons}
-                onMouseEnter={() => dimAllButtonsExcept(ButtonNames.STOP)}
-                onMouseLeave={() => setDimmedButtons([])}
-                className={clsx({
-                  "text-neutral-900 transition-colors duration-200 ease-linear dark:text-neutral-300":
-                    true,
-                  "!text-neutral-300 dark:!text-neutral-500": dimmedButtons.includes(
-                    ButtonNames.STOP
-                  ),
-                })}
+              <Fade
+                in={[PomodoroStatus.RUNNING, PomodoroStatus.PAUSED].includes(timerState.status)}
+                appear
               >
-                <FiX />
-              </button>
+                <button
+                  onClick={onStopClick}
+                  disabled={disableButtons}
+                  onMouseEnter={() => dimAllButtonsExcept(ButtonNames.STOP)}
+                  onMouseLeave={() => setDimmedButtons([])}
+                  className={clsx({
+                    "text-neutral-900 transition-colors duration-200 ease-linear dark:text-neutral-300":
+                      true,
+                    "!text-neutral-300 dark:!text-neutral-500": dimmedButtons.includes(
+                      ButtonNames.STOP
+                    ),
+                  })}
+                >
+                  <FiX />
+                </button>
+              </Fade>
             )}
             {timerState.status === PomodoroStatus.RUNNING && (
               <button
@@ -339,21 +346,23 @@ export function Timer({ ...props }: ITimerProps) {
               </button>
             )}
             {timerState.status === PomodoroStatus.RUNNING && (
-              <button
-                onClick={timer.addOneMinute}
-                disabled={disableButtons}
-                onMouseEnter={() => dimAllButtonsExcept(ButtonNames.ADD_ONE_MINUTE)}
-                onMouseLeave={() => setDimmedButtons([])}
-                className={clsx({
-                  "w-9 text-center text-3xl transition-colors duration-200 ease-linear dark:text-neutral-300":
-                    true,
-                  "!text-neutral-300 dark:!text-neutral-500": dimmedButtons.includes(
-                    ButtonNames.ADD_ONE_MINUTE
-                  ),
-                })}
-              >
-                +1
-              </button>
+              <Fade in={timerState.status === PomodoroStatus.RUNNING} appear>
+                <button
+                  onClick={timer.addOneMinute}
+                  disabled={disableButtons}
+                  onMouseEnter={() => dimAllButtonsExcept(ButtonNames.ADD_ONE_MINUTE)}
+                  onMouseLeave={() => setDimmedButtons([])}
+                  className={clsx({
+                    "w-9 text-center text-3xl transition-colors duration-200 ease-linear dark:text-neutral-300":
+                      true,
+                    "!text-neutral-300 dark:!text-neutral-500": dimmedButtons.includes(
+                      ButtonNames.ADD_ONE_MINUTE
+                    ),
+                  })}
+                >
+                  +1
+                </button>
+              </Fade>
             )}
             {timerState.status === PomodoroStatus.PAUSED && (
               <>
