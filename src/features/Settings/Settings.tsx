@@ -9,6 +9,8 @@ import { updateSettings, defaultSettings, SettingsFormData, settingsSchema, Form
 import { InputNumber, LargeInputTile } from "./Inputs";
 import { isDarkMode, setTheme, Theme } from "@/common/darkMode";
 import clsx from "clsx";
+import { Temporal } from "@js-temporal/polyfill";
+import { durationToHoursMinutes } from "@/common/helpers";
 
 interface Settings extends ComponentProps<"form"> {
   onClose: () => void;
@@ -26,11 +28,20 @@ export function Settings({ onClose, ...params }: Settings) {
     control,
     handleSubmit,
     reset,
+    watch,
     formState: { isDirty, isSubmitSuccessful },
   } = useForm<SettingsFormData>({
     resolver: zodResolver(settingsSchema),
     defaultValues: defaultSettings,
   });
+
+  const sessionDurationWatch = watch("sessionDuration");
+  const dailyGoalWatch = watch("dailyGoal");
+
+  const totalTimeToFocusDuration = Temporal.Duration.from({
+    minutes: sessionDurationWatch * dailyGoalWatch,
+  });
+  const totalTimeToFocus = durationToHoursMinutes(totalTimeToFocusDuration);
 
   function restoreDefault() {
     dispatch(updateSettings(defaultSettings));
@@ -172,6 +183,11 @@ export function Settings({ onClose, ...params }: Settings) {
               )}
             />
           </div>
+          <div className="mb-2.5 flex select-none items-center justify-between text-neutral-500">
+            <p>Total time to focus</p>
+            <p>{totalTimeToFocus}</p>
+          </div>
+          <hr className="my-2.5 w-full border-neutral-300 dark:border-neutral-700" />
           <div className="mb-2.5 flex items-center justify-between">
             <label htmlFor="autoStartBreaks">Auto start breaks</label>
             <input type="checkbox" id="autoStartBreaks" {...register("autoStartBreaks")} />
