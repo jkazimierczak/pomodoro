@@ -41,7 +41,10 @@ export function Settings({ onClose, ...params }: Settings) {
   const totalTimeToFocusDuration = Temporal.Duration.from({
     minutes: sessionDurationWatch * dailyGoalWatch,
   });
-  const totalTimeToFocus = durationToHoursMinutes(totalTimeToFocusDuration);
+  const totalTimeToFocus =
+    sessionDurationWatch < 0
+      ? "(￣︿￣ *)"
+      : durationToHoursMinutes(totalTimeToFocusDuration) || "¯\\_(ツ)_/¯";
 
   function restoreDefault() {
     dispatch(updateSettings(defaultSettings));

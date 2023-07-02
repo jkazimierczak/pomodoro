@@ -19,9 +19,11 @@ export function readableTime(duration: Temporal.Duration): string {
  * Return formatted string from duration in form of <H> hour(s) <M> minute(s).
  * @param duration A Temporal.Duration instance.
  */
-export function durationToHoursMinutes(duration: Temporal.Duration): string {
+export function durationToHoursMinutes(duration: Temporal.Duration) {
   const hours = Math.floor(duration.total("hours"));
   const minutes = duration.subtract({ hours }).total("minutes");
+
+  if (hours == 0 && minutes == 0) return;
 
   const suffixH = hours > 1 ? "s" : "";
   const suffixM = minutes > 1 ? "s" : "";
