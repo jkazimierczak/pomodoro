@@ -38,6 +38,10 @@ export const store = configureStore({
         ...initialTimerState.currentSession,
         duration: preloadedSettings.sessionDuration,
       },
+      settings: {
+        dailyGoal: preloadedSettings.dailyGoal,
+        sessionsBeforeLongBreak: preloadedSettings.sessionsBeforeLongBreak,
+      },
     },
   },
   reducer: {

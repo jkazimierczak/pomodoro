@@ -51,7 +51,7 @@ export interface TimerState {
   currentSessionIdx: number;
   status: PomodoroStatus;
   history: FinishedPomodoro[];
-  settings: InitializeActionPayload;
+  settings: TimerSettings;
 }
 
 export const initialTimerState: TimerState = {
@@ -62,16 +62,14 @@ export const initialTimerState: TimerState = {
   history: [],
   currentSessionIdx: 0,
   settings: {
-    ...defaultSettings,
+    dailyGoal: defaultSettings.dailyGoal,
+    sessionsBeforeLongBreak: defaultSettings.sessionsBeforeLongBreak,
   },
   status: PomodoroStatus.UNSTARTED,
 };
 
-interface InitializeActionPayload {
+interface TimerSettings {
   dailyGoal: number;
-  sessionDuration: number;
-  breakDuration: number;
-  longBreakDuration: number;
   sessionsBeforeLongBreak: number;
 }
 
@@ -79,22 +77,11 @@ export const timerSlice = createSlice({
   name: "timer",
   initialState: initialTimerState,
   reducers: {
-    updateDurations: (state, action: PayloadAction<InitializeActionPayload>) => {
-      const durations = action.payload;
-      state.settings = { ...durations };
-
-      const currentSession = state.currentSession;
-      switch (state.currentSession.type) {
-        case PomodoroType.SESSION:
-          currentSession.duration = durations.sessionDuration;
-          break;
-        case PomodoroType.BREAK:
-          currentSession.duration = durations.breakDuration;
-          break;
-        case PomodoroType.LONG_BREAK:
-          currentSession.duration = durations.longBreakDuration;
-          break;
-      }
+    updateDuration: (state, action: PayloadAction<number>) => {
+      state.currentSession.duration = action.payload;
+    },
+    updateSettingsCopy: (state, action: PayloadAction<TimerSettings>) => {
+      state.settings = { ...action.payload };
     },
     start: (state) => {
       state.status = PomodoroStatus.RUNNING;
@@ -114,25 +101,18 @@ export const timerSlice = createSlice({
       }
 
       // Bootstrap new session
+      let nextSessionType: PomodoroType;
       const finishedSession = state.currentSession.type === PomodoroType.SESSION;
       if (finishedSession) {
         if (state.currentSessionIdx % state.settings.sessionsBeforeLongBreak === 0) {
-          state.currentSession = {
-            type: PomodoroType.LONG_BREAK,
-            duration: state.settings.longBreakDuration,
-          };
+          nextSessionType = PomodoroType.LONG_BREAK;
         } else {
-          state.currentSession = {
-            type: PomodoroType.BREAK,
-            duration: state.settings.breakDuration,
-          };
+          nextSessionType = PomodoroType.BREAK;
         }
       } else {
-        state.currentSession = {
-          type: PomodoroType.SESSION,
-          duration: state.settings.sessionDuration,
-        };
+        nextSessionType = PomodoroType.SESSION;
       }
+      state.currentSession.type = nextSessionType;
     },
     resetProgress: (state) => {
       state.currentSessionIdx = 0;
@@ -153,15 +133,12 @@ export const timerSlice = createSlice({
       switch (state.currentSession.type) {
         case PomodoroType.SESSION:
           state.currentSession.type = PomodoroType.BREAK;
-          state.currentSession.duration = state.settings.breakDuration;
           break;
         case PomodoroType.BREAK:
           state.currentSession.type = PomodoroType.LONG_BREAK;
-          state.currentSession.duration = state.settings.longBreakDuration;
           break;
         case PomodoroType.LONG_BREAK:
           state.currentSession.type = PomodoroType.SESSION;
-          state.currentSession.duration = state.settings.sessionDuration;
           break;
       }
     },
@@ -169,7 +146,8 @@ export const timerSlice = createSlice({
 });
 
 export const {
-  updateDurations,
+  updateDuration,
+  updateSettingsCopy,
   resetProgress,
   start,
   stop,
