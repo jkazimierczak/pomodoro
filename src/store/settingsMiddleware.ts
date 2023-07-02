@@ -3,6 +3,7 @@ import { defaultSettings, SettingsFormData, updateSettings } from "@/features/Se
 import { AppStartListening } from "@/app";
 import {
   changeNextSessionType,
+  finished,
   PomodoroType,
   updateDuration,
   updateSettingsCopy,
@@ -40,7 +41,7 @@ startAppListening({
 });
 
 startAppListening({
-  matcher: isAnyOf(updateSettings, changeNextSessionType),
+  matcher: isAnyOf(updateSettings, changeNextSessionType, finished),
   effect: (action, api) => {
     const settings = api.getState().settings;
     const sessionType = api.getState().timer.currentSession.type;
