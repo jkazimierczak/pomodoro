@@ -1,0 +1,42 @@
+import React, { ComponentProps } from "react";
+import { Panel } from "@/features/Panel";
+import { FiBarChart2 } from "react-icons/all";
+import { Tile } from "@/features/Stats/Tile";
+import { Heatmap, HeatmapCell } from "@/features/Stats/Heatmap";
+
+interface StatsProps extends ComponentProps<"form"> {
+  onClose: () => void;
+}
+
+export function Stats({ onClose, ...props }: StatsProps) {
+  return (
+    <Panel
+      onClose={onClose}
+      icon={<FiBarChart2 />}
+      headerText="Stats"
+      className="absolute right-0 top-0 h-screen w-screen overflow-y-auto bg-white p-5 shadow shadow-gray-700 transition-colors dark:bg-neutral-900 dark:text-neutral-200 sm:w-[440px]"
+    >
+      <div className="mb-2.5 grid grid-cols-2 gap-2.5">
+        <Tile title="Sessions finished" body={12} />
+        <Tile title="Time focused" body={"06:32h"} />
+      </div>
+      <div className="text- mb-2.5 flex items-center justify-center gap-2.5 text-neutral-500">
+        <span>Less</span>
+        <table className="w-max border-separate border-spacing-0.5">
+          <tbody>
+            <tr>
+              <HeatmapCell level={1} />
+              <HeatmapCell level={2} />
+              <HeatmapCell level={3} />
+              <HeatmapCell level={4} />
+              <HeatmapCell level={5} />
+            </tr>
+          </tbody>
+        </table>
+        <span>More</span>
+      </div>
+      <div className="mb-1 text-center uppercase text-neutral-400">Heatmap</div>
+      <Heatmap></Heatmap>
+    </Panel>
+  );
+}

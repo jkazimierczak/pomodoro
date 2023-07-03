@@ -1,7 +1,7 @@
 import { Timer, PomodoroStatus } from "@/features/Timer";
 import { Settings, updateSettings } from "@/features/Settings";
 import { Portal, usePortal } from "@/features/Portal";
-import { FiBell, FiBellOff, FiMoon, FiSettings, FiSun } from "react-icons/all";
+import { FiBarChart2, FiBell, FiBellOff, FiMoon, FiSettings, FiSun } from "react-icons/all";
 import { IconContext } from "react-icons";
 import { isDarkMode, toggleTheme } from "@/common/darkMode";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -11,10 +11,12 @@ import type { Container, Engine } from "tsparticles-engine";
 import type { EmitterContainer } from "tsparticles-plugin-emitters";
 import Particles from "react-tsparticles";
 import { confettiConfig, confettiEmitter, resetDailyGoal, useAppDispatch, useAppSelector } from ".";
+import { Stats } from "@/features/Stats";
 
 export function App() {
   const containerRef = useRef<Container | null>(null);
-  const { isOpen, openPortal, closePortal } = usePortal(false);
+  const settings = usePortal(false);
+  const stats = usePortal(true);
   const timerStatus = useAppSelector((state) => state.timer.status);
   const appSettings = useAppSelector((state) => state.settings);
   const isSoundEnabled = useAppSelector((state) => state.settings.canPlaySound);
@@ -80,19 +82,23 @@ export function App() {
                 }),
               }}
             >
-              <button onClick={openPortal} disabled={isStarted}>
+              <button onClick={stats.openPortal} disabled={isStarted}>
+                <FiBarChart2 />
+              </button>
+              <button onClick={settings.openPortal} disabled={isStarted}>
                 <FiSettings />
               </button>
             </IconContext.Provider>
           </IconContext.Provider>
         </div>
-        <Portal isOpen={isOpen} close={closePortal}>
-          <div>
-            <Settings
-              className="absolute right-0 top-0 h-screen w-screen overflow-y-auto bg-white p-5 shadow shadow-gray-700 transition-colors dark:bg-neutral-900 dark:text-neutral-200 sm:w-[440px]"
-              onClose={closePortal}
-            />
-          </div>
+        <Portal isOpen={settings.isOpen} close={settings.closePortal}>
+          <Settings
+            onClose={settings.closePortal}
+            className="absolute right-0 top-0 h-screen w-screen overflow-y-auto bg-white p-5 shadow shadow-gray-700 transition-colors dark:bg-neutral-900 dark:text-neutral-200 sm:w-[440px]"
+          />
+        </Portal>
+        <Portal isOpen={stats.isOpen} close={stats.closePortal}>
+          <Stats onClose={stats.closePortal} />
         </Portal>
       </div>
     </>
