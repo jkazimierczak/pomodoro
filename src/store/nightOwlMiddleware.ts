@@ -4,13 +4,7 @@ import { Temporal } from "@js-temporal/polyfill";
 import { finished, resetProgress, start } from "@/features/Timer/timerSlice";
 import { getNextMidnight } from "@/common/helpers";
 import { updateSettings } from "@/features/Settings/settingsSlice";
-
-const LS_NEXT_MIDNIGHT_KEY = "next_midnight";
-
-export function getStoredNextMidnight(): Temporal.PlainDateTime | null {
-  const stored = localStorage.getItem(LS_NEXT_MIDNIGHT_KEY);
-  return stored ? Temporal.PlainDateTime.from(stored) : null;
-}
+import { LS_NEXT_MIDNIGHT_KEY } from "@/common/localStorage/nightOwl";
 
 export const nightOwlMiddleware = createListenerMiddleware();
 const startAppListening = nightOwlMiddleware.startListening as AppStartListening;

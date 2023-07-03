@@ -1,5 +1,5 @@
 import { createListenerMiddleware, isAnyOf } from "@reduxjs/toolkit";
-import { defaultSettings, SettingsFormData, updateSettings } from "@/features/Settings";
+import { updateSettings } from "@/features/Settings";
 import { AppStartListening } from "@/app";
 import {
   changeNextSessionType,
@@ -7,13 +7,7 @@ import {
   updateDuration,
   updateSettingsCopy,
 } from "@/features/Timer";
-
-const LS_SETTINGS_KEY = "settings";
-
-export function getStoredSettings(): SettingsFormData {
-  const storedSettings = localStorage.getItem(LS_SETTINGS_KEY);
-  return storedSettings ? JSON.parse(storedSettings) : defaultSettings;
-}
+import { LS_SETTINGS_KEY } from "@/common/localStorage/settings";
 
 export const settingsMiddleware = createListenerMiddleware();
 const startAppListening = settingsMiddleware.startListening as AppStartListening;
