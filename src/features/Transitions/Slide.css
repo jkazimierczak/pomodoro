@@ -1,0 +1,35 @@
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.fadeInRight {
+    animation-fill-mode: both;
+    animation-name: fadeInRight;
+    animation-duration: 300ms;
+}
+
+@keyframes fadeInBottom {
+    from {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fadeInBottom {
+    animation-fill-mode: both;
+    animation-name: fadeInBottom;
+    animation-duration: 300ms;
+}

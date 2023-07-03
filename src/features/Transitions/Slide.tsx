@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import { CSSTransition } from "react-transition-group";
 import { TransitionProps } from "./types";
 import { Direction } from "@/common";
+import "./Slide.css";
 
 const fromTop = {
   appear: "opacity-0 -translate-y-full",
@@ -12,18 +13,18 @@ const fromTop = {
 };
 
 const fromRight = {
-  appear: "transition-opacity-transform opacity-0 translate-x-full",
-  appearActive: "transition-opacity-transform opacity-100 -translate-x-0",
-  enter: "animated",
+  appear: "opacity-0",
+  appearActive: "fadeInRight",
+  enter: "opacity-0",
   enterActive: "fadeInRight",
   exitActive: "transition-opacity-transform duration-250 opacity-0 translate-x-full",
 };
 
 const fromBottom = {
-  appear: "opacity-0 translate-y-full",
-  appearActive: "transition-opacity-transform duration-300 opacity-100 -translate-y-0",
-  enter: "opacity-0 translate-y-full",
-  enterActive: "transition-opacity-transform duration-300 opacity-100 -translate-y-0",
+  appear: "opacity-0",
+  appearActive: "fadeInBottom",
+  enter: "opacity-0",
+  enterActive: "fadeInBottom",
   exitActive: "transition-opacity-transform duration-250 opacity-0 translate-y-full",
 };
 
@@ -35,9 +36,9 @@ const fromLeft = {
   exitActive: "transition-opacity-transform duration-250 opacity-0 -translate-x-full",
 };
 
-export interface SlideProps extends TransitionProps {
+type SlideProps = TransitionProps & {
   from?: Direction;
-}
+};
 
 export function Slide({ children, from, ...props }: SlideProps) {
   const childrenRef = useRef(null);
