@@ -11,9 +11,7 @@
 }
 
 .fadeInRight {
-    animation-fill-mode: both;
     animation-name: fadeInRight;
-    animation-duration: 300ms;
 }
 
 @keyframes fadeInBottom {
@@ -29,7 +27,5 @@
 }
 
 .fadeInBottom {
-    animation-fill-mode: both;
     animation-name: fadeInBottom;
-    animation-duration: 300ms;
 }

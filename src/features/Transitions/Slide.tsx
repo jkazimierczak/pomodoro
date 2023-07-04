@@ -1,8 +1,9 @@
-import React, { useRef } from "react";
-import { CSSTransition } from "react-transition-group";
+import React from "react";
 import { TransitionProps } from "./types";
 import { Direction } from "@/common";
+import "./base.css";
 import "./Slide.css";
+import { BaseTransition } from "@/features/Transitions/BaseTransition";
 
 const fromTop = {
   appear: "opacity-0 -translate-y-full",
@@ -13,10 +14,11 @@ const fromTop = {
 };
 
 const fromRight = {
-  appear: "opacity-0",
+  appear: "animate animate-300 opacity-0",
   appearActive: "fadeInRight",
-  enter: "opacity-0",
+  enter: "animate animate-300 opacity-0",
   enterActive: "fadeInRight",
+  exit: "animate animate-250",
   exitActive: "transition-opacity-transform duration-250 opacity-0 translate-x-full",
 };
 
@@ -41,8 +43,6 @@ type SlideProps = TransitionProps & {
 };
 
 export function Slide({ children, from, ...props }: SlideProps) {
-  const childrenRef = useRef(null);
-
   let classNames;
   switch (from) {
     case "top":
@@ -61,16 +61,8 @@ export function Slide({ children, from, ...props }: SlideProps) {
   }
 
   return (
-    <CSSTransition
-      {...props}
-      nodeRef={childrenRef}
-      timeout={{
-        enter: 300,
-        exit: 250,
-      }}
-      classNames={classNames}
-    >
-      {React.cloneElement(children, { ref: childrenRef })}
-    </CSSTransition>
+    <BaseTransition {...props} classNames={classNames}>
+      {children}
+    </BaseTransition>
   );
 }
