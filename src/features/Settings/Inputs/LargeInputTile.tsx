@@ -26,6 +26,7 @@ export const LargeInputTile = forwardRef<HTMLInputElement, LargeInputTileProps>(
           type="number"
           enterKeyHint="done"
           ref={inputRef}
+          inputMode="decimal"
           className="border-none bg-transparent p-0 text-center text-3xl font-medium [appearance:textfield] focus:ring-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
           {...props}
         />

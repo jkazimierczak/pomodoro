@@ -9,6 +9,7 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(({ ...
         type="number"
         enterKeyHint="done"
         ref={ref}
+        inputMode="decimal"
         className="w-full border-none bg-transparent p-0 text-center text-neutral-900 [appearance:textfield] focus:ring-0 dark:text-neutral-100 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         {...props}
       />

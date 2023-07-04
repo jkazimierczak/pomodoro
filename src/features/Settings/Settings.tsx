@@ -11,12 +11,14 @@ import { isDarkMode, setTheme, Theme } from "@/common/darkMode";
 import clsx from "clsx";
 import { SwitchTransition } from "react-transition-group";
 import { Fade, Slide } from "@/features/Transitions";
+import { durationToHoursMinutes } from "@/common";
+import { Temporal } from "@js-temporal/polyfill";
 
 interface Settings extends ComponentProps<"form"> {
   onClose: () => void;
 }
 
-export const Settings = forwardRef<HTMLFormElement, Settings>(({ onClose, ...params }, ref) => {
+export const Settings = forwardRef<HTMLFormElement, Settings>(({ onClose, ...params }, forwardedRef) => {
   const dispatch = useAppDispatch();
   const settingsState = useAppSelector((state) => state.settings);
 
@@ -28,11 +30,23 @@ export const Settings = forwardRef<HTMLFormElement, Settings>(({ onClose, ...par
     control,
     handleSubmit,
     reset,
+    watch,
     formState: { isDirty, isSubmitSuccessful },
   } = useForm<SettingsFormData>({
     resolver: zodResolver(settingsSchema),
     defaultValues: defaultSettings,
   });
+
+  const sessionDurationWatch = watch("sessionDuration");
+  const dailyGoalWatch = watch("dailyGoal");
+
+  const totalTimeToFocusDuration = Temporal.Duration.from({
+    minutes: sessionDurationWatch * dailyGoalWatch,
+  });
+  const totalTimeToFocus =
+    sessionDurationWatch < 0
+      ? "(￣︿￣ *)"
+      : durationToHoursMinutes(totalTimeToFocusDuration) || "¯\\_(ツ)_/¯";
 
   function restoreDefault() {
     dispatch(updateSettings(defaultSettings));
@@ -62,7 +76,7 @@ export const Settings = forwardRef<HTMLFormElement, Settings>(({ onClose, ...par
     <>
       {import.meta.env.DEV && <DevTool control={control} placement="top-left" />}
 
-      <form {...params} onSubmit={handleSubmit(onSubmit)} ref={ref}>
+      <form {...params} onSubmit={handleSubmit(onSubmit)} ref={forwardedRef}>
         <header className="between flex justify-between">
           <IconContext.Provider value={{ size: "1.75em" }}>
             <div className="flex items-center gap-2">
@@ -178,6 +192,11 @@ export const Settings = forwardRef<HTMLFormElement, Settings>(({ onClose, ...par
               )}
             />
           </div>
+          <div className="mb-2.5 flex select-none items-center justify-between text-neutral-500">
+            <p>Total time to focus</p>
+            <p>{totalTimeToFocus}</p>
+          </div>
+          <hr className="my-2.5 w-full border-neutral-300 dark:border-neutral-700" />
           <div className="mb-2.5 flex items-center justify-between">
             <label htmlFor="autoStartBreaks">Auto start breaks</label>
             <input type="checkbox" id="autoStartBreaks" {...register("autoStartBreaks")} />

@@ -34,6 +34,14 @@ export const store = configureStore({
       ...initialTimerState,
       history: preloadedProgressHistory,
       currentSessionIdx: preloadedProgressHistory.length % preloadedSettings.dailyGoal,
+      currentSession: {
+        ...initialTimerState.currentSession,
+        duration: preloadedSettings.sessionDuration,
+      },
+      settings: {
+        dailyGoal: preloadedSettings.dailyGoal,
+        sessionsBeforeLongBreak: preloadedSettings.sessionsBeforeLongBreak,
+      },
     },
   },
   reducer: {

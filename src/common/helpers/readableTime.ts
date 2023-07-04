@@ -14,3 +14,22 @@ export function readableTime(duration: Temporal.Duration): string {
 
   return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 }
+
+/**
+ * Return formatted string from duration in form of <H> hour(s) <M> minute(s).
+ * @param duration A Temporal.Duration instance.
+ */
+export function durationToHoursMinutes(duration: Temporal.Duration) {
+  const hours = Math.floor(duration.total("hours"));
+  const minutes = duration.subtract({ hours }).total("minutes");
+
+  if (hours == 0 && minutes == 0) return;
+
+  const suffixH = hours > 1 ? "s" : "";
+  const suffixM = minutes > 1 ? "s" : "";
+
+  const hoursStr = hours > 0 ? `${hours} hour${suffixH}` : "";
+  const minutesStr = minutes > 0 ? `${minutes} minute${suffixM}` : "";
+
+  return `${hoursStr} ${minutesStr}`;
+}

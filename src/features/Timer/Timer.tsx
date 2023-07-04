@@ -21,7 +21,6 @@ import {
   resume,
   start,
   stop,
-  updateDurations,
 } from "./timerSlice";
 import { useTimer } from "./useTimer";
 import { ActionCreatorWithoutPayload } from "@reduxjs/toolkit";
@@ -58,23 +57,6 @@ export function Timer({ ...props }: ITimerProps) {
   const timer = useTimer(settings.sessionDuration, 100, animationMs);
 
   const [dimmedButtons, setDimmedButtons] = useState<string[]>([]);
-
-  useEffect(() => {
-    dispatch(
-      updateDurations({
-        dailyGoal: settings.dailyGoal,
-        sessionDuration: settings.sessionDuration,
-        breakDuration: settings.breakDuration,
-        longBreakDuration: settings.longBreakDuration,
-        sessionsBeforeLongBreak: settings.sessionsBeforeLongBreak,
-      })
-    );
-  }, [
-    settings.dailyGoal,
-    settings.sessionDuration,
-    settings.breakDuration,
-    settings.longBreakDuration,
-  ]);
 
   useEffect(() => {
     timer.setDuration(currentSession.duration);
