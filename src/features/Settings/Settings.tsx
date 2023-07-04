@@ -86,7 +86,7 @@ export const Settings = forwardRef<HTMLFormElement, Settings>(
               </div>
 
               <SwitchTransition>
-                <Slide key={Number(isDirty)} from="left">
+                <Slide key={Number(isDirty)} from="left" speed="faster">
                   <div className="flex gap-2">
                     {isDirty && (
                       <button onClick={() => reset({ ...settingsState })}>
