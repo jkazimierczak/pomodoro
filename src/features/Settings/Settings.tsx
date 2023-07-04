@@ -9,6 +9,8 @@ import { updateSettings, defaultSettings, SettingsFormData, settingsSchema, Form
 import { InputNumber, LargeInputTile } from "./Inputs";
 import { isDarkMode, setTheme, Theme } from "@/common/darkMode";
 import clsx from "clsx";
+import { SwitchTransition } from "react-transition-group";
+import { Fade, Slide } from "@/features/Transitions";
 
 interface Settings extends ComponentProps<"form"> {
   onClose: () => void;
@@ -68,23 +70,27 @@ export const Settings = forwardRef<HTMLFormElement, Settings>(({ onClose, ...par
               <p className="text-3xl font-medium">Settings</p>
             </div>
 
-            <div className="flex gap-2">
-              {isDirty && (
-                <button onClick={() => reset({ ...settingsState })}>
-                  <FiRotateCcw />
-                </button>
-              )}
-              {isDirty && (
-                <button type="submit">
-                  <FiSave />
-                </button>
-              )}
-              {!isDirty && (
-                <button onClick={onClose}>
-                  <FiX />
-                </button>
-              )}
-            </div>
+            <SwitchTransition>
+              <Slide key={Number(isDirty)} from="left">
+                <div className="flex gap-2">
+                  {isDirty && (
+                    <button onClick={() => reset({ ...settingsState })}>
+                      <FiRotateCcw />
+                    </button>
+                  )}
+                  {isDirty && (
+                    <button type="submit">
+                      <FiSave />
+                    </button>
+                  )}
+                  {!isDirty && (
+                    <button onClick={onClose}>
+                      <FiX />
+                    </button>
+                  )}
+                </div>
+              </Slide>
+            </SwitchTransition>
           </IconContext.Provider>
         </header>
 
@@ -221,49 +227,53 @@ export const Settings = forwardRef<HTMLFormElement, Settings>(({ onClose, ...par
 
         <FormSection title="Danger zone">
           <IconContext.Provider value={{ size: "1em" }}>
-            {!confirmRestore ? (
-              <p
-                className={"flex items-center gap-2 hover:cursor-pointer"}
-                onClick={() => setConfirmRestore(true)}
-              >
-                <FiRotateCcw /> Restore default settings
-              </p>
-            ) : (
-              <div className="mb-2.5 flex items-center justify-between">
-                <p className="">Are you sure?</p>
-                <div className="text-md flex rounded border border-neutral-300 dark:border-neutral-700">
-                  <button
-                    className={clsx({
-                      "box-border flex w-20 items-center gap-2 rounded-l-sm px-4 transition-colors":
-                        true,
-                      "bg-sky-500 text-neutral-100": selectedTheme === Theme.LIGHT,
-                    })}
-                    onClick={() => {
-                      restoreDefault();
-                      setConfirmRestore(false);
-                    }}
+            <SwitchTransition>
+              <Fade key={Number(confirmRestore)}>
+                {!confirmRestore ? (
+                  <p
+                    className={"flex items-center gap-2 hover:cursor-pointer"}
+                    onClick={() => setConfirmRestore(true)}
                   >
-                    <span>
-                      <FiCheck />
-                    </span>
-                    Yes
-                  </button>
-                  <button
-                    className={clsx({
-                      "box-border flex w-20 items-center gap-2 rounded-r-sm px-4 transition-colors":
-                        true,
-                      "bg-sky-500": selectedTheme === Theme.DARK,
-                    })}
-                    onClick={() => setConfirmRestore(false)}
-                  >
-                    <span>
-                      <FiX />
-                    </span>
-                    No
-                  </button>
-                </div>
-              </div>
-            )}
+                    <FiRotateCcw /> Restore default settings
+                  </p>
+                ) : (
+                  <div className="mb-2.5 flex items-center justify-between">
+                    <p className="">Are you sure?</p>
+                    <div className="text-md flex rounded border border-neutral-300 dark:border-neutral-700">
+                      <button
+                        className={clsx({
+                          "box-border flex w-20 items-center gap-2 rounded-l-sm px-4 transition-colors":
+                            true,
+                          "bg-sky-500 text-neutral-100": selectedTheme === Theme.LIGHT,
+                        })}
+                        onClick={() => {
+                          restoreDefault();
+                          setConfirmRestore(false);
+                        }}
+                      >
+                        <span>
+                          <FiCheck />
+                        </span>
+                        Yes
+                      </button>
+                      <button
+                        className={clsx({
+                          "box-border flex w-20 items-center gap-2 rounded-r-sm px-4 transition-colors":
+                            true,
+                          "bg-sky-500": selectedTheme === Theme.DARK,
+                        })}
+                        onClick={() => setConfirmRestore(false)}
+                      >
+                        <span>
+                          <FiX />
+                        </span>
+                        No
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </Fade>
+            </SwitchTransition>
           </IconContext.Provider>
         </FormSection>
       </form>
