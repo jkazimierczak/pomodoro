@@ -1,6 +1,5 @@
 import { Timer, PomodoroStatus } from "@/features/Timer";
 import { Settings, updateSettings } from "@/features/Settings";
-import { Portal, usePortal } from "@/features/Portal";
 import { FiBell, FiBellOff, FiMoon, FiSettings, FiSun } from "react-icons/all";
 import { IconContext } from "react-icons";
 import { isDarkMode, toggleTheme } from "@/common/darkMode";
@@ -11,16 +10,19 @@ import type { Container, Engine } from "tsparticles-engine";
 import type { EmitterContainer } from "tsparticles-plugin-emitters";
 import Particles from "react-tsparticles";
 import { confettiConfig, confettiEmitter, resetDailyGoal, useAppDispatch, useAppSelector } from ".";
+import { useModal } from "@/features/Modal";
+import { Drawer } from "@/features/Drawer";
 
 export function App() {
   const containerRef = useRef<Container | null>(null);
-  const { isOpen, openPortal, closePortal } = usePortal(false);
+  const drawer = useModal(false);
+  const [isDarkModeEnabled, setIsDarkModeEnabled] = useState(isDarkMode());
+
   const timerStatus = useAppSelector((state) => state.timer.status);
   const appSettings = useAppSelector((state) => state.settings);
   const isSoundEnabled = useAppSelector((state) => state.settings.canPlaySound);
-  const dispatch = useAppDispatch();
-  const [isDarkModeEnabled, setIsDarkModeEnabled] = useState(isDarkMode());
   const finishedDailyGoal = useAppSelector((state) => state.app.finishedDailyGoal);
+  const dispatch = useAppDispatch();
 
   const isStarted = timerStatus !== PomodoroStatus.UNSTARTED;
 
@@ -80,20 +82,18 @@ export function App() {
                 }),
               }}
             >
-              <button onClick={openPortal} disabled={isStarted}>
+              <button onClick={drawer.open} disabled={isStarted}>
                 <FiSettings />
               </button>
             </IconContext.Provider>
           </IconContext.Provider>
         </div>
-        <Portal isOpen={isOpen} close={closePortal}>
-          <div>
-            <Settings
-              className="absolute right-0 top-0 h-screen w-screen overflow-y-auto bg-white p-5 shadow shadow-gray-700 transition-colors dark:bg-neutral-900 dark:text-neutral-200 sm:w-[440px]"
-              onClose={closePortal}
-            />
-          </div>
-        </Portal>
+        <Drawer isOpen={drawer.isOpen} onClose={drawer.close} placement="right">
+          <Settings
+            className="h-screen overflow-y-auto bg-white p-5 shadow shadow-gray-700 transition-colors dark:bg-neutral-900 dark:text-neutral-200 sm:w-[440px]"
+            onClose={drawer.close}
+          />
+        </Drawer>
       </div>
     </>
   );

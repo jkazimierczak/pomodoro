@@ -1,4 +1,4 @@
-import React, { ComponentProps, FormEvent, useEffect, useState } from "react";
+import React, { ComponentProps, FormEvent, forwardRef, useEffect, useState } from "react";
 import { IconContext } from "react-icons";
 import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,14 +9,16 @@ import { updateSettings, defaultSettings, SettingsFormData, settingsSchema, Form
 import { InputNumber, LargeInputTile } from "./Inputs";
 import { isDarkMode, setTheme, Theme } from "@/common/darkMode";
 import clsx from "clsx";
+import { SwitchTransition } from "react-transition-group";
+import { Fade, Slide } from "@/features/Transitions";
+import { durationToHoursMinutes } from "@/common";
 import { Temporal } from "@js-temporal/polyfill";
-import { durationToHoursMinutes } from "@/common/helpers";
 
 interface Settings extends ComponentProps<"form"> {
   onClose: () => void;
 }
 
-export function Settings({ onClose, ...params }: Settings) {
+export const Settings = forwardRef<HTMLFormElement, Settings>(({ onClose, ...params }, forwardedRef) => {
   const dispatch = useAppDispatch();
   const settingsState = useAppSelector((state) => state.settings);
 
@@ -74,7 +76,7 @@ export function Settings({ onClose, ...params }: Settings) {
     <>
       {import.meta.env.DEV && <DevTool control={control} placement="top-left" />}
 
-      <form {...params} onSubmit={handleSubmit(onSubmit)}>
+      <form {...params} onSubmit={handleSubmit(onSubmit)} ref={forwardedRef}>
         <header className="between flex justify-between">
           <IconContext.Provider value={{ size: "1.75em" }}>
             <div className="flex items-center gap-2">
@@ -82,23 +84,27 @@ export function Settings({ onClose, ...params }: Settings) {
               <p className="text-3xl font-medium">Settings</p>
             </div>
 
-            <div className="flex gap-2">
-              {isDirty && (
-                <button onClick={() => reset({ ...settingsState })}>
-                  <FiRotateCcw />
-                </button>
-              )}
-              {isDirty && (
-                <button type="submit">
-                  <FiSave />
-                </button>
-              )}
-              {!isDirty && (
-                <button onClick={onClose}>
-                  <FiX />
-                </button>
-              )}
-            </div>
+            <SwitchTransition>
+              <Slide key={Number(isDirty)} from="left">
+                <div className="flex gap-2">
+                  {isDirty && (
+                    <button onClick={() => reset({ ...settingsState })}>
+                      <FiRotateCcw />
+                    </button>
+                  )}
+                  {isDirty && (
+                    <button type="submit">
+                      <FiSave />
+                    </button>
+                  )}
+                  {!isDirty && (
+                    <button onClick={onClose}>
+                      <FiX />
+                    </button>
+                  )}
+                </div>
+              </Slide>
+            </SwitchTransition>
           </IconContext.Provider>
         </header>
 
@@ -240,52 +246,56 @@ export function Settings({ onClose, ...params }: Settings) {
 
         <FormSection title="Danger zone">
           <IconContext.Provider value={{ size: "1em" }}>
-            {!confirmRestore ? (
-              <p
-                className={"flex items-center gap-2 hover:cursor-pointer"}
-                onClick={() => setConfirmRestore(true)}
-              >
-                <FiRotateCcw /> Restore default settings
-              </p>
-            ) : (
-              <div className="mb-2.5 flex items-center justify-between">
-                <p className="">Are you sure?</p>
-                <div className="text-md flex rounded border border-neutral-300 dark:border-neutral-700">
-                  <button
-                    className={clsx({
-                      "box-border flex w-20 items-center gap-2 rounded-l-sm px-4 transition-colors":
-                        true,
-                      "bg-sky-500 text-neutral-100": selectedTheme === Theme.LIGHT,
-                    })}
-                    onClick={() => {
-                      restoreDefault();
-                      setConfirmRestore(false);
-                    }}
+            <SwitchTransition>
+              <Fade key={Number(confirmRestore)}>
+                {!confirmRestore ? (
+                  <p
+                    className={"flex items-center gap-2 hover:cursor-pointer"}
+                    onClick={() => setConfirmRestore(true)}
                   >
-                    <span>
-                      <FiCheck />
-                    </span>
-                    Yes
-                  </button>
-                  <button
-                    className={clsx({
-                      "box-border flex w-20 items-center gap-2 rounded-r-sm px-4 transition-colors":
-                        true,
-                      "bg-sky-500": selectedTheme === Theme.DARK,
-                    })}
-                    onClick={() => setConfirmRestore(false)}
-                  >
-                    <span>
-                      <FiX />
-                    </span>
-                    No
-                  </button>
-                </div>
-              </div>
-            )}
+                    <FiRotateCcw /> Restore default settings
+                  </p>
+                ) : (
+                  <div className="mb-2.5 flex items-center justify-between">
+                    <p className="">Are you sure?</p>
+                    <div className="text-md flex rounded border border-neutral-300 dark:border-neutral-700">
+                      <button
+                        className={clsx({
+                          "box-border flex w-20 items-center gap-2 rounded-l-sm px-4 transition-colors":
+                            true,
+                          "bg-sky-500 text-neutral-100": selectedTheme === Theme.LIGHT,
+                        })}
+                        onClick={() => {
+                          restoreDefault();
+                          setConfirmRestore(false);
+                        }}
+                      >
+                        <span>
+                          <FiCheck />
+                        </span>
+                        Yes
+                      </button>
+                      <button
+                        className={clsx({
+                          "box-border flex w-20 items-center gap-2 rounded-r-sm px-4 transition-colors":
+                            true,
+                          "bg-sky-500": selectedTheme === Theme.DARK,
+                        })}
+                        onClick={() => setConfirmRestore(false)}
+                      >
+                        <span>
+                          <FiX />
+                        </span>
+                        No
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </Fade>
+            </SwitchTransition>
           </IconContext.Provider>
         </FormSection>
       </form>
     </>
   );
-}
+});
