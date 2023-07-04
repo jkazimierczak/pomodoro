@@ -5,37 +5,38 @@ import "./base.css";
 import "./Slide.css";
 import { BaseTransition } from "@/features/Transitions/BaseTransition";
 
+const common = {
+  appear: "animate opacity-0",
+  enter: "animate opacity-0",
+  exit: "animate",
+};
+
 const fromTop = {
-  appear: "opacity-0 -translate-y-full",
-  appearActive: "transition-opacity-transform duration-300 opacity-100 translate-y-0",
-  enter: "opacity-0 -translate-y-full",
-  enterActive: "transition-opacity-transform duration-300 opacity-100 translate-y-0",
-  exitActive: "transition-opacity-transform duration-250 opacity-0 -translate-y-full",
+  ...common,
+  appearActive: "fadeInTop",
+  enterActive: "fadeInTop",
+  exitActive: "fadeOutTop",
 };
 
 const fromRight = {
-  appear: "animate opacity-0",
+  ...common,
   appearActive: "fadeInRight",
-  enter: "animate opacity-0",
   enterActive: "fadeInRight",
-  exit: "animate",
-  exitActive: "transition-opacity-transform duration-250 opacity-0 translate-x-full",
+  exitActive: "fadeOutRight",
 };
 
 const fromBottom = {
-  appear: "opacity-0",
+  ...common,
   appearActive: "fadeInBottom",
-  enter: "opacity-0",
   enterActive: "fadeInBottom",
-  exitActive: "transition-opacity-transform duration-250 opacity-0 translate-y-full",
+  exitActive: "fadeOutBottom",
 };
 
 const fromLeft = {
-  appear: "opacity-0 -translate-x-full",
-  appearActive: "transition-opacity-transform duration-300 opacity-100 translate-x-0",
-  enter: "opacity-0 -translate-x-full",
-  enterActive: "transition-opacity-transform duration-300 opacity-100 translate-x-0",
-  exitActive: "transition-opacity-transform duration-250 opacity-0 -translate-x-full",
+  ...common,
+  appearActive: "fadeInLeft",
+  enterActive: "fadeInLeft",
+  exitActive: "fadeOutLeft",
 };
 
 type SlideProps = TransitionProps & {
