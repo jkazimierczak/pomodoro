@@ -5,6 +5,7 @@ import { Tile } from "@/features/Stats/Tile";
 import { Heatmap, HeatmapCell } from "@/features/Stats/Heatmap";
 import { FinishedPomodoro } from "@/features/Timer";
 import { getStoredProgressHistory } from "@/common/localStorage";
+import { Temporal } from "@js-temporal/polyfill";
 
 interface StatsProps extends ComponentProps<"form"> {
   onClose: () => void;
@@ -27,7 +28,16 @@ function groupByDates(progress: FinishedPomodoro[]) {
 }
 
 export function Stats({ onClose, ...props }: StatsProps) {
-  const groupedByDates = groupByDates(getStoredProgressHistory());
+  const progressHistory = getStoredProgressHistory();
+  const groupedByDates = groupByDates(progressHistory);
+
+  const sessionsFinished = progressHistory.length;
+  const timeFocusedMinutes = progressHistory.reduce((acc, item) => acc + item.duration, 0);
+  const timeFocusedHours = Math.round(
+    Temporal.Duration.from({ minutes: timeFocusedMinutes }).total("hours")
+  );
+
+  console.log(progressHistory, groupedByDates);
 
   return (
     <Panel
@@ -37,8 +47,8 @@ export function Stats({ onClose, ...props }: StatsProps) {
       className="absolute right-0 top-0 h-screen w-screen overflow-y-auto bg-white p-5 shadow shadow-gray-700 transition-colors dark:bg-neutral-900 dark:text-neutral-200 sm:w-[440px]"
     >
       <div className="mb-2.5 grid grid-cols-2 gap-2.5">
-        <Tile title="Sessions finished" body={12} />
-        <Tile title="Time focused" body={"06:32h"} />
+        <Tile title="Sessions finished" body={sessionsFinished} />
+        <Tile title="Time focused" body={`${timeFocusedHours} h`} />
       </div>
 
       <div className="text- mb-2.5 flex items-center justify-center gap-2.5 text-neutral-500">
