@@ -27,14 +27,7 @@ export function getClassesFromProps(
 ): CSSTransitionClassNames {
   const { enter, exit } = timeouts;
 
-  if (speed === "fast") {
-    return {
-      ...base,
-      appear: `${base.appear} animate-${enter}`,
-      enter: `${base.enter} animate-${enter}`,
-      exit: `${base.exit} animate-${exit}`,
-    };
-  } else if (speed === "faster") {
+  if (speed) {
     return {
       ...base,
       appear: `${base.appear} animate-${enter}`,

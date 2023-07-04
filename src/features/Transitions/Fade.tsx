@@ -13,7 +13,7 @@ const classNames = {
   exitActive: "fadeOut",
 };
 
-export function Fade({ children, speed, ...props }: TransitionProps) {
+export function Fade({ children, ...props }: TransitionProps) {
   return (
     <BaseTransition {...props} classNames={classNames}>
       {children}
