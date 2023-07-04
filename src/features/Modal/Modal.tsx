@@ -82,9 +82,9 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
               "left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2":
                 !placement || placement == "center",
               "left-1/2 top-0 -translate-x-1/2": placement == "top",
-              "right-0 top-1/2 -translate-y-1/2": placement == "right",
+              "right-0 top-1/2 -translate-y-1/2 max-[440px]:left-0": placement == "right",
               "bottom-0 left-1/2 -translate-x-1/2": placement == "bottom",
-              "left-0 top-1/2 -translate-y-1/2": placement == "left",
+              "left-0 top-1/2 -translate-y-1/2  max-[440px]:right-0": placement == "left",
             })}
           >
             {React.cloneElement(children, childProps)}
