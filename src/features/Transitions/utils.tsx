@@ -2,22 +2,22 @@ import { TransitionProps, TransitionSpeed } from "@/features/Transitions/types";
 import { CSSTransitionClassNames } from "react-transition-group/CSSTransition";
 
 export function getTimeoutFromProps(speed: TransitionSpeed | undefined) {
-  if (speed === "fast") {
-    return {
-      enter: 200,
-      exit: 150,
-    };
-  } else if (speed === "faster") {
-    return {
-      enter: 150,
-      exit: 150,
-    };
-  } else {
-    return {
+  const timeouts = {
+    default: {
       enter: 300,
       exit: 250,
-    };
-  }
+    },
+    fast: {
+      enter: 200,
+      exit: 150,
+    },
+    faster: {
+      enter: 150,
+      exit: 150,
+    },
+  };
+
+  return timeouts[speed ?? "default"];
 }
 
 export function getClassesFromProps(
