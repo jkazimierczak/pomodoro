@@ -14,11 +14,11 @@ const fromTop = {
 };
 
 const fromRight = {
-  appear: "animate animate-300 opacity-0",
+  appear: "animate opacity-0",
   appearActive: "fadeInRight",
-  enter: "animate animate-300 opacity-0",
+  enter: "animate opacity-0",
   enterActive: "fadeInRight",
-  exit: "animate animate-250",
+  exit: "animate",
   exitActive: "transition-opacity-transform duration-250 opacity-0 translate-x-full",
 };
 
