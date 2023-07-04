@@ -1,6 +1,6 @@
 import { Timer, PomodoroStatus } from "@/features/Timer";
 import { Settings, updateSettings } from "@/features/Settings";
-import { Portal, usePortal } from "@/features/Portal";
+import { Portal } from "@/features/Portal";
 import { FiBarChart2, FiBell, FiBellOff, FiMoon, FiSettings, FiSun } from "react-icons/all";
 import { IconContext } from "react-icons";
 import { isDarkMode, toggleTheme } from "@/common/darkMode";
@@ -12,17 +12,20 @@ import type { EmitterContainer } from "tsparticles-plugin-emitters";
 import Particles from "react-tsparticles";
 import { confettiConfig, confettiEmitter, resetDailyGoal, useAppDispatch, useAppSelector } from ".";
 import { Stats } from "@/features/Stats";
+import { useModal } from "@/features/Modal";
+import { Drawer } from "@/features/Drawer";
 
 export function App() {
   const containerRef = useRef<Container | null>(null);
-  const settings = usePortal(false);
-  const stats = usePortal(true);
+  const settings = useModal(false);
+  const stats = useModal(false);
+  const [isDarkModeEnabled, setIsDarkModeEnabled] = useState(isDarkMode());
+
   const timerStatus = useAppSelector((state) => state.timer.status);
   const appSettings = useAppSelector((state) => state.settings);
   const isSoundEnabled = useAppSelector((state) => state.settings.canPlaySound);
-  const dispatch = useAppDispatch();
-  const [isDarkModeEnabled, setIsDarkModeEnabled] = useState(isDarkMode());
   const finishedDailyGoal = useAppSelector((state) => state.app.finishedDailyGoal);
+  const dispatch = useAppDispatch();
 
   const isStarted = timerStatus !== PomodoroStatus.UNSTARTED;
 
@@ -82,24 +85,25 @@ export function App() {
                 }),
               }}
             >
-              <button onClick={stats.openPortal} disabled={isStarted}>
+              <button onClick={stats.open} disabled={isStarted}>
                 <FiBarChart2 />
               </button>
-              <button onClick={settings.openPortal} disabled={isStarted}>
+              <button onClick={settings.open} disabled={isStarted}>
                 <FiSettings />
               </button>
             </IconContext.Provider>
           </IconContext.Provider>
         </div>
-        <Portal isOpen={settings.isOpen} close={settings.closePortal}>
+
+        <Drawer isOpen={settings.isOpen} onClose={settings.close} placement="right">
           <Settings
-            onClose={settings.closePortal}
-            className="absolute right-0 top-0 h-screen w-screen overflow-y-auto bg-white p-5 shadow shadow-gray-700 transition-colors dark:bg-neutral-900 dark:text-neutral-200 sm:w-[440px]"
+            className="h-screen overflow-y-auto bg-white p-5 shadow shadow-gray-700 transition-colors dark:bg-neutral-900 dark:text-neutral-200 sm:w-[440px]"
+            onClose={settings.close}
           />
-        </Portal>
-        <Portal isOpen={stats.isOpen} close={stats.closePortal}>
-          <Stats onClose={stats.closePortal} />
-        </Portal>
+        </Drawer>
+        <Drawer isOpen={stats.isOpen} onClose={stats.close} placement="right">
+          <Stats onClose={stats.close} />
+        </Drawer>
       </div>
     </>
   );

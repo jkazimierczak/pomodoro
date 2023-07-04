@@ -1,0 +1,36 @@
+.animate {
+    animation-fill-mode: both;
+    animation-duration: 300ms;
+}
+
+.animate-1000 {
+    animation-duration: 1000ms;
+}
+
+.animate-300 {
+    animation-duration: 300ms;
+}
+
+.animate-250 {
+    animation-duration: 250ms;
+}
+
+.animate-200 {
+    animation-duration: 200ms;
+}
+
+.animate-150 {
+    animation-duration: 150ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate {
+        animation-duration: 1ms !important;
+        transition-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+    }
+
+    .animate[class*='Out'] {
+        opacity: 0;
+    }
+}
