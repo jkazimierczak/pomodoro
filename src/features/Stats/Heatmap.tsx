@@ -35,7 +35,7 @@ function getWeekDayName(number: number) {
 export function Heatmap({ data }: HeatmapProps) {
   const UTCWeekDay = new Date().getUTCDay();
   const weekday = (UTCWeekDay + 1) % 7;
-  const N_COLS = 20;
+  const N_COLS = 19;
 
   const thisWeekMonday = Temporal.Now.plainDateISO().subtract({
     days: UTCWeekDay === 0 ? 6 : UTCWeekDay - 1,
@@ -50,16 +50,6 @@ export function Heatmap({ data }: HeatmapProps) {
     for (let j = 0; j <= N_COLS; j++) {
       if (j === N_COLS && i + 1 >= weekday) {
         break;
-      }
-
-      if (j === 0) {
-        const content = i % 2 == 0 ? getWeekDayName(i) : "";
-        row.push(
-          <td className="w-8 text-sm leading-3 text-neutral-500" key={`heatmap_lead_${i}`}>
-            {content}
-          </td>
-        );
-        continue;
       }
 
       let level: ReturnType<typeof levelFromData> = 1;
@@ -77,7 +67,12 @@ export function Heatmap({ data }: HeatmapProps) {
       <table className="w-max border-separate border-spacing-0.5">
         <tbody>
           {rows.map((row, i) => (
-            <tr key={`heatmap_row_${i}`}>{row}</tr>
+            <tr key={`heatmap_row_${i}`}>
+              <td className="w-8 text-sm leading-3 text-neutral-500">
+                {i % 2 === 0 && getWeekDayName(i)}
+              </td>
+              {row}
+            </tr>
           ))}
         </tbody>
       </table>
