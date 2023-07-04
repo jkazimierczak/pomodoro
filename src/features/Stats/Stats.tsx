@@ -6,6 +6,7 @@ import { Heatmap, HeatmapCell } from "@/features/Stats/Heatmap";
 import { FinishedPomodoro } from "@/features/Timer";
 import { getStoredProgressHistory } from "@/common/localStorage";
 import { Temporal } from "@js-temporal/polyfill";
+import { createHeatmapData, createThresholds, getMinMax } from "@/features/Stats/functions";
 
 interface StatsProps extends ComponentProps<"form"> {
   onClose: () => void;
@@ -37,7 +38,10 @@ export function Stats({ onClose, ...props }: StatsProps) {
     Temporal.Duration.from({ minutes: timeFocusedMinutes }).total("hours")
   );
 
-  console.log(progressHistory, groupedByDates);
+  // Heatmap
+  const minMax = getMinMax(groupedByDates);
+  const thresholds = createThresholds(minMax.min, minMax.max);
+  const heatmapData = createHeatmapData(groupedByDates, thresholds);
 
   return (
     <Panel
@@ -68,7 +72,7 @@ export function Stats({ onClose, ...props }: StatsProps) {
       </div>
 
       <div className="mb-1 text-center uppercase text-neutral-400">Heatmap</div>
-      <Heatmap data={groupedByDates} />
+      <Heatmap data={heatmapData} />
     </Panel>
   );
 }
