@@ -353,7 +353,7 @@ export function Timer({ ...props }: ITimerProps) {
                   onMouseEnter={() => dimAllButtonsExcept(ButtonNames.ADD_ONE_MINUTE)}
                   onMouseLeave={() => setDimmedButtons([])}
                   className={clsx({
-                    "w-9 text-center text-3xl transition-colors duration-200 ease-linear dark:text-neutral-300":
+                    "w-10 select-none text-center text-3xl transition-colors duration-200 ease-linear dark:text-neutral-300":
                       true,
                     "!text-neutral-300 dark:!text-neutral-500": dimmedButtons.includes(
                       ButtonNames.ADD_ONE_MINUTE
