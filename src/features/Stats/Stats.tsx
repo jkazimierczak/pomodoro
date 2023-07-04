@@ -3,12 +3,32 @@ import { Panel } from "@/features/Panel";
 import { FiBarChart2 } from "react-icons/all";
 import { Tile } from "@/features/Stats/Tile";
 import { Heatmap, HeatmapCell } from "@/features/Stats/Heatmap";
+import { FinishedPomodoro } from "@/features/Timer";
+import { getStoredProgressHistory } from "@/common/localStorage";
 
 interface StatsProps extends ComponentProps<"form"> {
   onClose: () => void;
 }
 
+/**
+ * Group progress by dates. Multiple sessions from the same date will be summed.
+ * @param progress An array of FinishedPomodoro objects.
+ */
+function groupByDates(progress: FinishedPomodoro[]) {
+  const getDate = (finishedAt: string) => finishedAt.slice(0, "0000-00-00".length);
+  const progressMap: Record<string, number> = {};
+
+  const keys = progress.map((item) => getDate(item.finishedAt));
+  keys.forEach((key) => Object.assign(progressMap, { [key]: 0 }));
+
+  progress.forEach((item) => (progressMap[getDate(item.finishedAt)] += item.duration));
+
+  return progressMap;
+}
+
 export function Stats({ onClose, ...props }: StatsProps) {
+  const groupedByDates = groupByDates(getStoredProgressHistory());
+
   return (
     <Panel
       onClose={onClose}
@@ -20,6 +40,7 @@ export function Stats({ onClose, ...props }: StatsProps) {
         <Tile title="Sessions finished" body={12} />
         <Tile title="Time focused" body={"06:32h"} />
       </div>
+
       <div className="text- mb-2.5 flex items-center justify-center gap-2.5 text-neutral-500">
         <span>Less</span>
         <table className="w-max border-separate border-spacing-0.5">
@@ -35,8 +56,9 @@ export function Stats({ onClose, ...props }: StatsProps) {
         </table>
         <span>More</span>
       </div>
+
       <div className="mb-1 text-center uppercase text-neutral-400">Heatmap</div>
-      <Heatmap></Heatmap>
+      <Heatmap data={groupedByDates} />
     </Panel>
   );
 }
