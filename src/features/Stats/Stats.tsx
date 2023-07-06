@@ -6,7 +6,12 @@ import { Heatmap, HeatmapCell } from "@/features/Stats/Heatmap";
 import { FinishedPomodoro } from "@/features/Timer";
 import { getStoredProgressHistory } from "@/common/localStorage";
 import { Temporal } from "@js-temporal/polyfill";
-import { createHeatmapData, createThresholds, getMinMax } from "@/features/Stats/functions";
+import {
+  createHeatmapData,
+  createThresholds,
+  getMinMax,
+  countStreaks,
+} from "@/features/Stats/functions";
 
 interface StatsProps extends ComponentProps<"form"> {
   onClose: () => void;
@@ -44,6 +49,9 @@ export const Stats = forwardRef<HTMLDivElement, StatsProps>(
     const thresholds = createThresholds(minMax.min, minMax.max);
     const heatmapData = createHeatmapData(groupedByDates, thresholds);
 
+    // Streaks
+    const streaks = countStreaks(Object.keys(groupedByDates));
+
     return (
       <Panel
         ref={forwardedRef}
@@ -75,6 +83,18 @@ export const Stats = forwardRef<HTMLDivElement, StatsProps>(
 
         <div className="mb-1 text-center uppercase text-neutral-400">Heatmap</div>
         <Heatmap data={heatmapData} />
+
+        <div className="my-2.5 text-center uppercase text-neutral-400">Streaks</div>
+        <div className="grid grid-cols-2 gap-2.5">
+          <div className="flex justify-between rounded border border-sky-500 px-3 py-2">
+            <span className="text-neutral-500">Current:</span>
+            <span>{streaks.currentStreak} days</span>
+          </div>
+          <div className="flex justify-between rounded border border-sky-500 px-3 py-2">
+            <span className="text-neutral-500">Best:</span>
+            <span>{streaks.longestStreak} days</span>
+          </div>
+        </div>
       </Panel>
     );
   }
