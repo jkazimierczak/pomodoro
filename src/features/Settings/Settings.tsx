@@ -1,18 +1,20 @@
-import React, { ComponentProps, FormEvent, forwardRef, useEffect, useState } from "react";
-import { IconContext } from "react-icons";
 import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Temporal } from "@js-temporal/polyfill";
+import clsx from "clsx";
+import React, { ComponentProps, FormEvent, forwardRef, useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { IconContext } from "react-icons";
 import { FiCheck, FiRotateCcw, FiSave, FiSettings, FiX } from "react-icons/fi";
+import { SwitchTransition } from "react-transition-group";
+
 import { useAppDispatch, useAppSelector } from "@/app";
+import { durationToHoursMinutes } from "@/common";
+import { isDarkMode, setTheme, Theme } from "@/common/darkMode";
+import { Fade } from "@/features/Transitions";
+
 import { defaultSettings, FormSection, SettingsFormData, settingsSchema, updateSettings } from ".";
 import { InputNumber, LargeInputTile } from "./Inputs";
-import { isDarkMode, setTheme, Theme } from "@/common/darkMode";
-import clsx from "clsx";
-import { SwitchTransition } from "react-transition-group";
-import { Fade, Slide, TransitionSpeed } from "@/features/Transitions";
-import { durationToHoursMinutes } from "@/common";
-import { Temporal } from "@js-temporal/polyfill";
 
 interface Settings extends ComponentProps<"form"> {
   onClose: () => void;

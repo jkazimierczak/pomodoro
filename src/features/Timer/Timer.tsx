@@ -1,6 +1,8 @@
-import React, { useEffect, useMemo, useState } from "react";
 import { Temporal } from "@js-temporal/polyfill";
-import { Circle } from "./Circle";
+import { ActionCreatorWithoutPayload } from "@reduxjs/toolkit";
+import clsx from "clsx";
+import React, { useEffect, useMemo, useState } from "react";
+import { IconContext } from "react-icons";
 import {
   FiCheckCircle,
   FiCircle,
@@ -10,8 +12,14 @@ import {
   FiPlay,
   FiX,
 } from "react-icons/fi";
-import { IconContext } from "react-icons";
+import { SwitchTransition } from "react-transition-group";
+
 import { useAppDispatch, useAppSelector } from "@/app";
+import { readableTime } from "@/common/helpers";
+import { Fade, Slide } from "@/features/Transitions";
+
+import { Circle } from "./Circle";
+import { dummyAudioSrc, timerAudio } from "./timerAudio";
 import {
   changeNextSessionType,
   finished,
@@ -23,12 +31,6 @@ import {
   stop,
 } from "./timerSlice";
 import { useTimer } from "./useTimer";
-import { ActionCreatorWithoutPayload } from "@reduxjs/toolkit";
-import { readableTime } from "@/common/helpers";
-import clsx from "clsx";
-import { dummyAudioSrc, timerAudio } from "./timerAudio";
-import { SwitchTransition } from "react-transition-group";
-import { Fade, Slide } from "@/features/Transitions";
 
 enum ButtonNames {
   START = "START",
@@ -38,7 +40,7 @@ enum ButtonNames {
   ADD_ONE_MINUTE = "ADD_ONE_MINUTE",
 }
 
-interface ITimerProps extends React.ComponentProps<"div"> {}
+type ITimerProps = React.ComponentProps<"div">;
 
 const animationMs = 750;
 
@@ -100,8 +102,7 @@ export function Timer({ ...props }: ITimerProps) {
   useEffect(() => {
     const readableTimeLeft = readableTime(timer.timeLeft());
     setReadableTimeLeft(readableTimeLeft);
-    const stateText = `${readableTimeLeft} | ${getSessionStateText()}`;
-    document.title = stateText;
+    document.title = `${readableTimeLeft} | ${getSessionStateText()}`;
 
     if (timer.progress >= 1) {
       _stop(finished);

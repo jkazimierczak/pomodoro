@@ -1,13 +1,7 @@
-import React, {
-  ComponentProps,
-  forwardRef,
-  ReactElement,
-  ReactNode,
-  useEffect,
-  useState,
-} from "react";
-import { Portal } from "../Portal";
 import clsx from "clsx";
+import React, { ComponentProps, forwardRef, ReactElement, ReactNode, useState } from "react";
+
+import { Portal } from "../Portal";
 import { Fade } from "../Transitions";
 
 export interface ModalProps extends ComponentProps<"div"> {
@@ -66,7 +60,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
 
     return (
       <Portal>
-        <div ref={forwardedRef}>
+        <div {...props} ref={forwardedRef}>
           {/*  Backdrop  */}
           {hasTransition ? (
             <Fade in={isOpen} appear>

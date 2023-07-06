@@ -1,6 +1,7 @@
 import { createListenerMiddleware, isAnyOf } from "@reduxjs/toolkit";
-import { defaultSettings, SettingsFormData, updateSettings } from "@/features/Settings";
+
 import { AppStartListening } from "@/app";
+import { defaultSettings, SettingsFormData, updateSettings } from "@/features/Settings";
 import {
   changeNextSessionType,
   finished,

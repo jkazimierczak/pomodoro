@@ -1,4 +1,5 @@
-import React, { ComponentProps, forwardRef, ReactElement } from "react";
+import { ComponentProps, forwardRef, ReactElement } from "react";
+
 import { Modal, ModalProps } from "../Modal";
 import { Slide } from "../Transitions";
 
@@ -12,7 +13,7 @@ export interface DrawerProps extends ComponentProps<"div">, Omit<ModalProps, "ch
 export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(
   ({ children, isOpen, onClose, placement }, forwardedRef) => {
     return (
-      <Modal isOpen={isOpen} onClose={onClose} placement={placement}>
+      <Modal isOpen={isOpen} onClose={onClose} placement={placement} ref={forwardedRef}>
         <Slide in={isOpen} from={placement} appear>
           {children}
         </Slide>

@@ -1,8 +1,9 @@
-import React from "react";
-import { TransitionProps } from "./types";
 import "./base.css";
 import "./Fade.css";
+
 import { BaseTransition } from "@/features/Transitions/BaseTransition";
+
+import { TransitionProps } from "./types";
 
 const classNames = {
   appear: "animate opacity-0",

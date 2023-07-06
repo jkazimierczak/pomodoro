@@ -1,6 +1,6 @@
 import { ComponentProps, forwardRef } from "react";
 
-interface InputNumberProps extends ComponentProps<"input"> {}
+type InputNumberProps = ComponentProps<"input">
 
 export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(({ ...props }, ref) => {
   return (

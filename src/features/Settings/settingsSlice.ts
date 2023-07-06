@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
 import { SettingsFormData } from "./schema";
 
 export const defaultSettings: SettingsFormData = {

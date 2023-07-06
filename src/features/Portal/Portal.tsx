@@ -1,4 +1,4 @@
-import { cloneElement, ComponentProps, forwardRef, ReactNode } from "react";
+import React, { cloneElement, ComponentProps, forwardRef, ReactNode } from "react";
 import ReactDOM from "react-dom";
 
 interface PortalProps extends ComponentProps<"div"> {

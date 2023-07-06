@@ -1,7 +1,8 @@
-import { AnyAction, createListenerMiddleware } from "@reduxjs/toolkit";
-import { FinishedPomodoro, PomodoroType, resetProgress } from "@/features/Timer/timerSlice";
 import { Temporal } from "@js-temporal/polyfill";
-import { AppStartListening, RootState, finishDailyGoal } from "@/app";
+import { AnyAction, createListenerMiddleware } from "@reduxjs/toolkit";
+
+import { AppStartListening, finishDailyGoal,RootState } from "@/app";
+import { FinishedPomodoro, PomodoroType, resetProgress } from "@/features/Timer/timerSlice";
 
 const LS_PROGRESS_KEY = "progressHistory";
 

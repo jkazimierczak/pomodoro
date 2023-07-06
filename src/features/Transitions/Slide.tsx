@@ -1,9 +1,10 @@
-import React from "react";
-import { TransitionProps } from "./types";
-import { Direction } from "@/common";
 import "./base.css";
 import "./Slide.css";
+
+import { Direction } from "@/common";
 import { BaseTransition } from "@/features/Transitions/BaseTransition";
+
+import { TransitionProps } from "./types";
 
 const common = {
   appear: "animate opacity-0",

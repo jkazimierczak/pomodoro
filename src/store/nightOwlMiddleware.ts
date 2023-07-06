@@ -1,9 +1,10 @@
-import { AnyAction, createListenerMiddleware, isAnyOf, ListenerEffectAPI } from "@reduxjs/toolkit";
-import { AppDispatch, AppStartListening, RootState, setNextMidnight } from "@/app";
 import { Temporal } from "@js-temporal/polyfill";
-import { finished, resetProgress, start } from "@/features/Timer/timerSlice";
+import { AnyAction, createListenerMiddleware, isAnyOf, ListenerEffectAPI } from "@reduxjs/toolkit";
+
+import { AppDispatch, AppStartListening, RootState, setNextMidnight } from "@/app";
 import { getNextMidnight } from "@/common/helpers";
 import { updateSettings } from "@/features/Settings/settingsSlice";
+import { finished, resetProgress, start } from "@/features/Timer/timerSlice";
 
 const LS_NEXT_MIDNIGHT_KEY = "next_midnight";
 

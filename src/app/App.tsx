@@ -1,17 +1,19 @@
-import { Timer, PomodoroStatus } from "@/features/Timer";
-import { Settings, updateSettings } from "@/features/Settings";
-import { FiBell, FiBellOff, FiMoon, FiSettings, FiSun } from "react-icons/all";
-import { IconContext } from "react-icons";
-import { isDarkMode, toggleTheme } from "@/common/darkMode";
-import { useCallback, useEffect, useRef, useState } from "react";
 import clsx from "clsx";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { IconContext } from "react-icons";
+import { FiBell, FiBellOff, FiMoon, FiSettings, FiSun } from "react-icons/all";
+import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
 import type { Container, Engine } from "tsparticles-engine";
 import type { EmitterContainer } from "tsparticles-plugin-emitters";
-import Particles from "react-tsparticles";
-import { confettiConfig, confettiEmitter, resetDailyGoal, useAppDispatch, useAppSelector } from ".";
-import { useModal } from "@/features/Modal";
+
+import { isDarkMode, toggleTheme } from "@/common/darkMode";
 import { Drawer } from "@/features/Drawer";
+import { useModal } from "@/features/Modal";
+import { Settings, updateSettings } from "@/features/Settings";
+import { PomodoroStatus, Timer } from "@/features/Timer";
+
+import { confettiConfig, confettiEmitter, resetDailyGoal, useAppDispatch, useAppSelector } from ".";
 
 export function App() {
   const containerRef = useRef<Container | null>(null);
@@ -48,7 +50,7 @@ export function App() {
       showConfetti();
       dispatch(resetDailyGoal());
     }
-  }, [finishedDailyGoal]);
+  }, [finishedDailyGoal, dispatch]);
 
   return (
     <>

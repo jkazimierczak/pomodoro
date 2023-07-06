@@ -1,5 +1,6 @@
-import { TransitionProps, TransitionSpeed } from "@/features/Transitions/types";
 import { CSSTransitionClassNames } from "react-transition-group/CSSTransition";
+
+import { TransitionProps, TransitionSpeed } from "@/features/Transitions/types";
 
 export function getTimeoutFromProps(speed: TransitionSpeed | undefined) {
   const timeouts = {

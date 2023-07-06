@@ -1,5 +1,5 @@
-import { useRef, useState } from "react";
 import { Temporal } from "@js-temporal/polyfill";
+import { useRef, useState } from "react";
 
 export function useTimer(initialMinutes: number, intervalMs: number, animationMs?: number) {
   const [duration, setDuration] = useState(initialMinutes * 60);

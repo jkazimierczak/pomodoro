@@ -1,13 +1,15 @@
-import { TransitionProps } from "@/features/Transitions/types";
+import "./base.css";
+
 import React, { useRef } from "react";
+import { CSSTransition } from "react-transition-group";
+import { CSSTransitionClassNames } from "react-transition-group/CSSTransition";
+
+import { TransitionProps } from "@/features/Transitions/types";
 import {
   getClassesFromProps,
   getTimeoutFromProps,
   prepareProps,
 } from "@/features/Transitions/utils";
-import { CSSTransition } from "react-transition-group";
-import "./base.css";
-import { CSSTransitionClassNames } from "react-transition-group/CSSTransition";
 
 type BaseTransitionProps = TransitionProps & {
   classNames: CSSTransitionClassNames;

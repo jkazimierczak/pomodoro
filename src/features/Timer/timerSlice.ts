@@ -1,6 +1,7 @@
+import { Temporal } from "@js-temporal/polyfill";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
-import { Temporal } from "@js-temporal/polyfill";
+
 import { defaultSettings } from "@/features/Settings";
 
 /**
