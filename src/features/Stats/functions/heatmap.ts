@@ -19,25 +19,24 @@ export function getMinMax(data: Record<string, number>) {
  * @param max Maximal value.
  */
 export function createThresholds(min: number, max: number) {
-  const step = (max - min) / 5;
+  const step = (max - min) / 4;
 
   return {
-    1: min,
-    2: min + step,
-    3: min + step + step,
+    2: min,
+    3: min + step,
     4: max - step,
     5: max,
   };
 }
 
 export function levelFromData(data: number, thresholds: Record<number, number>) {
-  if (thresholds["2"] < data && data < thresholds["3"]) {
+  if (thresholds["2"] <= data && data < thresholds["3"]) {
     return 2;
-  } else if (thresholds["3"] < data && data < thresholds["4"]) {
+  } else if (thresholds["3"] <= data && data < thresholds["4"]) {
     return 3;
-  } else if (thresholds["4"] < data && data < thresholds["5"]) {
+  } else if (thresholds["4"] <= data && data < thresholds["5"]) {
     return 4;
-  } else if (thresholds["5"] === data) {
+  } else if (thresholds["5"] <= data) {
     return 5;
   } else {
     return 1;
